@@ -1,0 +1,25 @@
+Square,Spit,Method,Lab Code,Type,Depth cm,Uncalibrated Age,Error,Lower Cal BP,Upper Cal BP,Reference
+DEF30,,TL,KTL156,Multigrain,2,2000,1300,,,Roberts et al. 1990a
+1972,2,C14    ,SUA263    ,Wood Charcoal,10,450,80,635,309,Clarkson et al. 2015
+F30,4,C14,ANU-7002,Marine gastropod,13,3810,80,4420,3981,Clarkson et al. 2015
+F30,12,C14,ANU-7003,Marine gastropod,59,6290,90,7420,6995,Clarkson et al. 2015
+1972,8,C14    ,SUA264    ,Wood Charcoal,65-88,6440,200,7689,6883,Clarkson et al. 2015
+F30,18,C14,ANU-7004,Wood Charcoal,93,7300,230,8558,7676,Clarkson et al. 2015
+DEF30,21,C14,ANU-7005,Wood Charcoal,113,10470,120,12681,12006,Clarkson et al. 2015
+DEF30,26,ABOX,ANU-7006,Wood Charcoal and Sand,146,13390,400,17429,15001,Bird et al. 2002
+DEF30,,TL,KTL165,Multigrain,155,15000,3000,,,Roberts et al. 1990a
+DEF30,,ABOX,ANUA-9913,Wood Charcoal,149,10330,150,12638,11501,Bird et al. 2002
+DEF30,,ABOX,ANUA-9914,Wood Charcoal,149,13050,210,16267,15043,Bird et al. 2002
+DEF30,28,C14,ANU-7007,Wood Charcoal and Sand,158,14990,150,18583,17885,Clarkson et al. 2015
+1972,19,C14,SUA265    ,Wood Charcoal,188-215,18040,300,22493,21051,Clarkson et al. 2015
+DEF30,31,C14,ANU-7115,Wood Charcoal,178,18810,2090,29584,18480,Clarkson et al. 2015
+Auger,,TL,KTL97,Multigrain,190,24000,5000,,,Roberts et al. 1990a
+DEF30,,TL,KTL164,Multigrain,230,45600,9000,,,Roberts et al. 1990a
+DEF30,,OSL,KTL164,Single Grain,230,44200,4700,,,Roberts et al. 1998
+Auger,,TL,KTL158,Multigrain,242,52000,11000,,,Roberts et al. 1990a
+DEF30,,TL,KTL162,Multigrain,254,61000,13000,,,Roberts et al. 1990a
+DEF30,,OSL,KTL162,Single Grain,254,55500,8200,,,Roberts et al. 1998
+DEF30,,ABOX,ANUA-9915,Wood Charcoal,254,10810,200,13108,12159,Bird et al. 2002
+Auger,,TL,KTL141,Multigrain,295,65000,14000,,,Roberts et al. 1990a
+Auger,,TL,KTL116,Multigrain,390,86000,18000,,,Roberts et al. 1990a
+DEF30,,TL,KTL163,Multigrain,452,105000,21000,,,Roberts et al. 1990a

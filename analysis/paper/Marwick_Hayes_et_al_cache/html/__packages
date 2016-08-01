@@ -1,0 +1,16 @@
+base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
+knitr
+dplyr
+ggplot2
+gridExtra
+readxl
+stringr
+captioner
+grid
+perm
