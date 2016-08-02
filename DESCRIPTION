@@ -1,9 +1,22 @@
 Package: mjbtrampling
-Title: What the Package Does (one line, title case)
+Title: Research compendium for paper on an artefact trampling experiment
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Ben", "Marwick", email = "benmarwick@gmail.com", role = c("aut", "cre"))
+Description: This package contains the data, code and text of our study of artefact trampling at Madjebebe rockshelter.
 Depends: R (>= 3.3.1)
-License: What license is it under?
+License: GPL-3
+Suggests:
+  knitr,
+  dplyr,
+  gridExtra,
+  readxl,
+  stringr,
+  grid,
+  perm,
+  broom,
+  purrr,
+  tidyr,
+  ggrepel,
+  bookdown
 Encoding: UTF-8
 LazyData: true

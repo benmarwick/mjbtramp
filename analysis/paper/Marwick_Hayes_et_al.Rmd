@@ -7,10 +7,10 @@ author:
 - Richard Fullagar
 date: '`r Sys.Date()`'
 output:
-  html_document: default
-  word_document:
+  # html_document: default
+   bookdown::word_document2:
     fig_caption: yes
-    reference_docx: ../templates/template.docx
+    reference_docx: templates/template.docx
 bibliography: trampling.bib
 abstract: |
   This is the abstract.
@@ -24,9 +24,7 @@ suppressPackageStartupMessages(library(ggplot2, quietly = TRUE))
 suppressPackageStartupMessages(library(gridExtra, quietly = TRUE))
 library(readxl)
 library(stringr)
-library(captioner)
 library(grid)
-fig_nums <- captioner()
 options(warn=-1)
 # image width should be 90 mm for 1 col, 140 mm for 1.5 col, 190mm for two cols
 ```
@@ -147,7 +145,7 @@ We collected nodules of white quartz from the landscape and used hard-hammer dir
 
 The overall shape of a clastic particle, such an artefact, is difficult to conveniently reduce to a single measurement with precision and accuracy. In attempting to summarise an artefact's shape, archaeologists have developed a variety of methods for producing multivariate descriptions of artefact shape in two- and three-dimensions [eg. @Grosman2008threedscanning; @Lycett2006crossbeam]. While these methods have provided insights into reduction strategies and assemblage comparison, they require specialised equipment (such as a three-dimensional scanner or photogrammetry equipment) that was not available to us for our experiment. Instead, we used linear measurements of artefacts obtained with vernier callipers to compute indices of artefact shape. These linear measurements can be used with th Zingg system to summarize artefact shape. Although there is extensive discussion on the question of the best clast shape classification method amongst geologists, there is little agreement [@Woronow992pebbleshape; @blott2008particle]. We chose the Zingg because it is the simplest and most widely used shape classification system for geological clasts. 
 
-```{r zingg_plot_of_artefacts}
+```{r zinggplotofartefacts, fig.cap="Zingg Diagram classifying the shape of the experimental artefacts"}
 # compute Zingg values --------
 
 # calculate Zingg's shape values
@@ -199,20 +197,22 @@ ggplot(tramp[1:30,], aes(flat, elong, label = artefact)) +
 
 ```
 
-`r fig_nums("zingg_plot_of_artefacts", "Zingg Diagram classifying the shape of the experimental artefacts")`
+Zingg indices are derived from the measurement of the three principal axes of the approximating tri-axial ellipsoid. The three principal axes are the longest axis (denoted a _a_), the second longest axis perpendicular to the longest axis (_b_), and the third longest axis perpendicular to both _a_ and _b_ (denoted as _c_). These measurements are not oriented with respect to the percussion axis of the artefact. This is because the percussion attributes have little relevance to how the artefact interacts with the sedimentary deposit during trampling. We simply measured the longest axis on the artefact without regard to the flaking attributes, and then the longest axis that is perpendicular to the first axis (the intermediate axis), and then the longest axis perpendicular to that (the short axis). To obtain the Zingg indices for a given artefact, we first determined the directions for principal axes of the artefact, then measured the axes, and finally computed the axis ratios _b_/_a_ (Zingg's elongation ratio) and _c_/_b_ (Zingg's flatness ratio). Zingg's shape factor is elongation divided by flatness. The Zingg classifications of the artefacts used in the trampling experiment are presented in Figure \@ref(fig:zinggplotofartefacts).
 
-Zingg indices are derived from the measurement of the three principal axes of the approximating tri-axial ellipsoid. The three principal axes are the longest axis (denoted a _a_), the second longest axis perpendicular to the longest axis (_b_), and the third longest axis perpendicular to both _a_ and _b_ (denoted as _c_). These measurements are not oriented with respect to the percussion axis of the artefact. This is because the percussion attributes have little relevance to how the artefact interacts with the sedimentary deposit during trampling. We simply measured the longest axis on the artefact without regard to the flaking attributes, and then the longest axis that is perpendicular to the first axis (the intermediate axis), and then the longest axis perpendicular to that (the short axis). To obtain the Zingg indices for a given artefact, we first determined the directions for principal axes of the artefact, then measured the axes, and finally computed the axis ratios _b_/_a_ (Zingg's elongation ratio) and _c_/_b_ (Zingg's flatness ratio). Zingg's shape factor is elongation divided by flatness. The Zingg classifications of the artefacts used in the trampling experiment are presented in `r fig_nums("zingg_plot_of_artefacts", display = "cite")`.
+```{r tramplingarea, fig.cap="Views of the trampling area on the excavation spoil heaps."}
+# I combined these images in Inkscape
+knitr::include_graphics("../figures/views_of_trampling_area.png")
+```
+
+```{r closeuptramplingarea, fig.cap="Close-up of trampling area showing the arrangement of artefacts before trampling (left, grid spacing in 10 cm) and after five minutes (right, scale rod bars are 10 cm)"}
+# I combined these images in Inkscape
+knitr::include_graphics("../figures/close_up_of_trampling_area.png")
+```
 
 ## Trampling area, setup and events
 
-```{r trampling_area}
-# I combined these images in Inkscape
-include_graphics("../figures/views_of_trampling_area.png")
-```
 
-`r fig_nums("trampling_area", "Views of the trampling area on the excavation spoil heaps.")`
-
-The trampling area was a level surface on the spoil heap of sediment removed during the 2012 excavations at Madjebebe (`r fig_nums("trampling_area", display = "cite")`). After excavation, the sediment was sieved through 7 mm and 3 mm sieves and dumped in a pile where it was stored until the excavation was backfilled. We used shovels to create a level surface on the spoil heap of about three by three meters. We waited until near the end of the excavation so that the trampling experiment could be conducted on sediments removed from the lowest artefact-bearing deposits at Madjebebe. Waiting until the end of the excavation imposed time constraints on the experiment, limiting the scale of our study, because our excavation permit required immediate backfilling at the end of the field season. 
+The trampling area was a level surface on the spoil heap of sediment removed during the 2012 excavations at Madjebebe (Figure \@ref(fig:tramplingarea)). After excavation, the sediment was sieved through 7 mm and 3 mm sieves and dumped in a pile where it was stored until the excavation was backfilled. We used shovels to create a level surface on the spoil heap of about three by three meters. We waited until near the end of the excavation so that the trampling experiment could be conducted on sediments removed from the lowest artefact-bearing deposits at Madjebebe. Waiting until the end of the excavation imposed time constraints on the experiment, limiting the scale of our study, because our excavation permit required immediate backfilling at the end of the field season. 
 
 ```{r split_by_trampling_event}
 # split string from total station point description
@@ -284,20 +284,14 @@ two_dims <- five2 %>% summarize(n = n())
 four_dims <- five4  %>%   summarize(n = n())
 ```
 
-```{r close_up_trampling_area}
-# I combined these images in Inkscape
-include_graphics("../figures/close_up_of_trampling_area.png")
-```
 
-`r fig_nums("close_up_trampling_area", "Close-up of trampling area showing the arrangement of artefacts before trampling (left, grid spacing in 10 cm) and after five minutes (right, scale rod bars are 10 cm)")`
-
-The artefacts were arranged on a one meter grid in the centre of the trampling area (`r fig_nums("close_up_trampling_area", display = "cite")`). The artefacts were positioned 10 cm from each other. The location of the artefacts was recorded with a total station after they were placed on the grid, and after each trampling event. Of the thirty artefacts, `r two_dims` were over two centimenters long and recorded using two points at either end of their longest axis. The remaining `r 30 - two_dims` were recorded with a single point at their center of mass. 
+The artefacts were arranged on a one meter grid in the centre of the trampling area (Figure \@ref(fig:closeuptramplingarea)). The artefacts were positioned 10 cm from each other. The location of the artefacts was recorded with a total station after they were placed on the grid, and after each trampling event. Of the thirty artefacts, `r two_dims` were over two centimenters long and recorded using two points at either end of their longest axis. The remaining `r 30 - two_dims` were recorded with a single point at their center of mass. 
 
 Each trampling episode consisted of an adult male walking barefoot at a constant natural slow walking speed. Our subject walked continuously in a clockwise circuit that included the trampling area for five minutes for each event. The walker crossed the trampling area in the same direction each time. At the end of five minutes, we carefully exposed the artefacts in situ with small leaf trowels, and used a total station to record their location, and for the larger ones, orientation and inclination. 
 
 ## Trampling substrate
 
-```{r substrate, cache = TRUE}
+```{r substrate, cache = TRUE, fig.cap="Particle size distributions of sediment collected from the trampling area (bold red line) and sediment collected from the archaeological excvation, 3-4 m below the surface"}
 # read in the particle size data
 archaeological_psd <- read.csv("../data/MK2_2015_excavation_lower_sediment_psd.csv")
 trampling_psd <- read.csv("../data/MK2_2015_trampling_area_sediment_psd.csv")
@@ -354,9 +348,9 @@ perm_test_sediment_CI_2 <- round(perm_test_sediment$p.conf.int[2], 3)
 nmc_pretty <- prettyNum( perm_test_sediment$nmc, big.mark = ",")
 ```
 
-`r fig_nums("substrate", "Particle size distributions of sediment collected from the trampling area (bold red line) and sediment collected from the archaeological excvation, 3-4 m below the surface")`
 
-The trampling area was a levelled section of the excavation spoil heap. The sediments came from 3-4 m below the surface, and had passed through 7 mm and 3 mm sieves before being dumped on the spoil heap. Although the sediment has been seived, the texture of a sample take from tbe spoil head sediment remains identical to samples taken from the archaeological deposit, 3-4m below the surface (`r fig_nums("substrate", display = "cite")`). A permutation test for significant differences between any of these samples returns a p-value of `r perm_test_sediment$p.value` (99% confidence interval: `r perm_test_sediment_CI_1`-  `r perm_test_sediment_CI_1` estimated from `r nmc_pretty` Monte Carlo replications).
+
+The trampling area was a levelled section of the excavation spoil heap. The sediments came from 3-4 m below the surface, and had passed through 7 mm and 3 mm sieves before being dumped on the spoil heap. Although the sediment has been seived, the texture of a sample take from tbe spoil head sediment remains identical to samples taken from the archaeological deposit, 3-4m below the surface (Figure \@ref(fig:substrate)). A permutation test for significant differences between any of these samples returns a p-value of `r perm_test_sediment$p.value` (99% confidence interval: `r perm_test_sediment_CI_1`-  `r perm_test_sediment_CI_1` estimated from `r nmc_pretty` Monte Carlo replications).
 
 # Results
 
@@ -525,9 +519,8 @@ fifteensum <- data.frame(cbind(fifteenhor, fifteenver, fifteentot))
 
 ```
 
-## Horizonal displacement
 
-```{r hor_disp}
+```{r hordisp, results='hide'}
 # plots for 5, 10 , 15, three plots, side by side
 
 s <- 4.5 # point size
@@ -778,13 +771,11 @@ ggsave(file="../figures/horizontal_plots.png", g,
        dpi = 300)
 ```
 
-```{r show_hor_disp_plot}
-include_graphics("../figures/horizontal_plots.png")
+```{r showhordispplot,  out.height = 4, fig.cap="Plots of horizontal displacement of artefacts after 5, 10 and 15 minutes of trampling."}
+knitr::include_graphics("../figures/horizontal_plots.png")
 ```
 
-`r fig_nums("hor_disp", "Plots of horizontal displacement of artefacts after 5, 10 and 15 minutes of trampling.")`
-
-```{r hor_displ_dists}
+```{r hordispldists, fig.cap="Distributions of horizontal displacements of artefacts after 5, 10 and 15 minutes of trampling."}
 # plot distribution of horizontal displacements after 5-10-15
 hor <- data.frame(artefact = c(five1diff$artefact.1, five2diff$artefact.1, five4diff$artefact.1), five = fivesum$fivehor, ten = tensum$tenhor, fifteen = fifteensum$fifteenhor)
 
@@ -802,9 +793,8 @@ ggplot(hor.s,
   xlab("")
 ```
 
-`r fig_nums("hor_displ_dists", "Distributions of horizontal displacements of artefacts after 5, 10 and 15 minutes of trampling.")`
 
-```{r hor_directions}
+```{r hordirectionshist, fig.cap="Histogram of directions of displacement of artefacts from their starting positions to their locations after fifteen minutes of trampling"}
 # start locations
 start_coords <- 
 do.call(rbind, list(cbind(five1diff$Northing.1.x, 
@@ -845,9 +835,8 @@ suppressMessages(print(p))
 
 ```
 
-`r fig_nums("hor_directions", "Histogram of directions of displacement of artefacts from their starting positions to their locations after fifteen minutes of trampling")`
 
-```{r hor_directions_model}
+```{r hordirectionsmodel, fig.cap="Linear models for a variety of predictors of the direction of horizontal displacement after fifteen minutes of trampling. None of the models have p < 0.05. Positive estimate values indicate positive correlations."}
 # get artefact IDs in order
 
 angle_hor_displacement_df <- 
@@ -922,9 +911,8 @@ ggplot(linear_models_estimates_dir,
    
 ```
 
-`r fig_nums("hor_models_dir", "Linear models for a variety of predictors of the direction of horizontal displacement after fifteen minutes of trampling. None of the models have p < 0.05. Positive estimate values indicate positive correlations.")`
 
-```{r hor_models}
+```{r hormodels, fig.cap="Linear models for a variety of predictors of horizontal displacement after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations."}
 hor_disp_artefact <- merge(hor, tramp, by = "artefact")
 
 # reshape to long, keeping the 15 mist hor dist out
@@ -994,7 +982,6 @@ ggplot(linear_models_estimates,
    
 ```
 
-`r fig_nums("hor_models", "Linear models for a variety of predictors of horizontal displacement after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations.")`
 
 ```{r hor_summary}
 rounding <- 3
@@ -1004,13 +991,16 @@ hor_median <-    round(median(hor_disp_artefact$fifteen), rounding)
 hor_mad <-       round(mad(hor_disp_artefact$fifteen),rounding)
 ```
 
-`r fig_nums("hor_disp", display = "cite")` shows maps of the horizontal displacement of artefacts after five, ten and fifteen minutes. A variety of trajectories are visible, with some artefacts moving in a relatively straight line, others changing angle at each move, and one returning almost exactly to its start position. `r fig_nums("hor_directions", display = "cite")` shows that after fifteen minutes, most artefacts have are in a location opposite to the direction of walking across the area. None of the Zingg shape variables are effective predictors of the direction of horizontal displacement (`r fig_nums("hor_models_dir", display = "cite")`).
 
-`r fig_nums("hor_displ_dists", display = "cite")` shows the distributions of dsiplacements from each artefact's starting position after each trampling interval. After fifteen minutes, the total horizontal displacement of all artefacts varied from `r hor_min` m to `r hor_max` m with a median of `r hor_median` m, and median absolute deviation (a robust measure of variation) of `r hor_mad` m. `r fig_nums("hor_models", display = "cite")` provides a graphical summary of linear regression models to identify how well the Zingg shape attributes predict the amount of horizontal displacement for each artefact after fifteen minutes of trampling. Shape and elongation are the strongest predictors of horizontal displacement. The elongation relationship indicates that as width increases relative to length, the artefacts are more likely to be moved a longer distance by trampling. The shape relationship suggests that as artefacts are more equidimensional, they tend to be moved horizontally further by trampling. 
+## Horizonal displacement
+
+Figure \@ref(fig:showhordispplot) shows maps of the horizontal displacement of artefacts after five, ten and fifteen minutes. A variety of trajectories are visible, with some artefacts moving in a relatively straight line, others changing angle at each move, and one returning almost exactly to its start position. Figure \@ref(fig:hordirectionshist) shows that after fifteen minutes, most artefacts have are in a location opposite to the direction of walking across the area. None of the Zingg shape variables are effective predictors of the direction of horizontal displacement (Figure \@ref(fig:hordirectionsmodel)).
+
+Figure \@ref(fig:hordispldists) shows the distributions of dsiplacements from each artefact's starting position after each trampling interval. After fifteen minutes, the total horizontal displacement of all artefacts varied from `r hor_min` m to `r hor_max` m with a median of `r hor_median` m, and median absolute deviation (a robust measure of variation) of `r hor_mad` m. Figure \@ref(fig:hormodels) provides a graphical summary of linear regression models to identify how well the Zingg shape attributes predict the amount of horizontal displacement for each artefact after fifteen minutes of trampling. Shape and elongation are the strongest predictors of horizontal displacement. The elongation relationship indicates that as width increases relative to length, the artefacts are more likely to be moved a longer distance by trampling. The shape relationship suggests that as artefacts are more equidimensional, they tend to be moved horizontally further by trampling. 
 
 ## Vertical displacement 
 
-```{r ver_disp}
+```{r verdisp, fig.cap="Distributions of vertical displacements of artefacts after 5, 10 and 15 minutes of trampling. Negative values indicate that the artefact is below its starting location."}
 
 # plot distribution of vertical displacements after 5-10-15
 ver <- data.frame(artefact = c(five1diff$artefact.1, 
@@ -1038,9 +1028,9 @@ ggplot(ver.s, aes(ind, values)) +
 
 ```
 
-`r fig_nums("ver_disp", "Distributions of vertical displacements of artefacts after 5, 10 and 15 minutes of trampling. Negative values indicate that the artefact is below its starting location.")`
 
-```{r ver_summary}
+
+```{r versummary}
 rounding <- 3
 ver.s %>% 
   group_by(ind) %>% 

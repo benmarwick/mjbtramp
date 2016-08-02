@@ -4,3 +4,5 @@
 *_files/*
 *_cache/*
 *~*
+packrat/lib*/
+packrat/src/
