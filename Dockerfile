@@ -8,7 +8,7 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 RUN apt-get update -y \
   && apt-get install r-cran-rjava   -y \
   # install devtools so we can get pkgs from github
-  && Rscript -e 'install.packages("devtools", repos = "http://cran.rstudio.com")' \
+  && install.r devtools \
   # install a few packages from GitHub for the most recent versions (or if they're not on CRAN)
   && installGithub.r --deps TRUE \
     # install my package that is the focus of this image
