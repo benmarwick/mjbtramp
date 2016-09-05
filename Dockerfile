@@ -12,7 +12,7 @@ RUN apt-get update -y \
   # make these files writable
   && chmod 777 -R mjbtramp \
   # go into the repo directory
-  && cd mjbtramp \
+  && cd /mjbtramp \
   # start R and build pkgs that we depend on from local sources that we have collected with packrat
   && R -e "0" --args --bootstrap-packrat \
   # build this compendium package
