@@ -38,11 +38,256 @@ tramp <- read_excel("../data/trampling_exp.xlsx")
 points <- read.csv("../data/trampling.csv")
 ```
 
+```{r split_by_trampling_event}
+# split string from total station point description
+# split out the description between dashes or underscores
+points$Description <- as.character(points$Description)
+points$code <- (strsplit(points$Description, "-|_"))
+points$type <- sapply(points$code, "[", 1) 
+points$square <- sapply(points$code, "[", 2)
+points$run <- sapply(points$code, "[", 3)
+points$artefact <- as.numeric(as.character(sapply(points$code, "[", 4)))
+# points$coords <- paste(points$Northing, points$Easting, points$Elevation, sep = "-")
+points$artefactNum <- sequence(rle(points$Description)$lengths)
+# points <- points[,-c(1:4)]
+
+# reshape to put multiple points of one artefact on one line
+points.r <- reshape(points, direction = "wide", timevar = "artefactNum", idvar = "Description")
+
+# make separate tables of point data 
+# for before, five min, ten min and fifteen min
+before  <- points.r[points.r$run.1 == "B",]
+five    <- points.r[points.r$run.1 == "A5",]
+ten     <- points.r[points.r$run.1 == "A10",]
+fifteen <- points.r[points.r$run.1 == "A15",]
+
+# fifteen is missing an artefact, find which one and replace
+# sort(fifteen$artefact.1)
+# sort(ten$artefact.1)
+# fifteen in missing artefact 35, check to see
+# points[points$artefact == 35,]
+# indeed it is... replace 35 with same data as ten mins
+fifteen <- rbind(fifteen, ten[ten$artefact.1 == 35,])
+
+# separate artefacts with one point, two points and four points
+before1 <- before[before$code.2 == 'NULL',]
+five1 <- five[five$code.2 == 'NULL',]
+ten1 <- ten[ten$code.2 == 'NULL',]
+fifteen1 <- fifteen[fifteen$code.2 == 'NULL',]
+
+# ten1 does not have 12 artefacts
+# sort(five1$artefact.1)
+# sort(ten1$artefact.1)
+# missing 58, replace with same data as five mins
+ten1 <- rbind(ten1, five1[five1$artefact.1 == 58,])
+
+
+# now two points per artefact
+before2 <- before[before$code.2 != 'NULL' & before$code.3 == 'NULL',]
+five2 <- five[five$code.2 != 'NULL' & five$code.3 == 'NULL',]
+ten2 <- ten[ten$code.2 != 'NULL' & ten$code.3 == 'NULL',]
+fifteen2 <- fifteen[fifteen$code.2 != 'NULL' & fifteen$code.3 == 'NULL',]
+
+# ten2 has too many artefacts....
+# sort(five2$artefact.1)
+# sort(ten2$artefact.1)
+# delete artefact 58, not sure why that's there. 
+ten2 <- ten2[ten2$artefact.1 != 58,]
+
+# now four points per artefact
+before4 <- before[before$code.3 != 'NULL' & before$code.4 != 'NULL',]
+five4 <- five[five$code.3 != 'NULL' & five$code.4 != 'NULL',]
+ten4 <- ten[ten$code.3 != 'NULL' & ten$code.4 != 'NULL',]
+fifteen4 <- fifteen[fifteen$code.3 != 'NULL' & fifteen$code.4 != 'NULL',]
+
+# how many artefacts in the experiment...
+
+# had two points recorded?
+two_dims <- five2 %>% summarize(n = n())
+# had four points recorded?
+four_dims <- five4  %>%   summarize(n = n())
+```
+
+```{r prepare_point_data}
+
+####### find the x and y distances between zero and five min ########
+# match up the artefacts, then subtract B from A5
+# for artefacts plotted with a single point
+five1diff <- merge(before1, five1, by = "artefact.1")
+# horizontal displacement distance
+five1diff$hor <- with(five1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 ) )
+# vertical displacement distance
+five1diff$ver <- with(five1diff, (Elevation.1.y - Elevation.1.x))
+# total length of displacement vector
+five1diff$tot <- with(five1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 + (Elevation.1.y - Elevation.1.x)^2) )
+# direction of displacement
+
+# for artefacts plotted with two points
+five2diff <- merge(before2, five2, by = "artefact.1")
+# get a centre coord for calculating displacements
+five2diff$B.centre.N <- apply(cbind(five2diff$Northing.1.x, five2diff$Northing.2.x), 1, mean)
+five2diff$B.centre.E <- apply(cbind(five2diff$Easting.1.x, five2diff$Easting.2.x), 1, mean)
+five2diff$B.centre.Z <- apply(cbind(five2diff$Elevation.1.x, five2diff$Elevation.2.x), 1, mean)
+five2diff$A5.centre.N <- apply(cbind(five2diff$Northing.1.y, five2diff$Northing.2.y), 1, mean)
+five2diff$A5.centre.E <- apply(cbind(five2diff$Easting.1.y, five2diff$Easting.2.y), 1, mean)
+five2diff$A5.centre.Z <- apply(cbind(five2diff$Elevation.1.y, five2diff$Elevation.2.y), 1, mean)
+# horizontal displacement distance
+five2diff$hor <- with(five2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
+# vertical displacement distance
+five2diff$ver <- with(five2diff, (B.centre.Z - A5.centre.Z))
+# total length of displacement vector
+five2diff$tot <- with(five2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
+# direction of displacement
+
+# for artefacts plotted with four points
+five4diff <- merge(before4, five4, by = "artefact.1")
+# get a centre coord for calculating displacements
+five4diff$B.centre.N <- apply(cbind(five4diff$Northing.1.x, five4diff$Northing.2.x, five4diff$Northing.3.x, five4diff$Northing.4.x), 1, mean)
+five4diff$B.centre.E <- apply(cbind(five4diff$Easting.1.x, five4diff$Easting.2.x, five4diff$Easting.3.x, five4diff$Easting.4.x), 1, mean)
+five4diff$B.centre.Z <- apply(cbind(five4diff$Elevation.1.x, five4diff$Elevation.2.x, five4diff$Elevation.3.x, five4diff$Elevation.4.x), 1, mean)
+five4diff$A5.centre.N <- apply(cbind(five4diff$Northing.1.y, five4diff$Northing.2.y, five4diff$Northing.3.y, five4diff$Northing.4.y), 1, mean)
+five4diff$A5.centre.E <- apply(cbind(five4diff$Easting.1.y, five4diff$Easting.2.y, five4diff$Easting.3.y, five4diff$Easting.4.y), 1, mean)
+five4diff$A5.centre.Z <- apply(cbind(five4diff$Elevation.1.y, five4diff$Elevation.2.y, five4diff$Elevation.3.y, five4diff$Elevation.4.y), 1, mean)
+# horizontal displacement distance
+five4diff$hor <- with(five4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
+# vertical displacement distance
+five4diff$ver <- with(five4diff, (B.centre.Z - A5.centre.Z))
+# total length of displacement vector
+five4diff$tot <- with(five4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
+# direction of displacement
+
+# summary for zero to five mins
+fivehor <- c(five1diff$hor, five2diff$hor, five4diff$hor)
+fivever <- c(five1diff$ver, five2diff$ver, five4diff$ver)
+fivetot <- c(five1diff$tot, five2diff$tot, five4diff$tot)
+fivesum <- data.frame(cbind(fivehor, fivever, fivetot))
+
+####### find the x and y distances between zero and ten min ########
+# match up the artefacts, then subtract B from A5
+# for artefacts plotted with a single point
+ten1diff <- merge(before1, ten1, by = "artefact.1", all.x = FALSE)
+# horizontal displacement distance
+ten1diff$hor <- with(ten1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 ) )
+# vertical displacement distance
+ten1diff$ver <- with(ten1diff, (Elevation.1.y - Elevation.1.x))
+# total length of displacement vector
+ten1diff$tot <- with(ten1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 + (Elevation.1.y - Elevation.1.x)^2) )
+# direction of displacement
+
+# for artefacts plotted with two points
+ten2diff <- merge(before2, ten2, by = "artefact.1", all.y = TRUE)
+# if two of these points are more than 5 cm apart, we have a bad field measurement, since no artefact was that big. So let's check
+
+# ten2diff$B.dif.N <- ten2diff$Northing.1.x - ten2diff$Northing.2.x
+# ten2diff$B.dif.E <- ten2diff$Easting.1.x - ten2diff$Easting.2.x
+# ten2diff$B.dif.Z <- ten2diff$Elevation.1.x - ten2diff$Elevation.2.x
+# 
+# ten2diff$A10.dif.N <- ten2diff$Northing.1.y - ten2diff$Northing.2.y
+# ten2diff$A10.dif.E <- ten2diff$Easting.1.y - ten2diff$Easting.2.y
+# ten2diff$A10.dif.Z <- ten2diff$Elevation.1.y - ten2diff$Elevation.2.y
+
+# they are all ok
+
+# get a centre coord for calculating displacements
+ten2diff$B.centre.N <- apply(cbind(ten2diff$Northing.1.x, ten2diff$Northing.2.x), 1, mean)
+ten2diff$B.centre.E <- apply(cbind(ten2diff$Easting.1.x, ten2diff$Easting.2.x), 1, mean)
+ten2diff$B.centre.Z <- apply(cbind(ten2diff$Elevation.1.x, ten2diff$Elevation.2.x), 1, mean)
+ten2diff$A5.centre.N <- apply(cbind(ten2diff$Northing.1.y, ten2diff$Northing.2.y), 1, mean)
+ten2diff$A5.centre.E <- apply(cbind(ten2diff$Easting.1.y, ten2diff$Easting.2.y), 1, mean)
+ten2diff$A5.centre.Z <- apply(cbind(ten2diff$Elevation.1.y, ten2diff$Elevation.2.y), 1, mean)
+# horizontal displacement distance
+ten2diff$hor <- with(ten2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
+# vertical displacement distance
+ten2diff$ver <- with(ten2diff, (B.centre.Z - A5.centre.Z))
+# total length of displacement vector
+ten2diff$tot <- with(ten2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
+# direction of displacement
+
+# for artefacts plotted with four points
+ten4diff <- merge(before4, ten4, by = "artefact.1")
+
+# get a centre coord for calculating displacements
+ten4diff$B.centre.N <- apply(cbind(ten4diff$Northing.1.x, ten4diff$Northing.2.x, ten4diff$Northing.3.x, ten4diff$Northing.4.x), 1, mean)
+ten4diff$B.centre.E <- apply(cbind(ten4diff$Easting.1.x, ten4diff$Easting.2.x, ten4diff$Easting.3.x, ten4diff$Easting.4.x), 1, mean)
+ten4diff$B.centre.Z <- apply(cbind(ten4diff$Elevation.1.x, ten4diff$Elevation.2.x, ten4diff$Elevation.3.x, ten4diff$Elevation.4.x), 1, mean)
+ten4diff$A5.centre.N <- apply(cbind(ten4diff$Northing.1.y, ten4diff$Northing.2.y, ten4diff$Northing.3.y, ten4diff$Northing.4.y), 1, mean)
+ten4diff$A5.centre.E <- apply(cbind(ten4diff$Easting.1.y, ten4diff$Easting.2.y, ten4diff$Easting.3.y, ten4diff$Easting.4.y), 1, mean)
+ten4diff$A5.centre.Z <- apply(cbind(ten4diff$Elevation.1.y, ten4diff$Elevation.2.y, ten4diff$Elevation.3.y,ten4diff$Elevation.4.y), 1, mean)
+# horizontal displacement distance
+ten4diff$hor <- with(ten4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
+# vertical displacement distance
+ten4diff$ver <- with(ten4diff, (B.centre.Z - A5.centre.Z))
+# total length of displacement vector
+ten4diff$tot <- with(ten4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
+# direction of displacement
+
+# summary for zero to ten mins
+tenhor <- c(ten1diff$hor, ten2diff$hor, ten4diff$hor)
+tenver <- c(ten1diff$ver, ten2diff$ver, ten4diff$ver)
+tentot <- c(ten1diff$tot, ten2diff$tot, ten4diff$tot)
+tensum <- data.frame(cbind(tenhor, tenver, tentot))
+
+####### find the x and y distances between zero and fifteen min ########
+# match up the artefacts, then subtract B from A5
+# for artefacts plotted with a single point
+fifteen1diff <- merge(before1, fifteen1, by = "artefact.1")
+# horizontal displacement distance
+fifteen1diff$hor <- with(fifteen1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 ) )
+# vertical displacement distance
+fifteen1diff$ver <- with(fifteen1diff, (Elevation.1.y - Elevation.1.x))
+# total length of displacement vector
+fifteen1diff$tot <- with(fifteen1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 + (Elevation.1.y - Elevation.1.x)^2) )
+# direction of displacement
+
+# for artefacts plotted with two points
+fifteen2diff <- merge(before2, fifteen2, by = "artefact.1")
+# get a centre coord for calculating displacements
+fifteen2diff$B.centre.N <- apply(cbind(fifteen2diff$Northing.1.x, fifteen2diff$Northing.2.x), 1, mean)
+fifteen2diff$B.centre.E <- apply(cbind(fifteen2diff$Easting.1.x, fifteen2diff$Easting.2.x), 1, mean)
+fifteen2diff$B.centre.Z <- apply(cbind(fifteen2diff$Elevation.1.x, fifteen2diff$Elevation.2.x), 1, mean)
+fifteen2diff$A5.centre.N <- apply(cbind(fifteen2diff$Northing.1.y, fifteen2diff$Northing.2.y), 1, mean)
+fifteen2diff$A5.centre.E <- apply(cbind(fifteen2diff$Easting.1.y, fifteen2diff$Easting.2.y), 1, mean)
+fifteen2diff$A5.centre.Z <- apply(cbind(fifteen2diff$Elevation.1.y, fifteen2diff$Elevation.2.y), 1, mean)
+# horizontal displacement distance
+fifteen2diff$hor <- with(fifteen2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
+# vertical displacement distance
+fifteen2diff$ver <- with(fifteen2diff, (B.centre.Z - A5.centre.Z))
+# total length of displacement vector
+fifteen2diff$tot <- with(fifteen2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
+# direction of displacement
+
+# for artefacts plotted with four points
+fifteen4diff <- merge(before4, fifteen4, by = "artefact.1")
+# get a centre coord for calculating displacements
+fifteen4diff$B.centre.N <- apply(cbind(fifteen4diff$Northing.1.x, fifteen4diff$Northing.2.x, fifteen4diff$Northing.3.x, fifteen4diff$Northing.4.x), 1, mean)
+fifteen4diff$B.centre.E <- apply(cbind(fifteen4diff$Easting.1.x, fifteen4diff$Easting.2.x, fifteen4diff$Easting.3.x, fifteen4diff$Easting.4.x), 1, mean)
+fifteen4diff$B.centre.Z <- apply(cbind(fifteen4diff$Elevation.1.x, fifteen4diff$Elevation.2.x, fifteen4diff$Elevation.3.x, fifteen4diff$Elevation.4.x), 1, mean)
+fifteen4diff$A5.centre.N <- apply(cbind(fifteen4diff$Northing.1.y, fifteen4diff$Northing.2.y, fifteen4diff$Northing.3.y, fifteen4diff$Northing.4.y), 1, mean)
+fifteen4diff$A5.centre.E <- apply(cbind(fifteen4diff$Easting.1.y, fifteen4diff$Easting.2.y, fifteen4diff$Easting.3.y, fifteen4diff$Easting.4.y), 1, mean)
+fifteen4diff$A5.centre.Z <- apply(cbind(fifteen4diff$Elevation.1.y, fifteen4diff$Elevation.2.y, fifteen4diff$Elevation.3.y, fifteen4diff$Elevation.4.y), 1, mean)
+# horizontal displacement distance
+fifteen4diff$hor <- with(fifteen4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
+# vertical displacement distance
+fifteen4diff$ver <- with(fifteen4diff, (B.centre.Z - A5.centre.Z))
+# total length of displacement vector
+fifteen4diff$tot <- with(fifteen4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
+# direction of displacement
+
+# summary for zero to fifteen mins
+fifteenhor <- c(fifteen1diff$hor, fifteen2diff$hor, fifteen4diff$hor)
+fifteenver <- c(fifteen1diff$ver, fifteen2diff$ver, fifteen4diff$ver)
+fifteentot <- c(fifteen1diff$tot, fifteen2diff$tot, fifteen4diff$tot)
+fifteensum <- data.frame(cbind(fifteenhor, fifteenver, fifteentot))
+
+```
+
 # Introduction
 
-Claims for the first evidence of human activity at many archaeological sites depend on a close stratigraphic assocation between culturally modified materials and dated materials. This has been a central concern in debates surrounding the timing of the first human occupation of Sahul, where the archaeological deposits are often sandy and lacking well-defined stratigraphy. Investigations at archaeological sites in northern Australia recovered small numbers of flaked stone artefacts from sandy rockshelter deposits associated with Optically Stimulated Lumincence ages 50-60 k BP. The reliability of these associations have been questioned, with critics claiming that post-depositional processes have brought the stone artefacts in association with much older sediments. At Madjebebe (formerly Malakanunja II), one of Australia's oldest sites, trampling of artefacts has been frequently proposed as a possible cause of dislocation of artefacts through down through the deposit into an association with sediments much older than the artefacts. In this paper we describe a trampling experiment directly relevant to Madjebebe and other sites with sandy deposits, such in coastal or desert environments. 
+Claims for the first evidence of human activity, or of new types of activity, at many archaeological sites depend on a close stratigraphic assocation between culturally modified materials and dated materials. To be confident of these associations we need a robust understanding of the process of artefacts displacement from their original locations due to post-depositional processes. Examples of problematic vertical separation of artefacts that complicate the interpretation of archaeological deposits have been known for some time. For example, Villa and Courtin [-@villa1983267] describe conjoinable artefacts up to 1 m vertically apart and in different deposits. Similarly, Cahen and Moeyersons [-@cahen1977subsurface] report refitting artefacts up with to 1 m of vertical separation at Gombe Point in Zaire. At FxJj50, Koobi Fora, Kenya, Bunn et al. [-@bunn1980] report conjoinable pieces up to 50 cm apart vertically in alluvial sandy silt. At Cave Spring, Tenessee, Hofman [-@hofman1986vertical] recorded refitting artefacts over 20-40 cm of vertical distance. Richardson [-@Richardson1992] observed a maximum vertical separation of 30 cm for conjoining artefacts from different excavation units at Kenniff Cave (Queensland, Australia). In this paper we explore clast shape and size metrics to identify relationships that might help identify artefacts that have moved due to trampling, and given the shape attributes of an assemblage, to understand the magnitude of movement that may have occurred in an assemblage.     
 
-Because of the importance of its effect on the understanding artefact contexts and associations, trampling experiments are a mainstay of archaeological science. For example, Eren et al. [-@eren2010experimental] summarised fourteen publications of trampling experiments, all aimed at understanidng how a human and animal trampling contribute to the spatial  displacement of, and damage to, object commonly found in archaeological sites. The aim of our experiment was to understand how artefacts move in a  sandy deposit when trampled by walking. Specifically, we explored the relationship between artefact shape paramteters and the distance they are moved by trampling. We follow Eren et al. [-@eren2010experimental] in focusing on short-term trampling events, and by record the position, orientation and inclination of the artefacts between each trampling event. 
+Our motivation for this study arise from claims of vertical movement of artefacts in debates surrounding the timing of the first human occupation of Sahul, where the archaeological deposits are often sandy and lacking well-defined stratigraphy. Investigations at archaeological sites in northern Australia recovered small numbers of flaked stone artefacts from sandy rockshelter deposits associated with Optically Stimulated Lumincence ages 50-60 k BP. The reliability of these associations have been questioned, with critics claiming that post-depositional processes have brought the stone artefacts in association with much older sediments. At Madjebebe (formerly Malakanunja II), one of Australia's oldest sites, trampling of artefacts has been frequently proposed as a possible cause of dislocation of artefacts through down through the deposit into an association with sediments much older than the artefacts. In this paper we describe a trampling experiment directly relevant to Madjebebe and other sites with sandy deposits, such in coastal or desert environments. 
+
+Because of the importance of its effect on the understanding artefact contexts and associations, trampling experiments are a mainstay of archaeological science. For example, Eren et al. [-@eren2010experimental] summarised fourteen publications of trampling experiments, all aimed at understanding how a human and animal trampling contribute to the spatial  displacement of, and damage to, object commonly found in archaeological sites. The aim of our experiment was to understand how artefacts move in a sandy deposit when trampled by walking. Specifically, we explored the relationship between artefact shape paramteters and the distance they are moved by trampling. We follow Eren et al. [-@eren2010experimental] in focusing on short-term trampling events, and by record the position, orientation and inclination of the artefacts between each trampling event. 
 
 The design of our experiment includes two novel elements not seen in previous trampling studies. First, the substrate for our trampling experiment was the same sediment as the archaeological site that motivated the experiment. A similar experimental setup was used by Benito-Calvo et al. [-@BenitoCalvo2011trampling], who simulated an archaeological sediment fabric by adding clasts to a nearby non-archaeological deposit. In contrast, we conducted our trampling experiment directly on the the spoil heaps that held archaeological sediment removed during the 2012 excavations at Madjebebe. This adds a degree of realism to our trampling model. Interactions between the experiment artefacts and deposit more faithfully resemble what happened in the archaeological deposit because we used the archaeological sediments as our trampling medium. This ensures a close match for texture and penetrability between the experimental setup and the archaeological site. Our experiment still has many differences from the archaeological contexts, for example we were not able to exactly match the compaction and fabric, or directional properties, of the archaeological deposits. Furthermore, we cannot be sure of the nature of the archaeological sediment at the time the artefacts were deposited and trampled in prehistory, because post-depositional processes have likely altered the However, our field observations were that the spoil heaps closely resembled the structure, cohesiveness, permeability and moisture content of the archaeological deposits at Madjebebe.
 
@@ -145,7 +390,7 @@ We collected nodules of white quartz from the landscape and used hard-hammer dir
 
 The overall shape of a clastic particle, such an artefact, is difficult to conveniently reduce to a single measurement with precision and accuracy. In attempting to summarise an artefact's shape, archaeologists have developed a variety of methods for producing multivariate descriptions of artefact shape in two- and three-dimensions [eg. @Grosman2008threedscanning; @Lycett2006crossbeam]. While these methods have provided insights into reduction strategies and assemblage comparison, they require specialised equipment (such as a three-dimensional scanner or photogrammetry equipment) that was not available to us for our experiment. Instead, we used linear measurements of artefacts obtained with vernier callipers to compute indices of artefact shape. These linear measurements can be used with th Zingg system to summarize artefact shape. Although there is extensive discussion on the question of the best clast shape classification method amongst geologists, there is little agreement [@Woronow992pebbleshape; @blott2008particle]. We chose the Zingg because it is the simplest and most widely used shape classification system for geological clasts. 
 
-```{r zinggplotofartefacts, fig.cap="Zingg Diagram classifying the shape of the experimental artefacts"}
+```{r zinggplotofartefacts, fig.cap="Left: Zingg Diagram classifying the shape of the experimental artefacts. Right: Starting locations of the experimental artefacts before trampling.", fig.width=10}
 # compute Zingg values --------
 
 # calculate Zingg's shape values
@@ -161,39 +406,79 @@ tramp$flatness <- tramp$flat
 tramp$sphericity <- with(tramp, ((`width(mm)` * `thickness(mm)`)/`length(mm)`^2))^1/3
 
 # plot Zingg values --------
+library(ggplot2)
+library(ggrepel)
 
-s <- 4 # text size for Zingg's shape
+s <- 3 # text size for Zingg's shape
 
+artefact_zingg <- 
 ggplot(tramp[1:30,], aes(flat, elong, label = artefact)) +
-  geom_text() +
+  geom_point() +
+  geom_text_repel(size = I(s)) +
   geom_vline(xintercept = 0.67) +
   geom_hline(yintercept = 0.67) +
   annotate("text", 
            label = "oblate\n(discoidal)",
            x=0.5, 
            y=0.9, 
-           colour = "red") +
+           colour = "red",
+           size = I(s)) +
   annotate("text", 
            label = "equiaxial\n(spheroidal)", 
            x=0.9,
            y=0.9,
-           colour = "red") +
+           colour = "red",
+           size = I(s)) +
   annotate("text", 
            label = "triaxial\n(bladed)", 
            x=0.5, 
-           y=0.5, 
-           colour = "red") +
+           y=0.2, 
+           colour = "red",
+           size = I(s)) +
   annotate("text", 
            label = "prolate\n(rod-shaped)", 
            x=0.9, 
-           y=0.5,  
-           colour = "red") +
+           y=0.2,  
+           colour = "red",
+           size = I(s)) +
   xlim(0,1) +
   ylim(0,1) +  
   xlab("flatness (width/thickness)") +
   ylab("elongation (width/length)") +
   coord_equal(ratio = 1) +
-  theme_minimal()
+  theme_minimal(base_size = 10)
+
+artefact_map <- 
+ggplot() + 
+   ## five minutes
+  # artefacts with one point
+  geom_text(colour = "black", # start
+             size = I(s),
+             data = five1diff, 
+             aes(Northing.1.x,  Easting.1.x, label = artefact.1)
+             ) +
+  
+   # artefacts with two points
+  geom_text(colour = "black", # start
+             size = I(s), 
+             data = five2diff, 
+             aes(B.centre.N,  B.centre.E, label = artefact.1)) +
+  
+    # artefacts with four points
+  geom_text(colour = "black", # start
+             size = I(s), 
+             data = five4diff, 
+             aes(B.centre.N,  B.centre.E, label = artefact.1)
+             ) +
+  
+  coord_equal() + 
+  # plot options
+  ylab("Easting (m)") +
+  xlab("Northing (m)")  +
+  theme_minimal(base_size = 10)
+
+library(gridExtra)
+grid.arrange( artefact_zingg, artefact_map, ncol=2 )
 
 ```
 
@@ -211,79 +496,7 @@ knitr::include_graphics("../figures/close_up_of_trampling_area.png")
 
 ## Trampling area, setup and events
 
-
 The trampling area was a level surface on the spoil heap of sediment removed during the 2012 excavations at Madjebebe (Figure \@ref(fig:tramplingarea)). After excavation, the sediment was sieved through 7 mm and 3 mm sieves and dumped in a pile where it was stored until the excavation was backfilled. We used shovels to create a level surface on the spoil heap of about three by three meters. We waited until near the end of the excavation so that the trampling experiment could be conducted on sediments removed from the lowest artefact-bearing deposits at Madjebebe. Waiting until the end of the excavation imposed time constraints on the experiment, limiting the scale of our study, because our excavation permit required immediate backfilling at the end of the field season. 
-
-```{r split_by_trampling_event}
-# split string from total station point description
-# split out the description between dashes or underscores
-points$Description <- as.character(points$Description)
-points$code <- (strsplit(points$Description, "-|_"))
-points$type <- sapply(points$code, "[", 1) 
-points$square <- sapply(points$code, "[", 2)
-points$run <- sapply(points$code, "[", 3)
-points$artefact <- as.numeric(as.character(sapply(points$code, "[", 4)))
-# points$coords <- paste(points$Northing, points$Easting, points$Elevation, sep = "-")
-points$artefactNum <- sequence(rle(points$Description)$lengths)
-# points <- points[,-c(1:4)]
-
-# reshape to put multiple points of one artefact on one line
-points.r <- reshape(points, direction = "wide", timevar = "artefactNum", idvar = "Description")
-
-# make separate tables of point data 
-# for before, five min, ten min and fifteen min
-before <- points.r[points.r$run.1 == "B",]
-five <- points.r[points.r$run.1 == "A5",]
-ten <- points.r[points.r$run.1 == "A10",]
-fifteen <- points.r[points.r$run.1 == "A15",]
-
-# fifteen is missing an artefact, find which one and replace
-# sort(fifteen$artefact.1)
-# sort(ten$artefact.1)
-# fifteen in missing artefact 35, check to see
-# points[points$artefact == 35,]
-# indeed it is... replace 35 with same data as ten mins
-fifteen <- rbind(fifteen, ten[ten$artefact.1 == 35,])
-
-# separate artefacts with one point, two points and four points
-before1 <- before[before$code.2 == 'NULL',]
-five1 <- five[five$code.2 == 'NULL',]
-ten1 <- ten[ten$code.2 == 'NULL',]
-fifteen1 <- fifteen[fifteen$code.2 == 'NULL',]
-
-# ten1 does not have 12 artefacts
-# sort(five1$artefact.1)
-# sort(ten1$artefact.1)
-# missing 58, replace with same data as five mins
-ten1 <- rbind(ten1, five1[five1$artefact.1 == 58,])
-
-
-# now two points per artefact
-before2 <- before[before$code.2 != 'NULL' & before$code.3 == 'NULL',]
-five2 <- five[five$code.2 != 'NULL' & five$code.3 == 'NULL',]
-ten2 <- ten[ten$code.2 != 'NULL' & ten$code.3 == 'NULL',]
-fifteen2 <- fifteen[fifteen$code.2 != 'NULL' & fifteen$code.3 == 'NULL',]
-
-# ten2 has too many artefacts....
-# sort(five2$artefact.1)
-# sort(ten2$artefact.1)
-# delete artefact 58, not sure why that's there. 
-ten2 <- ten2[ten2$artefact.1 != 58,]
-
-# now four points per artefact
-before4 <- before[before$code.3 != 'NULL' & before$code.4 != 'NULL',]
-five4 <- five[five$code.3 != 'NULL' & five$code.4 != 'NULL',]
-ten4 <- ten[ten$code.3 != 'NULL' & ten$code.4 != 'NULL',]
-fifteen4 <- fifteen[fifteen$code.3 != 'NULL' & fifteen$code.4 != 'NULL',]
-
-# how many artefacts in the experiment...
-
-# had two points recorded?
-two_dims <- five2 %>% summarize(n = n())
-# had four points recorded?
-four_dims <- five4  %>%   summarize(n = n())
-```
-
 
 The artefacts were arranged on a one meter grid in the centre of the trampling area (Figure \@ref(fig:closeuptramplingarea)). The artefacts were positioned 10 cm from each other. The location of the artefacts was recorded with a total station after they were placed on the grid, and after each trampling event. Of the thirty artefacts, `r two_dims` were over two centimenters long and recorded using two points at either end of their longest axis. The remaining `r 30 - two_dims` were recorded with a single point at their center of mass. 
 
@@ -291,7 +504,7 @@ Each trampling episode consisted of an adult male walking barefoot at a constant
 
 ## Trampling substrate
 
-```{r substrate, cache = TRUE, fig.cap="Particle size distributions of sediment collected from the trampling area (bold red line) and sediment collected from the archaeological excvation, 3-4 m below the surface"}
+```{r substrate, cache = TRUE, fig.cap="Particle size distributions of sediment collected from the trampling area (bold red line) and sediment collected from the archaeological excvation, 3-4 m below the surface", fig.width=10}
 # read in the particle size data
 archaeological_psd <- read.csv("../data/MK2_2015_excavation_lower_sediment_psd.csv")
 trampling_psd <- read.csv("../data/MK2_2015_trampling_area_sediment_psd.csv")
@@ -348,177 +561,11 @@ perm_test_sediment_CI_2 <- round(perm_test_sediment$p.conf.int[2], 3)
 nmc_pretty <- prettyNum( perm_test_sediment$nmc, big.mark = ",")
 ```
 
-
-
 The trampling area was a levelled section of the excavation spoil heap. The sediments came from 3-4 m below the surface, and had passed through 7 mm and 3 mm sieves before being dumped on the spoil heap. Although the sediment has been seived, the texture of a sample take from tbe spoil head sediment remains identical to samples taken from the archaeological deposit, 3-4m below the surface (Figure \@ref(fig:substrate)). A permutation test for significant differences between any of these samples returns a p-value of `r perm_test_sediment$p.value` (99% confidence interval: `r perm_test_sediment_CI_1`-  `r perm_test_sediment_CI_1` estimated from `r nmc_pretty` Monte Carlo replications).
 
 # Results
 
-We have archived the data resulting from the experiment at XXXXX to enable inspection and resuse of our data and methods. To facilitate computational repoducibility according to the principles described in [@Marwick2016repro], we have also included in that compendium the R code used to analyse the data and generate the all results presented here.
-
-```{r prepare_point_data}
-
-####### find the x and y distances between zero and five min ########
-# match up the artefacts, then subtract B from A5
-# for artefacts plotted with a single point
-five1diff <- merge(before1, five1, by = "artefact.1")
-# horizontal displacement distance
-five1diff$hor <- with(five1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 ) )
-# vertical displacement distance
-five1diff$ver <- with(five1diff, (Elevation.1.y - Elevation.1.x))
-# total length of displacement vector
-five1diff$tot <- with(five1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 + (Elevation.1.y - Elevation.1.x)^2) )
-# direction of displacement
-
-# for artefacts plotted with two points
-five2diff <- merge(before2, five2, by = "artefact.1")
-# get a centre coord for calculating displacements
-five2diff$B.centre.N <- apply(cbind(five2diff$Northing.1.x, five2diff$Northing.2.x), 1, mean)
-five2diff$B.centre.E <- apply(cbind(five2diff$Easting.1.x, five2diff$Easting.2.x), 1, mean)
-five2diff$B.centre.Z <- apply(cbind(five2diff$Elevation.1.x, five2diff$Elevation.2.x), 1, mean)
-five2diff$A5.centre.N <- apply(cbind(five2diff$Northing.1.y, five2diff$Northing.2.y), 1, mean)
-five2diff$A5.centre.E <- apply(cbind(five2diff$Easting.1.y, five2diff$Easting.2.y), 1, mean)
-five2diff$A5.centre.Z <- apply(cbind(five2diff$Elevation.1.y, five2diff$Elevation.2.y), 1, mean)
-# horizontal displacement distance
-five2diff$hor <- with(five2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
-# vertical displacement distance
-five2diff$ver <- with(five2diff, (B.centre.Z - A5.centre.Z))
-# total length of displacement vector
-five2diff$tot <- with(five2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
-# direction of displacement
-
-# for artefacts plotted with four points
-five4diff <- merge(before4, five4, by = "artefact.1")
-# get a centre coord for calculating displacements
-five4diff$B.centre.N <- apply(cbind(five4diff$Northing.1.x, five4diff$Northing.2.x, five4diff$Northing.3.x, five4diff$Northing.4.x), 1, mean)
-five4diff$B.centre.E <- apply(cbind(five4diff$Easting.1.x, five4diff$Easting.2.x, five4diff$Easting.3.x, five4diff$Easting.4.x), 1, mean)
-five4diff$B.centre.Z <- apply(cbind(five4diff$Elevation.1.x, five4diff$Elevation.2.x, five4diff$Elevation.3.x, five4diff$Elevation.4.x), 1, mean)
-five4diff$A5.centre.N <- apply(cbind(five4diff$Northing.1.y, five4diff$Northing.2.y, five4diff$Northing.3.y, five4diff$Northing.4.y), 1, mean)
-five4diff$A5.centre.E <- apply(cbind(five4diff$Easting.1.y, five4diff$Easting.2.y, five4diff$Easting.3.y, five4diff$Easting.4.y), 1, mean)
-five4diff$A5.centre.Z <- apply(cbind(five4diff$Elevation.1.y, five4diff$Elevation.2.y, five4diff$Elevation.3.y, five4diff$Elevation.4.y), 1, mean)
-# horizontal displacement distance
-five4diff$hor <- with(five4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
-# vertical displacement distance
-five4diff$ver <- with(five4diff, (B.centre.Z - A5.centre.Z))
-# total length of displacement vector
-five4diff$tot <- with(five4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
-# direction of displacement
-
-# summary for zero to five mins
-fivehor <- c(five1diff$hor, five2diff$hor, five4diff$hor)
-fivever <- c(five1diff$ver, five2diff$ver, five4diff$ver)
-fivetot <- c(five1diff$tot, five2diff$tot, five4diff$tot)
-fivesum <- data.frame(cbind(fivehor, fivever, fivetot))
-
-
-
-####### find the x and y distances between zero and ten min ########
-# match up the artefacts, then subtract B from A5
-# for artefacts plotted with a single point
-ten1diff <- merge(before1, ten1, by = "artefact.1", all.x = FALSE)
-# horizontal displacement distance
-ten1diff$hor <- with(ten1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 ) )
-# vertical displacement distance
-ten1diff$ver <- with(ten1diff, (Elevation.1.y - Elevation.1.x))
-# total length of displacement vector
-ten1diff$tot <- with(ten1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 + (Elevation.1.y - Elevation.1.x)^2) )
-# direction of displacement
-
-# for artefacts plotted with two points
-ten2diff <- merge(before2, ten2, by = "artefact.1", all.y = TRUE)
-# get a centre coord for calculating displacements
-ten2diff$B.centre.N <- apply(cbind(ten2diff$Northing.1.x, ten2diff$Northing.2.x), 1, mean)
-ten2diff$B.centre.E <- apply(cbind(ten2diff$Easting.1.x, ten2diff$Easting.2.x), 1, mean)
-ten2diff$B.centre.Z <- apply(cbind(ten2diff$Elevation.1.x, ten2diff$Elevation.2.x), 1, mean)
-ten2diff$A5.centre.N <- apply(cbind(ten2diff$Northing.1.y, ten2diff$Northing.2.y), 1, mean)
-ten2diff$A5.centre.E <- apply(cbind(ten2diff$Easting.1.y, ten2diff$Easting.2.y), 1, mean)
-ten2diff$A5.centre.Z <- apply(cbind(ten2diff$Elevation.1.y, ten2diff$Elevation.2.y), 1, mean)
-# horizontal displacement distance
-ten2diff$hor <- with(ten2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
-# vertical displacement distance
-ten2diff$ver <- with(ten2diff, (B.centre.Z - A5.centre.Z))
-# total length of displacement vector
-ten2diff$tot <- with(ten2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
-# direction of displacement
-
-# for artefacts plotted with four points
-ten4diff <- merge(before4, ten4, by = "artefact.1")
-# get a centre coord for calculating displacements
-ten4diff$B.centre.N <- apply(cbind(ten4diff$Northing.1.x, ten4diff$Northing.2.x, ten4diff$Northing.3.x, ten4diff$Northing.4.x), 1, mean)
-ten4diff$B.centre.E <- apply(cbind(ten4diff$Easting.1.x, ten4diff$Easting.2.x, ten4diff$Easting.3.x, ten4diff$Easting.4.x), 1, mean)
-ten4diff$B.centre.Z <- apply(cbind(ten4diff$Elevation.1.x, ten4diff$Elevation.2.x, ten4diff$Elevation.3.x, ten4diff$Elevation.4.x), 1, mean)
-ten4diff$A5.centre.N <- apply(cbind(ten4diff$Northing.1.y, ten4diff$Northing.2.y, ten4diff$Northing.3.y, ten4diff$Northing.4.y), 1, mean)
-ten4diff$A5.centre.E <- apply(cbind(ten4diff$Easting.1.y, ten4diff$Easting.2.y, ten4diff$Easting.3.y, ten4diff$Easting.4.y), 1, mean)
-ten4diff$A5.centre.Z <- apply(cbind(ten4diff$Elevation.1.y, ten4diff$Elevation.2.y, ten4diff$Elevation.3.y,ten4diff$Elevation.4.y), 1, mean)
-# horizontal displacement distance
-ten4diff$hor <- with(ten4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
-# vertical displacement distance
-ten4diff$ver <- with(ten4diff, (B.centre.Z - A5.centre.Z))
-# total length of displacement vector
-ten4diff$tot <- with(ten4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
-# direction of displacement
-
-# summary for zero to ten mins
-tenhor <- c(ten1diff$hor, ten2diff$hor, ten4diff$hor)
-tenver <- c(ten1diff$ver, ten2diff$ver, ten4diff$ver)
-tentot <- c(ten1diff$tot, ten2diff$tot, ten4diff$tot)
-tensum <- data.frame(cbind(tenhor, tenver, tentot))
-
-
-####### find the x and y distances between zero and fifteen min ########
-# match up the artefacts, then subtract B from A5
-# for artefacts plotted with a single point
-fifteen1diff <- merge(before1, fifteen1, by = "artefact.1")
-# horizontal displacement distance
-fifteen1diff$hor <- with(fifteen1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 ) )
-# vertical displacement distance
-fifteen1diff$ver <- with(fifteen1diff, (Elevation.1.y - Elevation.1.x))
-# total length of displacement vector
-fifteen1diff$tot <- with(fifteen1diff, sqrt( (Northing.1.y - Northing.1.x)^2 + (Easting.1.y - Easting.1.x)^2 + (Elevation.1.y - Elevation.1.x)^2) )
-# direction of displacement
-
-# for artefacts plotted with two points
-fifteen2diff <- merge(before2, fifteen2, by = "artefact.1")
-# get a centre coord for calculating displacements
-fifteen2diff$B.centre.N <- apply(cbind(fifteen2diff$Northing.1.x, fifteen2diff$Northing.2.x), 1, mean)
-fifteen2diff$B.centre.E <- apply(cbind(fifteen2diff$Easting.1.x, fifteen2diff$Easting.2.x), 1, mean)
-fifteen2diff$B.centre.Z <- apply(cbind(fifteen2diff$Elevation.1.x, fifteen2diff$Elevation.2.x), 1, mean)
-fifteen2diff$A5.centre.N <- apply(cbind(fifteen2diff$Northing.1.y, fifteen2diff$Northing.2.y), 1, mean)
-fifteen2diff$A5.centre.E <- apply(cbind(fifteen2diff$Easting.1.y, fifteen2diff$Easting.2.y), 1, mean)
-fifteen2diff$A5.centre.Z <- apply(cbind(fifteen2diff$Elevation.1.y, fifteen2diff$Elevation.2.y), 1, mean)
-# horizontal displacement distance
-fifteen2diff$hor <- with(fifteen2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
-# vertical displacement distance
-fifteen2diff$ver <- with(fifteen2diff, (B.centre.Z - A5.centre.Z))
-# total length of displacement vector
-fifteen2diff$tot <- with(fifteen2diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
-# direction of displacement
-
-# for artefacts plotted with four points
-fifteen4diff <- merge(before4, fifteen4, by = "artefact.1")
-# get a centre coord for calculating displacements
-fifteen4diff$B.centre.N <- apply(cbind(fifteen4diff$Northing.1.x, fifteen4diff$Northing.2.x, fifteen4diff$Northing.3.x, fifteen4diff$Northing.4.x), 1, mean)
-fifteen4diff$B.centre.E <- apply(cbind(fifteen4diff$Easting.1.x, fifteen4diff$Easting.2.x, fifteen4diff$Easting.3.x, fifteen4diff$Easting.4.x), 1, mean)
-fifteen4diff$B.centre.Z <- apply(cbind(fifteen4diff$Elevation.1.x, fifteen4diff$Elevation.2.x, fifteen4diff$Elevation.3.x, fifteen4diff$Elevation.4.x), 1, mean)
-fifteen4diff$A5.centre.N <- apply(cbind(fifteen4diff$Northing.1.y, fifteen4diff$Northing.2.y, fifteen4diff$Northing.3.y, fifteen4diff$Northing.4.y), 1, mean)
-fifteen4diff$A5.centre.E <- apply(cbind(fifteen4diff$Easting.1.y, fifteen4diff$Easting.2.y, fifteen4diff$Easting.3.y, fifteen4diff$Easting.4.y), 1, mean)
-fifteen4diff$A5.centre.Z <- apply(cbind(fifteen4diff$Elevation.1.y, fifteen4diff$Elevation.2.y, fifteen4diff$Elevation.3.y, fifteen4diff$Elevation.4.y), 1, mean)
-# horizontal displacement distance
-fifteen4diff$hor <- with(fifteen4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 ) )
-# vertical displacement distance
-fifteen4diff$ver <- with(fifteen4diff, (B.centre.Z - A5.centre.Z))
-# total length of displacement vector
-fifteen4diff$tot <- with(fifteen4diff, sqrt( (A5.centre.N - B.centre.N)^2 + (A5.centre.E - B.centre.E)^2 + (B.centre.Z - A5.centre.Z)^2) )
-# direction of displacement
-
-# summary for zero to fifteen mins
-fifteenhor <- c(fifteen1diff$hor, fifteen2diff$hor, fifteen4diff$hor)
-fifteenver <- c(fifteen1diff$ver, fifteen2diff$ver, fifteen4diff$ver)
-fifteentot <- c(fifteen1diff$tot, fifteen2diff$tot, fifteen4diff$tot)
-fifteensum <- data.frame(cbind(fifteenhor, fifteenver, fifteentot))
-
-```
-
+We have archived the data resulting from the experiment at doi:XXXXX to enable inspection and resuse of our data and methods. To facilitate computational repoducibility according to the principles described in [@Marwick2016repro], we have also included in that compendium the R code used to analyse the data and generate the all results presented here.
 
 ```{r hordisp, results='hide'}
 # plots for 5, 10 , 15, three plots, side by side
@@ -777,7 +824,12 @@ knitr::include_graphics("../figures/horizontal_plots.png")
 
 ```{r hordispldists, fig.cap="Distributions of horizontal displacements of artefacts after 5, 10 and 15 minutes of trampling."}
 # plot distribution of horizontal displacements after 5-10-15
-hor <- data.frame(artefact = c(five1diff$artefact.1, five2diff$artefact.1, five4diff$artefact.1), five = fivesum$fivehor, ten = tensum$tenhor, fifteen = fifteensum$fifteenhor)
+hor <- data.frame(artefact = c(five1diff$artefact.1,
+                               five2diff$artefact.1,
+                               five4diff$artefact.1), 
+                  five = fivesum$fivehor, 
+                  ten = tensum$tenhor, 
+                  fifteen = fifteensum$fifteenhor)
 
 hor.s <- stack(hor[,c(2:4)])
 hor.s$ind = reorder(hor.s$ind, hor.s$values, mean)
@@ -788,13 +840,12 @@ ggplot(hor.s,
   geom_jitter(alpha = 0.4, 
               width = 0.4,
               size = 3) +
-  theme_minimal(base_size = 14) +
-  ylab("Meters from start position") +
-  xlab("")
+  theme_minimal(base_size = 12) +
+  xlab("Trampling episode (mins)") + 
+  ylab("Meters from start position") 
 ```
 
-
-```{r hordirectionshist, fig.cap="Histogram of directions of displacement of artefacts from their starting positions to their locations after fifteen minutes of trampling"}
+```{r hordirectionshist, fig.cap="Histogram of directions of displacement of artefacts from their starting positions to their locations after fifteen minutes of trampling. Zero degrees is due North."}
 # start locations
 start_coords <- 
 do.call(rbind, list(cbind(five1diff$Northing.1.x, 
@@ -835,8 +886,7 @@ suppressMessages(print(p))
 
 ```
 
-
-```{r hordirectionsmodel, fig.cap="Linear models for a variety of predictors of the direction of horizontal displacement after fifteen minutes of trampling. None of the models have p < 0.05. Positive estimate values indicate positive correlations."}
+```{r hormodels, fig.cap="Linear models for a variety of predictors of the direction of horizontal direction (left) and distance (right) after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations.", fig.width=10}
 # get artefact IDs in order
 
 angle_hor_displacement_df <- 
@@ -859,65 +909,186 @@ vars_of_interest <-  c("length(mm)",
                       "shape",
                       "sphericity")
 
-
 library(tidyr)
-# summarise multiple models
-linear_models_estimates_dir <- 
+library(lmPerm)
+# summarise multiple models hor dir
+linear_models_estimates_hor_dir <- 
 hor_dir_artefact %>% 
   gather(value, 
          variable, 
          -angle_hor_displacement) %>% 
   filter(value %in% vars_of_interest) %>% 
   group_by(value) %>% 
-  do(cbind(tidy(lm(scale(angle_hor_displacement) ~ scale(variable), data = .), 
+  do(cbind(tidy(lm(scale(angle_hor_displacement) ~ scale(variable), 
+                    data = .), 
           conf.int=TRUE),
-          glance(lm(scale(angle_hor_displacement) ~ scale(variable), data = .)))) %>% 
+          glance(lm(scale(angle_hor_displacement) ~ scale(variable), 
+                     data = .)))) %>% 
   mutate(low = estimate - std.error,
         high = estimate + std.error) %>% 
   filter(term != "(Intercept)") %>% 
   ungroup %>% 
-  mutate(value = gsub("\\(mm\\)", "", value))
+  mutate(value = gsub("\\(mm\\)", "", value),
+         model = "Horizontal direction")
 
-# plot
-library(ggrepel)
-ggplot(linear_models_estimates_dir, 
-        aes(estimate, 
-            adj.r.squared,
-            xmin = low, 
-            xmax = high, 
-            height = 0)) +
-    geom_point(data = linear_models_estimates_dir[linear_models_estimates_dir$p.value > 0.05,],
-        aes(estimate, 
-            adj.r.squared,
-            size = 1/p.value)) +
-    # geom_point(data = linear_models_estimates_dir[linear_models_estimates_dir$p.value < 0.05,],
-    #     aes(estimate, 
-    #         adj.r.squared,
-    #         size = 1/p.value),
-    #         pch = 21) +
-    geom_vline(xintercept = 0) +
-    geom_errorbarh() +
-    geom_text_repel(aes(estimate, 
-            adj.r.squared,
-            label = value),
-            nudge_x = 0.015,
-            nudge_y = 0.01) +
-   theme_minimal() +
-   xlab("Standardised estimates with 95% confidence intervals") +
-   ylab(expression(Adjusted~R^2)) +
-   scale_size("p-values", 
-                         breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01), 
-                         labels = c(0.75, 0.25, 0.05, 0.01))
-   
-```
-
-
-```{r hormodels, fig.cap="Linear models for a variety of predictors of horizontal displacement after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations."}
 hor_disp_artefact <- merge(hor, tramp, by = "artefact")
 
 # reshape to long, keeping the 15 mist hor dist out
+
 library(tidyr)
 hor_disp_artefact_long <- gather(hor_disp_artefact, 
+                                 value, variable, 
+                                 -fifteen)
+
+
+# summarise multiple models hor dipls
+linear_models_estimates_hor_disp <- 
+hor_disp_artefact_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(cbind(tidy(lm(scale(fifteen) ~ scale(variable), data = .), 
+          conf.int=TRUE),
+          glance(lm(scale(fifteen) ~ scale(variable), data = .)))) %>% 
+  mutate(low = estimate - std.error,
+        high = estimate + std.error) %>% 
+  filter(term != "(Intercept)") %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value),
+         model = "Horizontal distance")
+
+# combine two models for hor dir and dist to plot
+hor_models <- 
+rbind(linear_models_estimates_hor_dir,
+      linear_models_estimates_hor_disp)
+   
+ggplot() +
+    geom_point(data = hor_models[hor_models$p.value > 0.05,],
+        aes(estimate, 
+            adj.r.squared,
+            size = 1/p.value)) +
+    geom_point(data = hor_models[hor_models$p.value < 0.05,],
+        aes(estimate, 
+            adj.r.squared,
+            size = 1/p.value),
+            pch = 21) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(data = hor_models, 
+                  aes(estimate, 
+                      adj.r.squared,
+            xmin = low, 
+            xmax = high, 
+            height = 0)) +
+    geom_text_repel(data = hor_models,
+                    aes(estimate, 
+                    adj.r.squared,
+                    label = value),
+            nudge_x = 0.02,
+            nudge_y = 0.02) +
+   theme_bw() +
+   xlab("Standardised estimates with 95% confidence intervals") +
+   ylab(expression(Adjusted~R^2)) +
+   scale_size("p-values", 
+              breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01, 1/0.005), 
+              labels = c(0.75, 0.25, 0.05, 0.01, 0.005)) +
+  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21, 21)))) +
+  facet_wrap(~model, ncol = 2)
+  
+   
+```
+
+```{r hor_summary}
+rounding <- 3
+hor_min <-       round(min(hor_disp_artefact$fifteen), rounding)
+hor_max <-       round(max(hor_disp_artefact$fifteen),  rounding)
+hor_median <-    round(median(hor_disp_artefact$fifteen), rounding)
+hor_mad <-       round(mad(hor_disp_artefact$fifteen),rounding)
+```
+
+## Horizonal displacement
+
+Figure \@ref(fig:showhordispplot) shows maps of the horizontal displacement of artefacts after five, ten and fifteen minutes. A variety of trajectories are visible, with some artefacts moving in a relatively straight line, others changing direction at each move, and one returning almost exactly to its start position. Figure \@ref(fig:hordirectionshist) shows that after fifteen minutes, most artefacts have moved to a location opposite to the direction of walking across the area. None of the Zingg shape variables are effective predictors of the direction of horizontal displacement (Figure \@ref(fig:hormodels)).
+
+Figure \@ref(fig:hordispldists) shows the distributions of displacements from each artefact's starting position after each trampling interval. After fifteen minutes, the total horizontal displacement of all artefacts varied from `r hor_min` m to `r hor_max` m with a median of `r hor_median` m, and median absolute deviation (a robust measure of variation) of `r hor_mad` m. Figure \@ref(fig:hormodels) provides a graphical summary of linear regression models to identify how well the Zingg shape attributes predict the amount of horizontal displacement for each artefact after fifteen minutes of trampling. Shape and elongation are the strongest predictors of horizontal displacement. The elongation relationship indicates that as width increases relative to length, the artefacts are more likely to be moved a longer distance by trampling. The shape relationship suggests that as artefacts are more disc-like, they tend to be moved horizontally further by trampling. 
+
+## Vertical displacement 
+
+```{r verdisp, fig.cap="Distributions of vertical displacements of artefacts from their initial location to their location after 5, 10 and 15 minutes of trampling. Negative values indicate that the artefact is below its starting location."}
+
+# plot distribution of vertical displacements after 5-10-15
+ver <- data.frame(artefact = c(five1diff$artefact.1, 
+                               five2diff$artefact.1, 
+                               five4diff$artefact.1), 
+                  five = fivesum$fivever, 
+                  ten = tensum$tenver, 
+                  fifteen = fifteensum$fifteenver)
+
+# to long format
+library(tidyr)
+ver.s <- gather(ver, time, displ, -artefact)
+
+# reorder so we get the x-axis looking sensible
+ver.s$time <- factor(ver.s$time, levels = c("five", "ten", "fifteen"))
+
+# plot
+vert_hist <- 
+  ggplot() + 
+  geom_boxplot(data = ver.s, 
+               aes(time, 
+                   displ), 
+               outlier.colour = "white") + 
+  geom_jitter(data = ver.s[ver.s$displ < 0.2 & ver.s$displ > -0.2, ], 
+              aes(time, 
+                  displ),
+              alpha = 0.4, 
+              width = 0.4,
+              size = 3) +
+  geom_point(data = ver.s[ver.s$displ > 0.2 | ver.s$displ < -0.2, ], 
+                  aes(time, 
+                      displ),
+              alpha = 0.4,
+              size = 3) +
+  geom_text_repel(data = ver.s[ver.s$displ > 0.2 | ver.s$displ < -0.2, ], 
+                  aes(time, 
+                      displ,
+                      label = artefact)) +
+  theme_minimal(base_size = 12) +
+  xlab("Trampling episode (mins)") + 
+  ylab("Meters from start position")
+
+vert_hist
+
+
+```
+
+The distributions of vertical displacements are shown in Figure \@ref(fig:verdisp). Five artefacts stand out as outliers, having moved > 0.2 m from their starting positions after ten minutes of trampling. These artefacts are located on the edge of the trampling area (Figure \@ref(fig:zinggplotofartefacts)) and their high vertical displacement is a result of heavier steps taken while walking over the edge of the trampling area as the walker adjusted their stride after ascended the slope onto the sand pile where the trampling area was located. At the end of the third trampling episode these outlying artefacts had returned closer to their starting locations, in part because the trampling moved them horizontally further from the edge of the trampling area and away from the slope. Excuding these outliers, the vertical displacement of the artefacts is summarised in Table \@ref(tab:versummary).
+
+```{r versummary}
+rounding <- 3
+versummary <- 
+ver.s %>% 
+  filter(displ < 0.2 &
+         displ > -0.2) %>% 
+  group_by( time) %>% 
+  summarise(Minimum =      round(min(abs(displ)), rounding),
+            Maximum =      round(max(abs(displ)), rounding),
+            Median =   round(median(abs(displ)), rounding),
+            MAD =      round(mad(abs(displ)), rounding))
+
+kable(versummary, caption = "Summary of absolute (ie unsigned) vertical displacement of trampled artefacts (units are meters, MAD = median absolute deviation)")
+```
+
+Figure \@ref(fig:vermodels) shows that unsigned (or absolute, without respect to the upwards or downwards direction) vertical displacement is most strongly influenced by artefact shape. Shape is elongation divided by flatness, so this means that disc-like artefacts have higher magnitudes of vertical movement relative to other artefact shapes. However, shape is relatively unimportant when considering signed (or directional) displacement. Artefact volume, width, length and thickness are all signficant predictors when the direction of vertical movement is considered. Bigger artefacts tend to move above their starting position, and smaller artefacts tend to move below it. 
+
+The vertical angles of artefact displacement cluster close to horizontal (Figure \@ref(fig:verangles)). This is expected given that the horizontal displacement values are much greater than the vertical displacement values.
+
+Correlation of ver with hor displs
+
+```{r vermodels, fig.cap="Linear models for a variety of predictors of signed and unsigned (ie. absolute) vertical displacement after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations.", fig.width=10}
+ver_disp_artefact <- merge(ver, tramp, by = "artefact")
+
+# reshape to long, keeping the 15 mist hor dist out
+library(tidyr)
+ver_disp_artefact_long <- gather(ver_disp_artefact, 
                                  value, variable, 
                                  -fifteen)
 # apply a linear model on 15 min disp and a bunch of size and shape variables
@@ -935,10 +1106,26 @@ vars_of_interest <-  c("length(mm)",
 # plot
 library(ggrepel)
 
-
 # another way to summarise multiple models
-linear_models_estimates <- 
-hor_disp_artefact_long %>% 
+
+# total vertical displacement, don't care if up or down
+linear_models_estimates_unsigned <- 
+ver_disp_artefact_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(cbind(tidy(lm(scale(abs(fifteen)) ~ scale(variable), data = .), 
+          conf.int=TRUE),
+          glance(lm(scale(abs(fifteen)) ~ scale(variable), data = .)))) %>% 
+  mutate(low = estimate - std.error,
+        high = estimate + std.error) %>% 
+  filter(term != "(Intercept)") %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value)) %>% 
+  mutate(signed = "unsigned")
+
+#  vertical displacement relative to zero, do care if up or down
+linear_models_estimates_signed <- 
+ver_disp_artefact_long %>% 
   filter(value %in% vars_of_interest) %>% 
   group_by(value) %>% 
   do(cbind(tidy(lm(scale(fifteen) ~ scale(variable), data = .), 
@@ -948,20 +1135,24 @@ hor_disp_artefact_long %>%
         high = estimate + std.error) %>% 
   filter(term != "(Intercept)") %>% 
   ungroup %>% 
-  mutate(value = gsub("\\(mm\\)", "", value))
+  mutate(value = gsub("\\(mm\\)", "", value)) %>% 
+  mutate(signed = "signed")
 
+all_models_ver <- 
+rbind(linear_models_estimates_unsigned,
+      linear_models_estimates_signed)
 
-ggplot(linear_models_estimates, 
+ggplot(all_models_ver, 
         aes(estimate, 
             adj.r.squared,
             xmin = low, 
             xmax = high, 
             height = 0)) +
-    geom_point(data = linear_models_estimates[linear_models_estimates$p.value > 0.05,],
+    geom_point(data = all_models_ver[all_models_ver$p.value > 0.05,],
         aes(estimate, 
             adj.r.squared,
             size = 1/p.value)) +
-    geom_point(data = linear_models_estimates[linear_models_estimates$p.value < 0.05,],
+    geom_point(data = all_models_ver[all_models_ver$p.value < 0.05,],
         aes(estimate, 
             adj.r.squared,
             size = 1/p.value),
@@ -973,83 +1164,729 @@ ggplot(linear_models_estimates,
             label = value),
             nudge_x = 0.02,
             nudge_y = 0.02) +
-   theme_minimal() +
+   theme_bw() +
    xlab("Standardised estimates with 95% confidence intervals") +
    ylab(expression(Adjusted~R^2)) +
    scale_size("p-values", 
-                         breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01), 
-                         labels = c(0.75, 0.25, 0.05, 0.01))
+              breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01, 1/0.005), 
+              labels = c(0.75, 0.25, 0.05, 0.01, 0.005)) +
+  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21, 21)))) +
+  facet_wrap(~ signed, ncol = 2)
+
    
 ```
 
+```{r verangles, fig.cap="Vertical angles of artefact displacement, or the vertical angle that the artefact moved from its starting point to its location after each trampling event. Zero degrees is horizontal"}
+# compute vertical angle for each artefact
 
-```{r hor_summary}
-rounding <- 3
-hor_min <-       round(min(hor_disp_artefact$fifteen), rounding)
-hor_max <-       round(max(hor_disp_artefact$fifteen),  rounding)
-hor_median <-    round(median(hor_disp_artefact$fifteen), rounding)
-hor_mad <-       round(mad(hor_disp_artefact$fifteen),rounding)
+# combine vertical displ and hor dipl for each artefact
+ver_long <- gather(ver, time, vdispl, -artefact)
+hor_long <- gather(hor, time, hdispl, -artefact)
+# join
+ver_and_hor <- left_join(ver_long, hor_long, by = c("artefact","time"))
+
+# trig to compute vertical angle (don't care about compass bearing here)
+ver_and_hor$vertangle <- with(ver_and_hor, 
+                              atan(vdispl / hdispl)) * 180/pi
+# convert -ve angles to 0-360
+ver_and_hor$vertangle <- ifelse(sign(ver_and_hor$vertangle) == -1,
+                                360 - abs(ver_and_hor$vertangle),
+                                ver_and_hor$vertangle)
+                              
+# plot
+p <- ggplot(ver_and_hor) +
+  geom_histogram(aes(x = vertangle), 
+                 colour = "black", 
+                 fill = "grey80") +
+  theme(axis.text.x = element_text(size = 18)) +
+  coord_polar(start = 90 * pi/180) +
+ scale_x_continuous(limits = c(0, 360), 
+                    breaks = (c(0, 90, 180, 270))) +
+  theme_minimal(base_size = 14) +
+  xlab("")
+# don't want that message about stat_bin!
+suppressMessages(print(p))
+```
+
+```{r corverhor}
+angle_hor_displacement_df
+
+
 ```
 
 
-## Horizonal displacement
+## Orientation and Plunge
 
-Figure \@ref(fig:showhordispplot) shows maps of the horizontal displacement of artefacts after five, ten and fifteen minutes. A variety of trajectories are visible, with some artefacts moving in a relatively straight line, others changing angle at each move, and one returning almost exactly to its start position. Figure \@ref(fig:hordirectionshist) shows that after fifteen minutes, most artefacts have are in a location opposite to the direction of walking across the area. None of the Zingg shape variables are effective predictors of the direction of horizontal displacement (Figure \@ref(fig:hordirectionsmodel)).
+Our sample includes `r nrow(rbind(five2diff, five4diff))` artefacts with two or four total station points, enabling measurements of changes in the orientation of the artefact (ie. changes in the bearing of the long axis of the artefact) and plunge (ie. the vertical angle from the horizontal plane of the long axis of the artefact). Figure \@ref(fig:artefactplunge) shows that these changes are generally small, with most changes clustered around zero degrees (ie the bearing/plunge angle that the artefact was at before trampling). Only changes in orientation are significantly predicted by artefact shape and size attributes; there are no significant predictors for changes in artefact plunge angle (Figure \@ref(fig:plotorientplunge)). Similar to vertical displacement, artefact volume, width, length and thickness are all significant predictors of the magnitude of change in artefact orientation. Bigger artefacts tend to be rotated further from their original bearing.
 
-Figure \@ref(fig:hordispldists) shows the distributions of dsiplacements from each artefact's starting position after each trampling interval. After fifteen minutes, the total horizontal displacement of all artefacts varied from `r hor_min` m to `r hor_max` m with a median of `r hor_median` m, and median absolute deviation (a robust measure of variation) of `r hor_mad` m. Figure \@ref(fig:hormodels) provides a graphical summary of linear regression models to identify how well the Zingg shape attributes predict the amount of horizontal displacement for each artefact after fifteen minutes of trampling. Shape and elongation are the strongest predictors of horizontal displacement. The elongation relationship indicates that as width increases relative to length, the artefacts are more likely to be moved a longer distance by trampling. The shape relationship suggests that as artefacts are more equidimensional, they tend to be moved horizontally further by trampling. 
+Correlations of these changes in orientaton and plunge with horizontal and vertical distances and angles are shown in Table \@ref(tab:cororientplungehorver). Orientation and plunge are not strongly correlated with any other measurements of artefact movement. Increased distances of artefact displacement do not appear to have any effect on artefact orientation and plunge. Vertical angle is strongly negatively correlated with horizontal distance and vertical distance. This indicates that as the artefact moves further from its starting location, the vertical angle is smaller (i.e. closer to horizontal). Vertical and horizontal distance have a moderately strong positive relationship, indicating that the magnitude of displacement is proportional in both horizontal and vertical axes. 
 
-## Vertical displacement 
+```{r artefactorientation}
+# change in orientation of artefacts with 2-4 points plotted
+get_change_in_orientations <- function(the_data){
+   orig.orient <- atan ((the_data$Northing.2.x - the_data$Northing.1.x) / 
+                           (the_data$Easting.2.x - the_data$Easting.1.x)) /
+                           (pi/180)
+   
+   final.orient <- atan ((the_data$Northing.2.y - the_data$Northing.1.y) /
+                           (the_data$Easting.2.y - the_data$Easting.1.y)) / 
+                           (pi/180)
+   
+   diff.orient <- final.orient - orig.orient
+   diff.orient <- ifelse(diff.orient < 0, 360 + diff.orient, diff.orient)
 
-```{r verdisp, fig.cap="Distributions of vertical displacements of artefacts after 5, 10 and 15 minutes of trampling. Negative values indicate that the artefact is below its starting location."}
+  return(diff.orient)
+}
 
-# plot distribution of vertical displacements after 5-10-15
-ver <- data.frame(artefact = c(five1diff$artefact.1, 
-                               five2diff$artefact.1, 
-                               five4diff$artefact.1), 
-                  five = fivesum$fivever, 
-                  ten = tensum$tenver, 
-                  fifteen = fifteensum$fifteenver)
+# compute the change in artefact orientations after each event
+five_orientations <- rbind(five2diff, five4diff)
+five_orientations_change <- get_change_in_orientations(five_orientations)
 
-# to long format
-ver.s <- stack(ver[,c(2:4)])
+ten_orientations <- rbind(ten2diff, ten4diff)
+ten_orientations_change <- get_change_in_orientations(ten_orientations)
 
-# reorder so we get the x-axis looking sensible
-ver.s$ind = factor(ver.s$ind, levels = c("five", "ten", "fifteen"))
+fifteen_orientations <- rbind(fifteen2diff, fifteen4diff)
+fifteen_orientations_change <- get_change_in_orientations(fifteen_orientations)
+
+# put them together
+all_orientation_changes <- c(five_orientations_change, 
+                        ten_orientations_change, 
+                        fifteen_orientations_change)
 
 # plot
-ggplot(ver.s, aes(ind, values)) + 
-  geom_boxplot(outlier.colour = "white") + 
-  geom_jitter(alpha = 0.4, 
-              width = 0.4,
-              size = 3) +
-  theme_minimal(base_size = 16) +
-  xlab("trampling episode (mins)") + 
-  ylab("displacement (m)")
+plot_orientation <- ggplot() +
+  geom_histogram(aes(x = all_orientation_changes), 
+                 colour = "black", 
+                 fill = "grey80") +
+  theme(axis.text.x = element_text(size = 18)) +
+  coord_polar(start = 0) +
+  scale_x_continuous(limits = c(0, 360), breaks = c(0, 90, 180, 270)) +
+  theme_minimal(base_size = 14) +
+  xlab("") +
+  ggtitle("Change in \nartefact orientation")
+```
+
+```{r artefactplunge, fig.cap="Histograms of changes in artefact orientation (left) and artefact plunge (right) after each trampling event. Zero degrees refers to the starting orientation bearing or plunge angle for each artefact. For artefact plunge, a change 0-180 degrees is a change towards a more vertical orientation, and a change 180-360 is a change towards a more horizontal orientation.", fig.width=10}
+
+# 
+change_in_plunge <- function(the_data){
+    # calculate horizontal length of artefact from end to end
+  # before points
+  plb <- with(the_data, sqrt((Northing.2.x - Northing.1.x)^2 +
+                            (Easting.2.x  - Easting.1.x)^2))
+  #  min points
+  pl <- with(the_data, sqrt((Northing.2.y - Northing.1.y)^2 + 
+                            (Easting.2.y  - Easting.1.y)^2))
+  
+    # calculate vertical difference between each end of the artefact
+  # before points
+  pvb <- with(the_data, (Elevation.2.x - Elevation.1.x))
+  # 
+  pv <- with(the_data, (Elevation.2.y - Elevation.1.y))
+  
+  # calculate angle of plunge - check how -ve values are handled...
+  # before
+  orig.plung <- atan ((pvb) / (plb)) / (pi/180)
+  # after fifteen mins
+  final.plung <- atan ((pv) / (pl)) / (pi/180)
+  
+  diff.plung <- final.plung - orig.plung
+  diff.plung <- ifelse(diff.plung < 0, 360 + diff.plung, diff.plung)
+  
+  return(diff.plung)
+  
+}
+
+five_plunge_change <- change_in_plunge(five_orientations)
+ten_plunge_change <- change_in_plunge(ten_orientations)
+fifteen_plunge_change <- change_in_plunge(fifteen_orientations)
+
+# put them together
+all_plunge_changes <- c(five_plunge_change, 
+                             ten_plunge_change, 
+                             fifteen_plunge_change)
+# plot
+# plot
+plot_plunge <- ggplot() +
+  geom_histogram(aes(x = all_plunge_changes), 
+                 colour = "black", 
+                 fill = "grey80") +
+  theme(axis.text.x = element_text(size = 18)) +
+  coord_polar(start = 0) +
+  scale_x_continuous(limits = c(0, 360), breaks = c(0, 90, 180, 270)) +
+  theme_minimal(base_size = 14) +
+  xlab("") +
+  ggtitle("Change in \nartefact plunge")
+
+library(gridExtra)
+suppressMessages(grid.arrange(plot_orientation, plot_plunge, ncol = 2))
+```
+
+```{r orientplungcorr}
+
+# need abs value of deg
+fifteen_orientations_change_abs <- data.frame(orient_change = 
+  ifelse(fifteen_orientations_change > 180, 
+         360 - fifteen_orientations_change,
+         fifteen_orientations_change))
+fifteen_orientations_change_abs$artefact <- fifteen_orientations$artefact.1
+
+fifteen_plunge_change_abs <- data.frame(plunge_change = 
+  ifelse(fifteen_plunge_change > 180, 
+         360 - fifteen_plunge_change,
+         fifteen_plunge_change))
+fifteen_plunge_change_abs$artefact <- fifteen_orientations$artefact.1
+
+fifteen_orientations_tramp <- 
+  left_join(fifteen_orientations_change_abs,
+          tramp,
+          by = "artefact")
+
+fifteen_plunge_tramp <- 
+  left_join(fifteen_plunge_change_abs,
+          tramp,
+          by = "artefact")
+
+# reshape to long, keeping the 15 mist hor dist out
+library(tidyr)
+fifteen_orientations_tramp_long <- 
+  gather(fifteen_orientations_tramp, 
+         value, 
+         variable, 
+        -orient_change)
+
+fifteen_plunge_tramp_long <- 
+  gather(fifteen_plunge_tramp, 
+         value, 
+         variable, 
+        -plunge_change)
+
+#  models
+linear_models_estimates_orient<- 
+fifteen_orientations_tramp_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(cbind(tidy(lm(scale(orient_change) ~ scale(variable), data = .), 
+          conf.int=TRUE),
+          glance(lm(scale(orient_change) ~ scale(variable), data = .)))) %>% 
+  mutate(low = estimate - std.error,
+        high = estimate + std.error) %>% 
+  filter(term != "(Intercept)") %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value)) %>% 
+  mutate(what = "orientation")
+
+linear_models_estimates_plunge <- 
+fifteen_plunge_tramp_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(cbind(tidy(lm(scale(plunge_change) ~ scale(variable), data = .), 
+          conf.int=TRUE),
+          glance(lm(scale(plunge_change) ~ scale(variable), data = .)))) %>% 
+  mutate(low = estimate - std.error,
+        high = estimate + std.error) %>% 
+  filter(term != "(Intercept)") %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value)) %>% 
+  mutate(what = "plunge")
+
+all_models_orientplunge <- 
+rbind(linear_models_estimates_orient,
+      linear_models_estimates_plunge)
+```
+
+```{r plotorientplunge, fig.cap="Linear models for a variety of predictors of changes in artefact orientation bearing and plunge angle after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations.", fig.width=10}
+
+ggplot(all_models_orientplunge, 
+        aes(estimate, 
+            adj.r.squared,
+            xmin = low, 
+            xmax = high, 
+            height = 0)) +
+    geom_point(data = all_models_orientplunge[all_models_orientplunge$p.value > 0.05,],
+        aes(estimate, 
+            adj.r.squared,
+            size = 1/p.value)) +
+    geom_point(data = all_models_orientplunge[all_models_orientplunge$p.value < 0.05,],
+        aes(estimate, 
+            adj.r.squared,
+            size = 1/p.value),
+            pch = 21) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh() +
+    geom_text_repel(aes(estimate, 
+            adj.r.squared,
+            label = value),
+            nudge_x = 0.02,
+            nudge_y = 0.02) +
+   theme_bw() +
+   xlab("Standardised estimates with 95% confidence intervals") +
+   ylab(expression(Adjusted~R^2)) +
+   scale_size("p-values", 
+              breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.02, 1/0.01), 
+              labels = c(0.75, 0.25, 0.05, 0.02, 0.01)) +
+  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21)))) +
+  facet_wrap(~what, ncol = 2)
+
+```
+
+```{r cororientplungehorver}
+ver_and_hor_15 <- filter(ver_and_hor, time == "fifteen")
+the_list <- list(fifteen_orientations_tramp,
+     fifteen_plunge_tramp,
+     ver_and_hor_15,
+     angle_hor_displacement_df)
+
+# join these tables together & simplify
+orientplungedistangle_for_correlation <- 
+left_join(
+  left_join(the_list[[1]],
+            the_list[[2]],
+            by = "artefact"),
+  left_join(the_list[[3]],
+            the_list[[4]],
+            by = "artefact"),
+  by = "artefact") %>% 
+  # simplify
+  select(orient_change, 
+         plunge_change,
+         hdispl,
+         angle_hor_displacement,
+         vdispl,
+         vertangle)
+
+# table of correlations with p and r values
+
+for_corr_table <- as.matrix(orientplungedistangle_for_correlation)
+
+
+corr_for_table <- Hmisc::rcorr(for_corr_table)
+
+two_tables_into_one <- 
+  as.data.frame(do.call(cbind, lapply(1:ncol(corr_for_table$r), 
+  function(i) paste0(
+       ifelse(
+             (as.numeric(corr_for_table$r[ , i]) > 0.7 |
+              as.numeric(corr_for_table$r[ , i]) < -0.7) & 
+              as.numeric(corr_for_table$P[ , i])  < 0.05,
+              paste0("**", round(corr_for_table$r[ , i], 2)),
+              round(corr_for_table$r[ , i], 2)
+              ),
+       ifelse(
+             (as.numeric(corr_for_table$r[ , i]) > 0.7 |
+              as.numeric(corr_for_table$r[ , i]) < -0.7) & 
+              as.numeric(corr_for_table$P[ , i])  < 0.05,
+              paste0(" (", round(corr_for_table$P[ , i], 2), ")**"),
+              paste0(" (", round(corr_for_table$P[ , i], 2),")")
+              )
+  ))))
+       
+
+names(two_tables_into_one) <- c("Orientation", 
+                                "Plunge", 
+                                "Horizontal distance", 
+                                "Horizontal bearing", 
+                                "Vertical distance", 
+                                "Vertical angle")
+
+# get lower diag only 
+lower <- as.matrix(two_tables_into_one)
+lower[lower.tri(two_tables_into_one, diag=TRUE)] <- ""
+lower <- as.data.frame(lower)
+row.names(lower) <- names(two_tables_into_one)
+
+# print table
+kable(lower[-nrow(lower),-1], row.names = TRUE,
+      caption = " Pearson's correlation coefficients for changes in artefact plunge and orientation, and for values of horizontal and vertical distance, horizontal bearing and verticle angle after fifteen minutes. Values in parentheses are p-values. Strong significant correlations are in bold.")
 
 ```
 
 
 
-```{r versummary}
-rounding <- 3
-ver.s %>% 
-  group_by(ind) %>% 
-  summarise(ver_min =      round(min(values), rounding),
-            ver_max =      round(max(values), rounding),
-            ver_median =   round(median(values), rounding),
-            ver_mad =      round(mad(values), rounding),
-            ver_min =      round(min(values), rounding),
-            ver_max =      round(max(values), rounding),
-            ver_median =   round(median(values),rounding),
-            ver_mad =      round(mad(values), rounding))
+# Discussion 
+
+Previous trampling studies show little agreement about the relationship between artefact size and displacement due to trampling. Stockton [-@stockton1973shaw] identified moderate size sorting resulting from trampling, with mean artefact mass decreasing with depth. Villa and Courtin [-@villa1983267] reported that artefacts lighter than 50 g were relatively mobile, moving vertically more than pieces heavier than 50 g, which tended to stay on or near their original location. They report no obvious correlations for horizontal movement and artefact size, but observed that while many lighter artefacts did not move far from their original locations, lighter pieces tended to move further than heavier artefacts. Wilk and Schiffer [-@wilkschiffer1979] reported the opposite relationship on paths in vacant lots, with larger artefacts having been more frequently trampled off the paths. 
+ 
+
+
+```{r previoustrampling}
+
+
+```
+
+...compare to results of other studies...
+
+## Simulation by resampling
+
+simulation or 1000s of trampling events by resampling bearing, hor-distance and ver-distance (independantly of each trampling event measurement) for each artefact to move it to new but plausible locations 
+
+```{r sim}
+# want hor and ver distances and hor bearings for 0-5, 5-10, 10-15 min
+library(tidyr)
+
+
+# need to find the diff in coords between each event, so we can resample from that set of diffs to update the location of the artefact
+
+# combine coords from the three different events
+artefact_event_coords_diffs <- 
+rbind(before, 
+      five, 
+      ten, 
+      fifteen) %>% 
+  # select only relevant rows
+  select(Description, 
+         run.1, 
+         Northing.1, 
+         Easting.1, 
+         Elevation.1) %>% 
+  # make artefact ID column
+  mutate(Description = gsub("_", "-", Description)) %>% 
+  mutate(artefact = gsub("[A-Z].*-[A-Z].*-.*-", "", Description)) %>%
+  select(-Description) %>% 
+  # make wide format so we have one row per artefact
+  reshape(idvar = "artefact", 
+           timevar = "run.1",
+          direction = "wide") %>% 
+  # sort by artefact so it's easier to read
+  arrange(as.numeric(artefact)) %>% 
+  # keep only artefacts that were part of the trampling
+  filter(artefact %in% 31:60) %>% 
+  # compute diffs in coords between events
+  mutate(Northing_B_to_5 =  Northing.1.A5 - Northing.1.B,
+         Easting_B_to_5  =  Easting.1.A5 - Easting.1.B,
+         Elevation_B_to_5 =  Elevation.1.A5 - Elevation.1.B,
+         # diffs between 5 and 10 mins
+         Northing_5_to_10 =  Northing.1.A10 - Northing.1.A5,
+         Easting_5_to_10  =  Easting.1.A10 - Easting.1.A5,
+         Elevation_5_to_10 =  Elevation.1.A10 - Elevation.1.A5,
+         # diffs between 10 and 15 mins
+         Northing_10_to_15 =  Northing.1.A15 - Northing.1.A10,
+         Easting_10_to_15  =  Easting.1.A15 - Easting.1.A10,
+         Elevation_10_to_15 =  Elevation.1.A15 - Elevation.1.A10)
+
+# Each artefact starts at 'before' coords, then we draw from one of the the three diffs to compute coords for a new position, then draw again from the diffs to get a second position, and so on. 
+
+move_the_artefact <- function(artefact_num, 
+                              artefact_event_coords_diffs,
+                              n){
+  mydf <- artefact_event_coords_diffs
+  
+  # select artefact
+  df_artefact <- mydf[mydf$artefact == artefact_num, ]
+  
+  # starting location 
+  before <- select(df_artefact, 
+                              Northing.1.B,
+                              Easting.1.B,
+                              Elevation.1.B)
+  
+  # diffs that we can resample from 
+  diff_coords_0_5 <- select(df_artefact, 
+                              Northing_B_to_5,
+                              Easting_B_to_5,
+                              Elevation_B_to_5)
+  
+  diff_coords_5_10 <- select(df_artefact, 
+                              Northing_5_to_10,
+                              Easting_5_to_10,
+                              Elevation_5_to_10)
+  
+  diff_coords_10_15 <- select(df_artefact, 
+                              Northing_10_to_15,
+                              Easting_10_to_15,
+                              Elevation_10_to_15)
+  
+  # put diffs into list to use easily
+  diff_list <- list(diff_coords_0_5, 
+                    diff_coords_5_10,
+                   diff_coords_10_15)
+  
+  artefact_coords_simulated <- 
+    vector("list", n)
+  for(i in 1:n){
+    
+    # to index the previous event
+    j <- i - 1
+    
+    # if this is the first move, start at 'before' 
+    # otherwise start at the previous location
+    
+      if(i == 1){
+       starting_location <- before
+        }else{
+       starting_location <- artefact_coords_simulated[[j]]
+        }
+             
+   # get coords for new location of the artefact after
+   # this event by randomly sampling for the diffs
+   # for the artefact that we observed during the experiment
+       if(i == 1){
+       artefact_coords_simulated[[1]] <-  starting_location
+        }else{
+        artefact_coords_simulated[[i]] <- 
+    starting_location + diff_list[[sample(3, 1)]]
+        }
+    
+  }
+  
+  # make into data frame
+  artefact_coords_simulated_df <- 
+  do.call(rbind, artefact_coords_simulated)
+  
+  artefact_coords_simulated_df$artefact_num <- artefact_num
+  artefact_coords_simulated_df$event <- 1:nrow(artefact_coords_simulated_df)
+  
+  names(artefact_coords_simulated_df) <- 
+    c("Northing",
+      "Easting", 
+      "Elevation",
+      "artefact_num",
+      "event")
+  
+  
+  return(artefact_coords_simulated_df)
+  
+}
+
+
+# move one artefact n times and look at the results
+
+n <- 100
+artefact_num = 46
+move_artefact_n <- 
+  move_the_artefact(artefact_num, 
+                    artefact_event_coords_diffs,
+                    n = n)
+
+# range of movement
+rnge_n <- max(move_artefact_n$Northing) - min(move_artefact_n$Northing)
+rnge_e <- max(move_artefact_n$Easting) - min(move_artefact_n$Easting)
+rngs <- c(rnge_n, rnge_e)
+max_extent <- round(rngs[which.max(rngs)], 0)
+
+const <- 1.2
+xmin <- median(move_artefact_n$Northing) - max_extent/const
+xmax <- median(move_artefact_n$Northing) + max_extent/const
+ymin <- median(move_artefact_n$Easting) - max_extent/const
+ymax <- median(move_artefact_n$Easting) + max_extent/const
+
+# plot plan to see horizontal movement
+hplot <- 
+ggplot(move_artefact_n,
+       aes(Northing,
+           Easting)) +
+  geom_point(alpha = 0.1) +
+  geom_point(data = move_artefact_n[1,],
+       aes(Northing,
+           Easting),
+       colour = "red",
+       size = 3)  +
+ coord_fixed(ratio = 1) +
+  xlim(xmin, xmax) +
+  ylim(ymin, ymax) +
+  ggtitle(paste0("Plan view of all artefact locations \nduring", n, " simulated events for artefact ", artefact_num))
+
+# plot section to see vertical movement
+vplot <- 
+ggplot(move_artefact_n,
+       aes(Northing,
+           Elevation)) +
+  geom_point(data = move_artefact_n[1,],
+       aes(Northing,
+           Elevation),
+       colour = "red",
+       size = 3)  +
+  geom_point(alpha = 0.1) +
+ coord_fixed(ratio = 1) +
+  ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
+
+grid.arrange(hplot, vplot, ncol =  2)
+```
+
+```{r}
+# function to move ALL the artefacts n many times
+
+move_all_the_artefacts <- function(n, artefact_event_coords_diffs){
+  
+  
+  # for each artefact, move it n times
+  
+  how_many_artefacts <- nrow(artefact_event_coords_diffs)
+  
+  # store the output
+  all_the_artefacts <- vector("list", how_many_artefacts)
+  
+  for(i in 1:how_many_artefacts){
+    all_the_artefacts[[i]] <- 
+      move_the_artefact(artefact_num = 30 + i,
+                        artefact_event_coords_diffs, 
+                        n = n)
+  }
+  
+    # make into data frame
+  all_the_artefacts_df <- 
+  do.call(rbind, all_the_artefacts)
+  
+  return(all_the_artefacts_df)
+  
+}
+
+# run the function to move all the artefacts:
+n <- 10 # how many times to move each artefact
+moved <- 
+move_all_the_artefacts(n = n, 
+                      artefact_event_coords_diffs )
+```
+
+  
+```{r}
+hplot <- 
+ggplot(moved,
+       aes(Northing,
+           Easting)) +
+  geom_point(alpha = 0.01) +
+  geom_point(data = moved[moved$event == 1,],
+       aes(Northing,
+           Easting),
+       colour = "red",
+       size = 3)  +
+ coord_fixed(ratio = 1) +
+  ggtitle(paste0("Plan view of all artefact locations \nduring ", n, " simulated events for all artefacts"))
+
+# plot section to see vertical movement
+vplot <- 
+ggplot(moved,
+       aes(Northing,
+           Elevation)) +
+  geom_point(alpha = 0.01) +
+   geom_point(data = moved[moved$event == 1,],
+       aes(Northing,
+           Elevation),
+       colour = "red",
+       size = 3)  +
+ coord_fixed(ratio = 1) +
+  ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for all artefacts"))
+
+grid.arrange(hplot, vplot, ncol =  2)
+
+```
+
+```{r}
+# movement over time
+
+start_elevations <- moved[moved$event == 1,]$Elevation
+ggplot(moved,
+       aes(event,
+           Elevation)) +
+  geom_point(alpha = 0.25) +
+  geom_hline(aes(yintercept = mean(start_elevations)),
+             colour = "red",
+             size = 1)
+
+# distribution of ver at event n
+ggplot(moved[moved$event == n,],
+       aes(Elevation)) +
+  geom_histogram(bins = 50) +
+  geom_vline(aes(xintercept = mean(start_elevations)),
+             colour = "red",
+             size = 1)
+
+# distribution of hordist at event n
+moved_n <- moved[moved$event == n,]
+moved_n$hdist <- 
+  sqrt(
+    (artefact_event_coords_diffs$Northing.1.B - moved_n$Northing)^2 +
+    (artefact_event_coords_diffs$Easting.1.B  - moved_n$Easting)^2
+ )
+
+
+# distribution of vertical dist at position of last event
+moved_n$vdist <- moved_n$Elevation - start_elevations
+moved_n_v_plot <- 
+ggplot(moved_n,
+       aes(vdist)) +
+  geom_histogram(bins = 20) +
+  xlab(paste0("Vertical distance (m) from starting point after ", n, " events"))
+  
+
+# distribution of hor dist at position of last event
+moved_n_h_plot <- 
+ggplot(moved_n,
+       aes(hdist)) +
+  geom_histogram(bins = 20) +
+  xlab(paste0("Horizontal distance (m) from starting point after ", n, " events"))
+
+grid.arrange(moved_n_v_plot, moved_n_h_plot, ncol = 1)
+
+```
+
+```{r}
+  
+
+# run the function to move all the artefacts, and keep the results after each event so we can see the cumulative effect
+n <- 100 # how many times to move each artefact
+move_keep_each <- vector("list", n)
+for(i in 1:n){
+  move_keep_each[[i]] <- 
+move_all_the_artefacts(n = i, artefact_event_coords_diffs)
+}
+
+move_keep_each <- 
+lapply(move_keep_each, function(i) i[i$event == max(i$event),])
+
+move_keep_each_hdist <-
+  lapply(move_keep_each, function(i) 
+  sqrt(
+    (artefact_event_coords_diffs$Northing.1.B - i$Northing)^2 +
+    (artefact_event_coords_diffs$Easting.1.B  - i$Easting)^2
+ ))
+
+move_keep_each_hdist_df <- data.frame(do.call(cbind, move_keep_each_hdist))
+move_keep_each_hdist_df_stack <- stack(move_keep_each_hdist_df)
+move_keep_each_hdist_df_stack$event <- 
+  as.numeric(move_keep_each_hdist_df_stack$ind)
+move_keep_each_hdist_df_stack$event <-
+  factor(move_keep_each_hdist_df_stack$event,
+         levels = 1:n)
+
+# plot h dist cumulative
+hdist_cum_plot <- 
+ggplot(move_keep_each_hdist_df_stack,
+       aes(values,
+           group = event)) +
+  geom_density( alpha = 0.5, linetype = 0, fill = "grey20") +
+  xlab(paste0("Horizontal distance (m) from starting point at the end of each of ", n, " events"))
+
+# same for vertical distances
+move_keep_each_vdist <-
+  lapply(move_keep_each, function(i) 
+  artefact_event_coords_diffs$Elevation.1.B - i$Elevation)
+
+move_keep_each_vdist_df <- data.frame(do.call(cbind, move_keep_each_vdist))
+move_keep_each_vdist_df_stack <- stack(move_keep_each_vdist_df)
+move_keep_each_vdist_df_stack$event <- 
+  as.numeric(move_keep_each_vdist_df_stack$ind)
+move_keep_each_vdist_df_stack$event <-
+  factor(move_keep_each_vdist_df_stack$event,
+         levels = 1:n)
+
+# plot v dist cumulative
+vdist_cum_plot <- 
+ggplot(move_keep_each_vdist_df_stack,
+       aes(values,
+           group = event)) +
+  geom_density( alpha = 0.2, linetype = 0, fill = "grey20") +
+  xlab(paste0("Vertical distance (m) from starting point at the end of each of ", n, " events"))
+
+grid.arrange(hdist_cum_plot, vdist_cum_plot, ncol = 1)
+
+
 ```
 
 
 
-## Inclination
+# Conclusion
 
-Discussion and Conclusion
-
-References 
+# References 
 
 

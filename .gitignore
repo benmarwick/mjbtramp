@@ -1,8 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
-*_files/*
-*_cache/*
+*/*_files/*
+*/*_cache/*
 *~*
 packrat/lib*/
-packrat/src/

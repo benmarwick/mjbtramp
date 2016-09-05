@@ -1,4 +1,4 @@
-Package: mjbtrampling
+Package: mjbtramp
 Title: Research compendium for paper on an artefact trampling experiment
 Version: 0.0.0.9000
 Authors@R: person("Ben", "Marwick", email = "benmarwick@gmail.com", role = c("aut", "cre"))

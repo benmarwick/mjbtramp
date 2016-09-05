@@ -1,0 +1,27 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker build -t benmarwick/mjbtramp  https://raw.githubusercontent.com/benmarwick/mjbtramp/master/Dockerfile
+test:
+  override:
+      # see if we can start container...
+    - docker run --name mjbtramp -d -p 8787:8787 benmarwick/mjbtramp ; sleep 10
+      # make RStudio server run in browser...
+    - curl --retry 10 --retry-delay 5 -v http://localhost:8787
+      # render main manuscript file in container...
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtrampling/analysis/paper/Marwick_Hayes_et_al.Rmd')"
+
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push benmarwick/mjbtramp
+
+
+
