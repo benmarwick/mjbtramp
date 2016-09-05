@@ -50,7 +50,7 @@ devtools::install_github("benmarwick/mjbtramp")
 
 The package has a number of dependencies on other R packages, and programs outside of R. These are listed at the bottom of this README. Installing these can be time-consuming and complicated, so to simpify access to the compendium we also provide at Docker image that includes all the necessary software, code and data to run our analysis.
 
-### The Docker image [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp)
+### The Docker image [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp)
 
 A Docker image is a lightweight GNU/Linux virtual computer that can be run as a piece of software on Windows and OSX (and other Linux systems). To capture the complete computational environment used for this project we have a Dockerfile that specifies how to make the Docker image that we developed this project in. The Docker image includes all of the software dependencies needed to run the code in this project, as well as the R package and other compendium files. To launch the Docker image for this project, first, [install Docker](https://docs.docker.com/installation/) on your computer. At the Docker prompt, enter:
 
