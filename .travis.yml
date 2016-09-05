@@ -3,4 +3,6 @@
 language: R
 sudo: false
 cache: packages
+install:
+  - R -e "0" --args --bootstrap-packrat
 warnings_are_errors: false
