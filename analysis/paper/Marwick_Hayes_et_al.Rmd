@@ -910,7 +910,6 @@ vars_of_interest <-  c("length(mm)",
                       "sphericity")
 
 library(tidyr)
-library(lmPerm)
 # summarise multiple models hor dir
 linear_models_estimates_hor_dir <- 
 hor_dir_artefact %>% 
