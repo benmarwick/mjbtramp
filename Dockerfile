@@ -9,13 +9,15 @@ RUN apt-get update -y \
   && apt-get install r-cran-rjava   -y \
   # install devtools so we can get pkgs from github
   && install.r devtools \
-  # install a few packages from GitHub for the most recent versions (or if they're not on CRAN)
+  # get the packages we depend on from the local packrat repo
+  && R -e "0" --args --bootstrap-packrat \
+  # allow to install from GitHub
   && installGithub.r --deps TRUE \
-    # install my package that is the focus of this image
-    benmarwick/mjbtramp \
-
+  # install from GitHub my package that is the focus of this image
+  benmarwick/mjbtramp \
+  # get the full set of repository files from GitHub (since the built package doesn't have them all)
   && git clone https://github.com/benmarwick/mjbtramp.git \
-
+  # make these files writable
   && chmod 777 -R mjbtramp
 
 
