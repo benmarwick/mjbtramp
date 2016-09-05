@@ -4,7 +4,7 @@ FROM rocker/rstudio
 # required
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
-# install some packages that not in the base image, these have to be manually identified from my package's Description -> Imports list
+# stay current
 RUN apt-get update -y \
 
   # get the full set of repository files from GitHub
@@ -13,10 +13,10 @@ RUN apt-get update -y \
   && chmod 777 -R mjbtramp \
   # go into the repo directory
   && cd mjbtramp \
-  # start R and build pkgs we depend on from local sources
+  # start R and build pkgs that we depend on from local sources that we have collected with packrat
   && R -e "0" --args --bootstrap-packrat \
   # build this compendium package
-  && R CMD build mjbtramp
+  && R -e "devtools::install(".")"
 
 
 
