@@ -6,19 +6,20 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
 # install some packages that not in the base image, these have to be manually identified from my package's Description -> Imports list
 RUN apt-get update -y \
-  && apt-get install r-cran-rjava   -y \
-  # install devtools so we can get pkgs from github
-  && install.r devtools \
-  # get the packages we depend on from the local packrat repo
-  && R -e "0" --args --bootstrap-packrat \
-  # allow to install from GitHub
-  && installGithub.r --deps TRUE \
-  # install from GitHub my package that is the focus of this image
-  benmarwick/mjbtramp \
-  # get the full set of repository files from GitHub (since the built package doesn't have them all)
+
+  # get the full set of repository files from GitHub
   && git clone https://github.com/benmarwick/mjbtramp.git \
   # make these files writable
-  && chmod 777 -R mjbtramp
+  && chmod 777 -R mjbtramp \
+  # go into the repo directory
+  && cd mjbtramp \
+  # start R and build pkgs we depend on from local sources
+  && R -e "0" --args --bootstrap-packrat \
+  # build this compendium package
+  && R CMD build mjbtramp
+
+
+
 
 
 
