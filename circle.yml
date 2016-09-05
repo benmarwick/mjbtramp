@@ -13,7 +13,7 @@ test:
       # make RStudio server run in browser...
     - curl --retry 10 --retry-delay 5 -v http://localhost:8787
       # render main manuscript file in container...
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtrampling/analysis/paper/Marwick_Hayes_et_al.Rmd')"
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
 
 deployment:
