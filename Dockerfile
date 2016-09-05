@@ -6,8 +6,10 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
 # install some packages that not in the base image, these have to be manually identified from my package's Description -> Imports list
 RUN apt-get update -y \
-  && apt-get install r-cran-rjava  r-cran-devtools -y \
-# install a few packages from GitHub for the most recent versions (or if they're not on CRAN)
+  && apt-get install r-cran-rjava   -y \
+  # install devtools so we can get pkgs from github
+  && Rscript -e 'install.packages("devtools", repos = "http://cran.rstudio.com")' \
+  # install a few packages from GitHub for the most recent versions (or if they're not on CRAN)
   && installGithub.r --deps TRUE \
     # install my package that is the focus of this image
     benmarwick/mjbtramp \
