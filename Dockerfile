@@ -9,7 +9,6 @@ RUN apt-get update -y \
   && apt-get install r-cran-rjava   -y \
   # install devtools so we can get pkgs from github
   && install.r devtools \
-  && R -e "0" --args --bootstrap-packrat
   # install a few packages from GitHub for the most recent versions (or if they're not on CRAN)
   && installGithub.r --deps TRUE \
     # install my package that is the focus of this image
