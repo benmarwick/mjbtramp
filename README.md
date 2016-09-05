@@ -58,7 +58,7 @@ A Docker image is a lightweight GNU/Linux virtual computer that can be run as a 
 
 This will start a server instance of RStudio. Then open your web browser at localhost:8787 or or run `docker-machine ip default` in the shell to find the correct IP address, and log in with rstudio/rstudio.
 
-Once logged in, use the Files pane (bottom right) to navigate to `/` (the root directory), then open the folder for this project, and open the `.Rproj` file for this project. Once that's open, you'll see the `analysis/` directory in the Files pane where you can find the R markdown documents, and knit them to produce the results in the paper. More information about using RStudio in Docker is avaiable at the [Rocker](https://github.com/rocker-org) [wiki](https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image) pages.
+Once logged in, use the Files pane (bottom right) to navigate to `/` (the root directory), then open the folder for this project, and open the `.Rproj` file for this project. Once that's open, you'll see the `analysis/paper` directory in the Files pane where you can find the R markdown document, and knit them to produce the results in the paper. More information about using RStudio in Docker is avaiable at the [Rocker](https://github.com/rocker-org) [wiki](https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image) pages.
 
 We developed and tested the package on this Docker container, so this is the only platform that We're confident it works on, and so recommend to anyone wanting to use this package to generate the vignette, etc.
 
@@ -72,28 +72,7 @@ Data: CC0 <http://creativecommons.org/publicdomain/zero/1.0/> attribution reques
 
 ### Dependencies:
 
-I used [RStudio](http://www.rstudio.com/products/rstudio/) (version 0.99.845) on Ubuntu 16.04 and Windows 7 and these packages:
-
-Identified using `sessionInfo()`:
-
-    #> R version 3.3.1 (2016-06-21)
-    #> Platform: x86_64-w64-mingw32/x64 (64-bit)
-    #> Running under: Windows 7 x64 (build 7601) Service Pack 1
-    #> 
-    #> locale:
-    #> [1] LC_COLLATE=English_Australia.1252  LC_CTYPE=English_Australia.1252   
-    #> [3] LC_MONETARY=English_Australia.1252 LC_NUMERIC=C                      
-    #> [5] LC_TIME=English_Australia.1252    
-    #> 
-    #> attached base packages:
-    #> [1] stats     graphics  grDevices utils     datasets  methods   base     
-    #> 
-    #> loaded via a namespace (and not attached):
-    #>  [1] magrittr_1.5       formatR_1.4        htmltools_0.3.5   
-    #>  [4] tools_3.3.1        yaml_2.1.13        Rcpp_0.12.6       
-    #>  [7] stringi_1.1.1      rmarkdown_1.0.9001 knitr_1.13.6      
-    #> [10] stringr_1.0.0      digest_0.6.9       packrat_0.4.7-1   
-    #> [13] evaluate_0.9
+I used [RStudio](http://www.rstudio.com/products/rstudio/) (version 0.99.845) on Ubuntu 16.04 and Windows 7. See the colophon section of the docx file in `analysis/paper` for a full list of the packages that this project depends on.
 
 ### Contact:
 
