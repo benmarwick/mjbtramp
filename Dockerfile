@@ -6,7 +6,7 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
 # install some packages that not in the base image, these have to be manually identified from my package's Description -> Imports list
 RUN apt-get update -y \
-  && sudo apt-get install r-cran-rjava \
+  && sudo apt-get install r-cran-rjava -y \
 # install a few packages from GitHub for the most recent versions (or if they're not on CRAN)
   && installGithub.r --deps TRUE \
     # install my package that is the focus of this image
