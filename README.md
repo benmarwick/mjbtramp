@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Last-changedate](https://img.shields.io/badge/last%20change-2016--09--06-yellowgreen.svg)](/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-6666ff.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2016--09--06-yellowgreen.svg)](/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-6666ff.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![open materials](https://raw.githubusercontent.com/benmarwick/mjbtramp/master/analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/home/) [![open data](https://raw.githubusercontent.com/benmarwick/mjbtramp/master/analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/home/)
 
 Research compendium for a report on xxx
 ---------------------------------------
@@ -75,5 +75,3 @@ Ben Marwick, Associate Professor, Department of Anthropology Denny Hall 117, Box
 
 1.  (+1) 206.552.9450 e. <bmarwick@uw.edu>
 2.  (+1) 206.543.3285 w. <http://faculty.washington.edu/bmarwick/>
-
-[![open materials](https://raw.githubusercontent.com/benmarwick/mjbtramp/master/analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/home/) [![open data](https://raw.githubusercontent.com/benmarwick/mjbtramp/master/analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/home/)
