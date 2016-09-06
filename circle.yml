@@ -12,8 +12,6 @@ test:
     - docker run --name mjbtramp -d -p 8787:8787 benmarwick/mjbtramp ; sleep 10
       # make RStudio server run in browser...
     - curl --retry 10 --retry-delay 5 -v http://localhost:8787
-      # render main manuscript file in container, render the Rmd into docx
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- ls -alsF
 
 deployment:
   hub:
