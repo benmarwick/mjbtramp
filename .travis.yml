@@ -4,7 +4,7 @@ language: R
 sudo: false
 cache:
   directories: /home/travis/build/benmarwick/mjbtramp/packrat/lib/x86_64-pc-linux-gnu/3.3.1
-  - packages
+  packages: true
 install:
   - R -e "0" --args --bootstrap-packrat
 warnings_are_errors: false
