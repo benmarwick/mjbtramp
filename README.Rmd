@@ -90,4 +90,15 @@ Denny Hall 117, Box 353100, University of Washington
 Seattle, WA 98195-3100 USA
 
 t. (+1) 206.552.9450   e. bmarwick@uw.edu
-f. (+1) 206.543.3285   w. http://faculty.washington.edu/bmarwick/ 
+f. (+1) 206.543.3285   w. http://faculty.washington.edu/bmarwick/
+
+
+
+```{r, out.width = 50, fig.retina = NULL, echo = FALSE}
+knitr::include_graphics("https://mfr.osf.io/export?url=https://osf.io/hr67w/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg")
+knitr::include_graphics("https://mfr.osf.io/export?url=https://osf.io/u63nr/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg")
+```
+
+
+
+
