@@ -76,6 +76,4 @@ Ben Marwick, Associate Professor, Department of Anthropology Denny Hall 117, Box
 1.  (+1) 206.552.9450 e. <bmarwick@uw.edu>
 2.  (+1) 206.543.3285 w. <http://faculty.washington.edu/bmarwick/>
 
-<img src="https://mfr.osf.io/export?url=https://osf.io/hr67w/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg" width="50" /><img src="https://mfr.osf.io/export?url=https://osf.io/u63nr/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg" width="50" />
-
-<https://mfr.osf.io/export?url=https://osf.io/qz8n9/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg>
+[![open materials](https://mfr.osf.io/export?url=https://osf.io/qz8n9/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg)](https://osf.io/tvyxz/wiki/home/) [![open data](https://mfr.osf.io/export?url=https://osf.io/xnv28/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg)](https://osf.io/tvyxz/wiki/home/)

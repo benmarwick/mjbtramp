@@ -93,14 +93,5 @@ t. (+1) 206.552.9450   e. bmarwick@uw.edu
 f. (+1) 206.543.3285   w. http://faculty.washington.edu/bmarwick/
 
 
-
-```{r, out.width = 50, fig.retina = NULL, echo = FALSE}
-knitr::include_graphics("https://mfr.osf.io/export?url=https://osf.io/hr67w/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg")
-knitr::include_graphics("https://mfr.osf.io/export?url=https://osf.io/u63nr/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg")
-```
-
-https://mfr.osf.io/export?url=https://osf.io/qz8n9/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg
-
-
-
+[![open materials](https://mfr.osf.io/export?url=https://osf.io/qz8n9/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg)](https://osf.io/tvyxz/wiki/home/) [![open data](https://mfr.osf.io/export?url=https://osf.io/xnv28/?action=download%26direct%26mode=render&initialWidth=733&childId=mfrIframe&format=1200x1200.jpeg)](https://osf.io/tvyxz/wiki/home/)
 

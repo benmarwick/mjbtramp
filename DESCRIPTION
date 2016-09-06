@@ -19,6 +19,6 @@ Suggests:
   ggrepel,
   bookdown,
   Hmisc,
-    testthat
+  testthat
 Encoding: UTF-8
 LazyData: true
