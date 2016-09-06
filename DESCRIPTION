@@ -17,6 +17,7 @@ Suggests:
   purrr,
   tidyr,
   ggrepel,
-  bookdown
+  bookdown,
+  Hmisc
 Encoding: UTF-8
 LazyData: true
