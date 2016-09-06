@@ -14,7 +14,7 @@ test:
     - curl --retry 10 --retry-delay 5 -v http://localhost:8787
       # render main manuscript file in container, render the Rmd into docx
     - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- ls -alsF
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- /mjbtramp/mjbtramp.Rproj && R -e "installed.packages()"
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- R -e "installed.packages()" '--args --bootstrap-packrat'
 
 deployment:
   hub:
