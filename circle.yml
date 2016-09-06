@@ -12,11 +12,8 @@ test:
     - docker run --name mjbtramp -d -p 8787:8787 benmarwick/mjbtramp ; sleep 10
       # make RStudio server run in browser...
     - curl --retry 10 --retry-delay 5 -v http://localhost:8787
-      # render main manuscript file in container...
-      # first, install rmarkdown & bookdown because we don't use those directly in the compendium
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "install.packages(c('rmarkdown', 'bookdown'))"
-      # second, render the Rmd into docx
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
+      # render main manuscript file in container, render the Rmd into docx
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')" --args --bootstrap-packrat
 
 
 deployment:
