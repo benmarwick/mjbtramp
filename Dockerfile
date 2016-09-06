@@ -16,11 +16,9 @@ RUN apt-get update -y \
   # start R and build pkgs that we depend on from local sources that we have collected with packrat
   && R -e "0" --args --bootstrap-packrat \
   # build this compendium package
-  && R -e 'devtools::install(".")'
-
-
-
-
+  && R -e 'devtools::install(".")' \
+  # render the manuscript into a docx
+  && R -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
 
 #################### Notes to self ###############################
