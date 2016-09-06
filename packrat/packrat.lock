@@ -311,14 +311,10 @@ Version: 0.9-24
 Hash: 37726d9307b8183493bb9187ea0cde8c
 
 Package: knitr
-Source: github
-Version: 1.13.6
-Hash: e45fe60dca363ad2f122c2a4ecccd5bd
+Source: CRAN
+Version: 1.14
+Hash: e7b411f5a5512295a260a45683fa0c4a
 Requires: digest, evaluate, formatR, highr, markdown, stringr, yaml
-GithubRepo: knitr
-GithubUsername: yihui
-GithubRef: master
-GithubSha1: 5235ec08ed9f4728eb3239432f1804e9b25d7c02
 
 Package: labeling
 Source: CRAN

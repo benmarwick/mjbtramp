@@ -31,7 +31,7 @@ The `analysis/` directory contains:
 
 ### The R package [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp)
 
-This repository is organized as an R package. These functions are provided as a package because this makes it simpler to reuse the functions many times in the paper. It also makes it easier for others to use and adapt these functions on their own data. Nevertheless, this package has been written explicitly for this project and may not yet be suitable for more general purpose use.
+This repository is organized as an R package. There are no actual R functions in this package - all the R code is in the Rmd file. I simply used the R package structure to help manage dependencies, to take advantage of continuous integration for automated code testing, and so I didn't have to think too much about how to organise the files.
 
 To download the package source as you see it on GitHub, for offline browsing, use this line at the shell prompt (assuming you have Git installed on your computer):
 
@@ -40,13 +40,6 @@ git clone https://github.com/benmarwick/mjbtramp.git
 ```
 
 Once the download is complete, open the `mjbtramp.Rproj` in RStudio to begin working with the package and compendium files.
-
-If you just want to use the functions included included in the package, you can install the R package directly (without obtaining the compendium files) in R with this line at the R prompt:
-
-``` r
-# install.packages("devtools") # which in turn requires Rtools (if Windows) or Xcode (if OSX)
-devtools::install_github("benmarwick/mjbtramp")
-```
 
 The package has a number of dependencies on other R packages, and programs outside of R. These are listed at the bottom of this README. Installing these can be time-consuming and complicated, so to simpify access to the compendium we also provide at Docker image that includes all the necessary software, code and data to run our analysis.
 
