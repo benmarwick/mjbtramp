@@ -18,6 +18,7 @@ Suggests:
   tidyr,
   ggrepel,
   bookdown,
-  Hmisc
+  Hmisc,
+    testthat
 Encoding: UTF-8
 LazyData: true
