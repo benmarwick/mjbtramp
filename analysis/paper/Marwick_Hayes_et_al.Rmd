@@ -7,7 +7,6 @@ author:
 - Richard Fullagar
 date: '`r Sys.Date()`'
 output:
-  # html_document: default
    bookdown::word_document2:
     fig_caption: yes
     reference_docx: templates/template.docx
