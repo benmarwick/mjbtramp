@@ -13,7 +13,8 @@ test:
       # make RStudio server run in browser...
     - curl --retry 10 --retry-delay 5 -v http://localhost:8787
       # render main manuscript file in container, render the Rmd into docx
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')" --args --bootstrap-packrat
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" --  R -e "0" --args --bootstrap-packrat
+    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" mjbtramp)" -- Rscript -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
 
 deployment:
