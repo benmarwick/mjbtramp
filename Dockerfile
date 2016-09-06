@@ -18,7 +18,7 @@ RUN apt-get update -y \
   # build this compendium package
   && R -e 'devtools::install(".")' \
   # render the manuscript into a docx
-  && R -e "rmarkdown::render('analysis/paper/Marwick_Hayes_et_al.Rmd')"
+  && R -e "rmarkdown::render('mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
 
 #################### Notes to self ###############################
