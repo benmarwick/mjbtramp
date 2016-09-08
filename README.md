@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Last-changedate](https://img.shields.io/badge/last%20change-2016--09--06-yellowgreen.svg)](/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-6666ff.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![open materials](https://raw.githubusercontent.com/benmarwick/mjbtramp/master/analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/home/) [![open data](https://raw.githubusercontent.com/benmarwick/mjbtramp/master/analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/home/)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2016--09--06-yellowgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-6666ff.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![open materials](analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/) [![open data](analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/)
 
 Research compendium for a report on xxx
 ---------------------------------------
