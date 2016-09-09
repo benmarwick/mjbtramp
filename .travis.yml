@@ -3,7 +3,7 @@
 language: R
 sudo: false
 cache:
-  directories: /home/travis/build/$TRAVIS_BUILD_DIR/packrat/
+  directories: $TRAVIS_BUILD_DIR/packrat/
   packages: true
 install:
   - R --args --bootstrap-packrat
