@@ -3,7 +3,7 @@
 language: R
 sudo: false
 cache:
-  directories: /home/travis/build/benmarwick/mjbtramp/packrat/src
+  directories: /home/travis/build/benmarwick/mjbtramp/packrat/
   packages: true
 install:
   - R -e "0" --args --bootstrap-packrat
