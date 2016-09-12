@@ -1,7 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
-*/*_files/*
-*/*_cache/*
+analysis/paper/Marwick_Hayes_et_al_files/
+analysis/paper/Marwick_Hayes_et_al_cache/
 *~*
 packrat/lib*/
