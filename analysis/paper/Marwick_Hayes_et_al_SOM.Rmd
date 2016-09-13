@@ -1,0 +1,287 @@
+---
+title: 'SOM: Diagnostics of linear models'
+author:
+- Ben Marwick
+- Elspeth Hayes
+- Chris Clarkson
+- Richard Fullagar
+date: '`r Sys.Date()`'
+output:
+   bookdown::word_document2:
+    fig_caption: yes
+    reference_docx: templates/template.docx
+bibliography: trampling.bib
+abstract: |
+  This is the abstract.
+---
+
+```{r, echo = FALSE}
+# extract code from main manuscript file into a new R file
+# so we can run select chunks from that in this file
+library(knitr)
+library(ggfortify)
+opts_chunk$set(echo = FALSE, 
+               messages = FALSE, 
+               warnings = FALSE, 
+               dpi = 300,
+               fig.show = 'hide')
+invisible(purl("Marwick_Hayes_et_al.Rmd",  
+               output="temp",
+               quiet=TRUE))
+read_chunk("temp")
+```
+
+
+```{r, ref.label="load_libraries"}
+```
+
+```{r, ref.label="load_data"}
+```
+
+```{r, ref.label="split_by_trampling_event"}
+```
+
+```{r, ref.label="prepare_point_data"}
+```
+
+```{r, ref.label="zinggplotofartefacts"}
+```
+
+```{r, ref.label = "hordispldists"} 
+```
+
+```{r, ref.label = "hordirectionshist"}
+```
+
+```{r, ref.label = "hormodels"}
+```
+
+## Diagnostic plots for linear models of horizontal displacement of artefacts
+
+```{r, hormodels_diagnostics,  fig.show = 'as.is'}
+# compute linear models for hori
+hormodels_diagnostics <- 
+hor_disp_artefact %>% 
+  gather(value, 
+         variable, 
+         -fifteen) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  mutate(scale_hor_disp_artefact = as.vector(scale(fifteen)),
+         scale_variable = as.vector(scale(variable))) %>% 
+  split(.$value) %>% 
+  map(~lm(scale_hor_disp_artefact ~ scale_variable, data = .))
+
+ # draw diagnostic plots
+hormodels_diagnostics_plots <- 
+ map(hormodels_diagnostics,
+     ~autoplot(., 
+         which = 1:6, 
+         ncol = 2, 
+         label.size = 3) + 
+  theme_bw(base_size = 10))
+
+# view
+hormodels_diagnostics_plots
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+hormodels_diagnostics_influence <- 
+hormodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(hor_disp_artefact$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(hormodels_diagnostics)) %>% 
+  select(-method, -alternative)
+
+kable(hormodels_diagnostics_influence, 
+      caption = "Horizontal displacement: Correlation of artefact volume with Cook's distance values for each model")
+  
+```
+
+## Diagnostic plots for linear models of horizontal direction of artefacts
+
+```{r, hordirmodels_diagnostics,  fig.show = 'as.is'}
+# compute linear models for hori
+hordirmodels_diagnostics <- 
+hor_dir_artefact %>% 
+  gather(value, 
+         variable, 
+         -angle_hor_displacement) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  mutate(scale_angle_hor_displacement = as.vector(scale(angle_hor_displacement)),
+         scale_variable = as.vector(scale(variable))) %>% 
+  split(.$value) %>% 
+  map(~lm(scale_angle_hor_displacement ~ scale_variable, data = .))
+
+ # draw diagnostic plots
+  
+hordirmodels_diagnostics_plots <- 
+ map(hordirmodels_diagnostics, ~autoplot(., 
+         which = 1:6, 
+         ncol = 2, 
+         label.size = 3) + 
+  theme_bw(base_size = 10))
+
+# view
+hordirmodels_diagnostics_plots
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+hordirmodels_diagnostics_influence <- 
+hordirmodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(hor_dir_artefact$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(hordirmodels_diagnostics)) %>% 
+  select(-method, -alternative)
+
+kable(hordirmodels_diagnostics_influence, 
+      caption = "Horizontal direction: Correlation of artefact volume with Cook's distance values for each model")
+ 
+```
+
+
+
+```{r, ref.label = "verdisp"}
+```
+
+```{r, ref.label = "vermodels"}
+```
+
+## Diagnostic plots for linear models of vertical displacement of artefacts
+
+```{r, vermodels_diagnostics,  fig.show = 'as.is'}
+vermodels_diagnostics <- 
+ ver_disp_artefact %>% 
+ gather(value, 
+        variable, 
+        -fifteen) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  mutate(scale_fifteen = as.vector(scale(fifteen)),
+         scale_variable = as.vector(scale(variable))) %>% 
+  split(.$value) %>% 
+  map(~lm(scale_fifteen ~ scale_variable, data = .))  
+
+  # draw diagnostic plots
+vermodels_diagnostics_plots <- 
+  map(vermodels_diagnostics, 
+      ~autoplot(., 
+         which = 1:6, 
+         ncol = 2, 
+         label.size = 3) + 
+  theme_bw(base_size = 10))
+
+vermodels_diagnostics_plots
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+vermodels_diagnostics_influence <- 
+vermodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(ver_disp_artefact$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(vermodels_diagnostics)) %>% 
+  select(-method, -alternative)
+
+kable(vermodels_diagnostics_influence, 
+      caption = "Vertical displacement: Correlation of artefact volume with Cook's distance values for each model")
+```
+
+
+```{r, ref.label = "verangles"}
+```
+
+```{r, ref.label = "artefactorientation"}
+```
+
+```{r, ref.label = "artefactplunge"}
+```
+
+```{r, ref.label = "orientplungcorr"}
+```
+
+## Diagnostic plots for linear models of artefact orientation
+
+```{r, orientmodels_diagnostics,  fig.show = 'as.is'}
+orientmodels_diagnostics <-  
+  fifteen_orientations_tramp %>% 
+   gather(value, 
+         variable, 
+        -orient_change) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  split(.$value) %>% 
+  map(~lm(as.vector(scale(orient_change)) ~ as.vector(scale(variable)), data = .)) 
+
+  orientmodels_diagnostics_plots <- 
+  orientmodels_diagnostics %>% 
+  map(~autoplot(., 
+         which = 1:6, 
+         ncol = 2, 
+         label.size = 3) + 
+  theme_bw(base_size = 10))
+
+orientmodels_diagnostics_plots
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+orientmodels_diagnostics_influence <- 
+orientmodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(fifteen_orientations_tramp$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(orientmodels_diagnostics)) %>% 
+  select(-method, -alternative)
+
+kable(orientmodels_diagnostics_influence, 
+      caption = "Artefact orientation: Correlation of artefact volume with Cook's distance values for each model")
+ 
+```
+
+## Diagnostic plots for linear models of artefact plunge
+
+```{r, plungemodels_diagnostics,  fig.show = 'as.is'}
+plungemodels_diagnostics <- 
+  fifteen_plunge_tramp %>% 
+ gather(value, 
+        variable, 
+        -plunge_change) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  split(.$value) %>% 
+  map(~lm(as.vector(scale(plunge_change)) ~ as.vector(scale(variable)), data = .))
+
+plungemodels_diagnostics_plots <- 
+  plungemodels_diagnostics %>% 
+  map(~autoplot(., 
+         which = 1:6, 
+         ncol = 2, 
+         label.size = 3) + 
+  theme_bw(base_size = 10))
+
+plungemodels_diagnostics_plots
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+plungemodels_diagnostics_influence <- 
+plungemodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(fifteen_plunge_tramp$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(plungemodels_diagnostics)) %>% 
+  select(-method, -alternative)
+
+kable(plungemodels_diagnostics_influence, 
+      caption = "Artefact plunge: Correlation of artefact volume with Cook's distance values for each model")
+ 
+```
+
+```{r}
+# delete the temp file we made at the top of this file
+unlink("temp")
+```
+
+

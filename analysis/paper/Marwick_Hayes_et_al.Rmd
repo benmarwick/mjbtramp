@@ -562,6 +562,10 @@ nmc_pretty <- prettyNum( perm_test_sediment$nmc, big.mark = ",")
 
 The trampling area was a levelled section of the excavation spoil heap. The sediments came from 3-4 m below the surface, and had passed through 7 mm and 3 mm sieves before being dumped on the spoil heap. Although the sediment has been seived, the texture of a sample take from tbe spoil head sediment remains identical to samples taken from the archaeological deposit, 3-4m below the surface (Figure \@ref(fig:substrate)). A permutation test for significant differences between any of these samples returns a p-value of `r perm_test_sediment$p.value` (99% confidence interval: `r perm_test_sediment_CI_1`-  `r perm_test_sediment_CI_1` estimated from `r nmc_pretty` Monte Carlo replications).
 
+## Regression models and visualisations
+
+To investigate how the artefacts' shape and size variables predicts their movements during trampling, we computed linear models [@Chambers1991] for each combination of artefact attribute and movement. For each model we visually inspected the independence of residuals, homoscedasticity (constant variance of the residuals), and the distribution of the residuals to verify that our data are consistent with the assumptions of linear modelling. These plots are available in our SOM and at doi:XXXXX.
+
 # Results
 
 We have archived the data resulting from the experiment at doi:XXXXX to enable inspection and resuse of our data and methods. To facilitate computational repoducibility according to the principles described in [@Marwick2016repro], we have also included in that compendium the R code used to analyse the data and generate the all results presented here.
@@ -1207,7 +1211,7 @@ suppressMessages(print(p))
 ```
 
 ```{r corverhor}
-angle_hor_displacement_df
+
 
 
 ```
@@ -1360,7 +1364,7 @@ fifteen_plunge_tramp_long <-
         -plunge_change)
 
 #  models
-linear_models_estimates_orient<- 
+linear_models_estimates_orient <- 
 fifteen_orientations_tramp_long %>% 
   filter(value %in% vars_of_interest) %>% 
   group_by(value) %>% 
@@ -1507,7 +1511,7 @@ Previous trampling studies show little agreement about the relationship between 
 
 On the other hand, Villa and Courtin [-@villa1983267] reported from their trampling experiment that artefacts lighter than 50 g were relatively mobile, moving vertically more than pieces heavier than 50 g, which tended to stay on or near their original location. They report no obvious correlations for horizontal movement and artefact size, but observed that while many lighter artefacts did not move far from their original locations, lighter pieces tended to move further than heavier artefacts. Gifford-Gonzalez et al. [-@GiffordGonzalez1985] found that none of the artefact metric variables they recorded correlated significantly with depth below surface (although no summary statistics or raw data are provided to support this claim). However, they note that their results may not be decisive because of the rarity of very large and very small artefacts in their sample (their artefacts had a maximum unoriented length of 3-13 mm, the majority were 3-6.5 mm). They further propose that the high dynamic range of trampling (i.e. highly vigorous) in their experiment may have prevented patterns from emerging in the interaction between the artefacts and the moving sediment. In a trampling experiment conducted by Driscoll et al. [-@driscoll2015trampled] vertical movements of artefacts were mostly less than 1 cm, with rare occurrences of greater than 2 cm. They observed no clear relationship between artefact size and vertical distance. In their low foot-traffic zone the largest artefacts had the greatest change in mean depth, while in the high traffic zone the smallest artefacts moved further. For horizontal movement, Driscoll et al. noted a clear pattern of the largest, thickest, and heaviest artefacts moving the greatest mean distance. But when they excluded the largest artefacts from the analysis (i.e. those with a maximum length of 35-40 mm, out of a total range of 10-40 mm in their sample), the relationship between distance and artefact size became very weak. 
 
-Our results similarly showed weak non-significant relationships between artefact length, width and thickness (as defined above) and horiztonal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that larger artefacts tend to move above their starting position. That said, the r^2 values on these relationships are low (0.1-0.3), inidicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. 
+Our results similarly showed weak non-significant relationships between artefact length, width and thickness (as defined above) and horizontal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that trampling causes larger artefacts to move above their starting position. That said, the r^2 values on these relationships are low (0.1-0.3), indicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. Our artefacts ranged in maximum unoriented length from `r min(tramp$`length(mm)`)` mm to `r max(tramp$`length(mm)`)`, a much greater range than reported by Driscoll et al. [-@driscoll2015trampled]. 
  
  
 shape: Moeyersons1978 Gifford-Gonzalez et al.

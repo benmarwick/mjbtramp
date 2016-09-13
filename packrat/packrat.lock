@@ -11,8 +11,8 @@ Hash: be2967bcff307e561d9ba17faf03205c
 
 Package: DBI
 Source: CRAN
-Version: 0.5
-Hash: b4baa1938fb20e76519e8aa253fe60a6
+Version: 0.5-1
+Hash: 375869004db963f9915f2b8a49b4a718
 
 Package: DEoptimR
 Source: CRAN
@@ -29,7 +29,12 @@ Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
 Requires: Formula, acepack, data.table, ggplot2, gridExtra, gtable,
-    latticeExtra
+    lattice, latticeExtra, survival
+
+Package: Matrix
+Source: CRAN
+Version: 1.2-7.1
+Requires: lattice
 
 Package: PKI
 Source: CRAN
@@ -197,7 +202,7 @@ Package: flexmix
 Source: CRAN
 Version: 2.3-13
 Hash: 4c5ae92368e1cc01c26afd1e67b66cd3
-Requires: modeltools
+Requires: lattice, modeltools
 
 Package: foreach
 Source: CRAN
@@ -227,6 +232,12 @@ Source: CRAN
 Version: 2.17.0
 Hash: e7d520c2a9597b303f54499e3bd90644
 Requires: gtools
+
+Package: ggfortify
+Source: CRAN
+Version: 0.2.0
+Hash: f5fb81f053e13395bdc4e5c144cfef27
+Requires: dplyr, ggplot2, gridExtra, scales, tidyr
 
 Package: ggplot2
 Source: CRAN
@@ -275,6 +286,7 @@ Package: hexbin
 Source: CRAN
 Version: 1.27.1
 Hash: 9f94c576cc4b9e83fd714ae8387272e6
+Requires: lattice
 
 Package: highr
 Source: CRAN
@@ -331,11 +343,15 @@ Source: CRAN
 Version: 0.3
 Hash: ecf589b42cd284b03a4beb9665482d3e
 
+Package: lattice
+Source: CRAN
+Version: 0.20-34
+
 Package: latticeExtra
 Source: CRAN
 Version: 0.6-28
 Hash: efdf3a10a129129f7b8f4ae5a0d7ec3d
-Requires: RColorBrewer
+Requires: RColorBrewer, lattice
 
 Package: lazyeval
 Source: CRAN
@@ -520,9 +536,15 @@ Requires: TSP, colorspace, dendextend, gclus, gplots, qap, registry
 
 Package: shiny
 Source: CRAN
-Version: 0.13.2
-Hash: 28d6903a44dc53bd4823fa43ccdc08e5
-Requires: R6, digest, htmltools, httpuv, jsonlite, mime, xtable
+Version: 0.14
+Hash: 695d82a6a0bc88b7fe693c968450f9ca
+Requires: R6, digest, htmltools, httpuv, jsonlite, mime, sourcetools,
+    xtable
+
+Package: sourcetools
+Source: CRAN
+Version: 0.1.2
+Hash: 62282a43e8bc00a37e571a70e0b47006
 
 Package: stringi
 Source: CRAN
@@ -534,6 +556,11 @@ Source: CRAN
 Version: 1.1.0
 Hash: 4d21d0063b37a17ea18eaec6acd29bf3
 Requires: magrittr, stringi
+
+Package: survival
+Source: CRAN
+Version: 2.39-5
+Requires: Matrix
 
 Package: testthat
 Source: CRAN
