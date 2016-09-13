@@ -8,7 +8,7 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 RUN apt-get update -y \
 
   # solve a mysterious & sudden error with XML pkg
-  && apt-get install libxml2-devel xml2-config -y \
+  && apt-get install libxml2-dev xml2-config -y \
 
 
   # get the full set of repository files from GitHub
