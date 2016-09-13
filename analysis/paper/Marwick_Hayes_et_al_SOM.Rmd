@@ -58,7 +58,7 @@ read_chunk("temp")
 
 ## Diagnostic plots for linear models of horizontal displacement of artefacts
 
-```{r, hormodels_diagnostics,  fig.show = 'as.is'}
+```{r, hormodelsdiagnostics,  fig.show = 'as.is'}
 # compute linear models for hori
 hormodels_diagnostics <- 
 hor_disp_artefact %>% 
@@ -101,7 +101,7 @@ kable(hormodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of horizontal direction of artefacts
 
-```{r, hordirmodels_diagnostics,  fig.show = 'as.is'}
+```{r, hordirmodelsdiagnostics,  fig.show = 'as.is'}
 # compute linear models for hori
 hordirmodels_diagnostics <- 
 hor_dir_artefact %>% 
@@ -152,7 +152,7 @@ kable(hordirmodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of vertical displacement of artefacts
 
-```{r, vermodels_diagnostics,  fig.show = 'as.is'}
+```{r, vermodelsdiagnostics,  fig.show = 'as.is'}
 vermodels_diagnostics <- 
  ver_disp_artefact %>% 
  gather(value, 
@@ -205,7 +205,7 @@ kable(vermodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of artefact orientation
 
-```{r, orientmodels_diagnostics,  fig.show = 'as.is'}
+```{r, orientmodelsdiagnostics,  fig.show = 'as.is'}
 orientmodels_diagnostics <-  
   fifteen_orientations_tramp %>% 
    gather(value, 
@@ -243,7 +243,7 @@ kable(orientmodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of artefact plunge
 
-```{r, plungemodels_diagnostics,  fig.show = 'as.is'}
+```{r, plungemodelsdiagnostics,  fig.show = 'as.is'}
 plungemodels_diagnostics <- 
   fifteen_plunge_tramp %>% 
  gather(value, 
