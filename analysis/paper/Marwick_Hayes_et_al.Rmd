@@ -481,7 +481,7 @@ grid.arrange( artefact_zingg, artefact_map, ncol=2 )
 
 ```
 
-Zingg indices are derived from the measurement of the three principal axes of the approximating tri-axial ellipsoid. The three principal axes are the longest axis (denoted a _a_), the second longest axis perpendicular to the longest axis (_b_), and the third longest axis perpendicular to both _a_ and _b_ (denoted as _c_). These measurements are not oriented with respect to the percussion axis of the artefact. This is because the percussion attributes have little relevance to how the artefact interacts with the sedimentary deposit during trampling. We simply measured the longest axis on the artefact without regard to the flaking attributes, and then the longest axis that is perpendicular to the first axis (the intermediate axis), and then the longest axis perpendicular to that (the short axis). To obtain the Zingg indices for a given artefact, we first determined the directions for principal axes of the artefact, then measured the axes, and finally computed the axis ratios _b_/_a_ (Zingg's elongation ratio) and _c_/_b_ (Zingg's flatness ratio). Zingg's shape factor is elongation divided by flatness. The Zingg classifications of the artefacts used in the trampling experiment are presented in Figure \@ref(fig:zinggplotofartefacts).
+Zingg indices are derived from the measurement of the three principal axes of the approximating tri-axial ellipsoid. The three principal axes are the longest axis (denoted a _a_), the second longest axis perpendicular to the longest axis (_b_), and the third longest axis perpendicular to both _a_ and _b_ (denoted as _c_). These measurements are not oriented with respect to the percussion axis of the artefact. This is because the percussion attributes have little relevance to how the artefact interacts with the sedimentary deposit during trampling. We simply measured the longest axis on the artefact without regard to the flaking attributes, and then the longest axis that is perpendicular to the first axis (the intermediate axis), and then the longest axis perpendicular to that (the short axis). Volume is taken as the log of the product of _a_, _b_, and _c_. To obtain the Zingg indices for a given artefact, we first determined the directions for principal axes of the artefact, then measured the axes, and finally computed the axis ratios _b_/_a_ (Zingg's elongation ratio) and _c_/_b_ (Zingg's flatness ratio). Zingg's shape factor is elongation divided by flatness. A round or cubic artefact will have a shape factor equal to 1, more  more elongated and thin artefacts will have a shape factor less than 1, and a blade shaped artefact will have a shape factor greater than 1 [@uthus2005evaluation]. The Zingg classifications of the artefacts used in the trampling experiment are presented in Figure \@ref(fig:zinggplotofartefacts).
 
 ```{r tramplingarea, fig.cap="Views of the trampling area on the excavation spoil heaps."}
 # I combined these images in Inkscape
@@ -564,7 +564,7 @@ The trampling area was a levelled section of the excavation spoil heap. The sedi
 
 ## Regression models and model visualisations
 
-To investigate how the artefacts' shape and size variables predicts their movements during trampling, we computed linear models [@Chambers1991] for each combination of artefact attribute and movement. For each model we visually inspected the independence of residuals, homoscedasticity (constant variance of the residuals), and the distribution of the residuals to verify that our data are consistent with the assumptions of linear modelling. These plots are available in our SOM and at doi:XXXXX. Here we present visual summaries of several models, following @Wickhammodelvis2015 and @Wickham2015vizmodels. We introduce a new kind of plot, the model ensemble plot, to show the model-level summary statistics. These model ensemble plots are an information-dense visualisation that is useful for exploring the importance of predictors in multiple models. These scatterplots show the models' adjusted R^2 values and standardarised estimates. The adjusted R^2 values shows model fit as an estimate of the proportion of variance explained by the variable under consideration [@Faraway2014], and standardarised estimates are useful as measures of relationship strength for each variable because they can be interpreted as the change in response when the predictor changes by one standard deviation if all other variables are held constant [@Wickham2015vizmodels]. Standardarised estimates also show the slope of the regression line and thus the direction of the relationship between the variables (i.e. a positive or negative relationships). Our model ensemble plots show the models' p-value of the models as proportional to the size of the data points (larger points indicate lower p-values), with p < 0.05 values indicated by hollow points to highlight models with a very low probability of obtaining the observed data or more extreme data given a hypothesis of no association between the variables [@Greenland2016]. 
+To investigate how the artefacts' shape and size variables predicts their movements during trampling, we computed linear models [@Chambers1991] for each combination of artefact attribute and movement. For each model we visually inspected the independence of residuals, homoscedasticity (constant variance of the residuals), and the distribution of the residuals to verify that our data are consistent with the assumptions of linear modelling. These plots are available in our SOM and at doi:XXXXX. Here we present visual summaries of several models, following @Wickhammodelvis2015 and @Wickham2015vizmodels. We introduce a new kind of plot, the model ensemble plot, to show model-level summary statistics. These model ensemble plots are an information-dense visualisation that is useful for exploring and comparing the importance of predictors in multiple models. These scatterplots show the models' adjusted R^2 values, standardarised estimates and p-values. The adjusted R^2 values (on the vertical axis) shows model fit as an estimate of the proportion of variance explained by the variable under consideration [@Faraway2014]. Standardarised estimates (on the horizontal axis) are useful as measures of relationship strength for each variable because they can be interpreted as the change in response when the predictor changes by one standard deviation, if all other variables are held constant [@Wickham2015vizmodels]. Standardarised estimates also show the slope of the regression line and thus the direction of the relationship between the variables (i.e. a positive or negative relationship). Our model ensemble plots show the models' p-value of the models as proportional to the size of the data points (larger points indicate lower p-values), with p < 0.05 values indicated by hollow points to highlight models with a very low probability of obtaining the observed data or more extreme data, given a hypothesis of no association between the variables [@Greenland2016]. 
 
 # Results
 
@@ -1499,29 +1499,98 @@ row.names(lower) <- names(two_tables_into_one)
 
 # print table
 kable(lower[-nrow(lower),-1], row.names = TRUE,
-      caption = " Pearson's correlation coefficients for changes in artefact plunge and orientation, and for values of horizontal and vertical distance, horizontal bearing and verticle angle after fifteen minutes. Values in parentheses are p-values. Strong significant correlations are in bold.")
+      caption = "Pearson's correlation coefficients for changes in artefact plunge and orientation, and for values of horizontal and vertical distance, horizontal bearing and verticle angle after fifteen minutes. Values in parentheses are p-values. Strong significant correlations are in bold.")
 
 ```
 
 
 # Discussion 
 
+## Comparison with previous experimental results
+
 Previous trampling studies show little agreement about the relationship between artefact size and displacement due to trampling. Stockton [-@stockton1973shaw] identified moderate size sorting resulting from trampling, with mean artefact mass decreasing with depth. Conversely, Moeyersons' [-@Moeyersons1978] wetting-drying experiments in Kalahari sands at Gombe found that the heaviest aretfacts moved the largest distances downward in the deposit. Wilk and Schiffer [-@wilkschiffer1979] reported a similar relationship on paths in vacant lots, with larger artefacts having been more frequently trampled off the paths. Similar patterns have been observed in more general studies of site formation. For example, smaller rather than larger pieces of flaked stone, bone and charcoal are more likely to be found _in situ_ after sweeping and other site maintainance activities have occurred [@keeley1991tool; @stevenson1991beyond]. 
 
 On the other hand, Villa and Courtin [-@villa1983267] reported from their trampling experiment that artefacts lighter than 50 g were relatively mobile, moving vertically more than pieces heavier than 50 g, which tended to stay on or near their original location. They report no obvious correlations for horizontal movement and artefact size, but observed that while many lighter artefacts did not move far from their original locations, lighter pieces tended to move further than heavier artefacts. Gifford-Gonzalez et al. [-@GiffordGonzalez1985] found that none of the artefact metric variables they recorded correlated significantly with depth below surface (although no summary statistics or raw data are provided to support this claim). However, they note that their results may not be decisive because of the rarity of very large and very small artefacts in their sample (their artefacts had a maximum unoriented length of 3-13 mm, the majority were 3-6.5 mm). They further propose that the high dynamic range of trampling (i.e. highly vigorous) in their experiment may have prevented patterns from emerging in the interaction between the artefacts and the moving sediment. In a trampling experiment conducted by Driscoll et al. [-@driscoll2015trampled] vertical movements of artefacts were mostly less than 1 cm, with rare occurrences of greater than 2 cm. They observed no clear relationship between artefact size and vertical distance. In their low foot-traffic zone the largest artefacts had the greatest change in mean depth, while in the high traffic zone the smallest artefacts moved further. For horizontal movement, Driscoll et al. noted a clear pattern of the largest, thickest, and heaviest artefacts moving the greatest mean distance. But when they excluded the largest artefacts from the analysis (i.e. those with a maximum length of 35-40 mm, out of a total range of 10-40 mm in their sample), the relationship between distance and artefact size became very weak. 
 
-Our results similarly showed weak non-significant relationships between artefact length, width and thickness (as defined above) and horizontal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that trampling causes larger artefacts to move above their starting position. That said, the r^2 values on these relationships are low (0.1-0.3), indicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. Our artefacts ranged in maximum unoriented length from `r min(tramp$'length(mm)')` mm to `r max(tramp$'length(mm)')`, a much greater range than reported by Driscoll et al. [-@driscoll2015trampled]. 
- 
- 
-shape: Moeyersons1978 Gifford-Gonzalez et al.
+```{r, echo = FALSE}
+# extract code from SOM file into a new R file
+# so we can run select chunks from that in this file
+library(knitr)
+library(ggfortify)
+opts_chunk$set(echo = FALSE, 
+               messages = FALSE, 
+               warnings = FALSE, 
+               dpi = 300,
+               fig.show = 'hide')
+invisible(purl("Marwick_Hayes_et_al_SOM.Rmd",  
+               output="temp",
+               quiet=TRUE))
+read_chunk("temp")
+# now read relevant chunks of code from SOM...
+```
 
+```{r, ref.label = "hormodelsdiagnostics", fig.show = 'hide', results = 'hide'}
+```
 
-```{r previoustrampling}
+```{r, ref.label = "hordirmodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+```
 
+```{r, ref.label = "vermodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+```
+
+```{r, ref.label = "orientmodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+```
+
+```{r, ref.label = "plungemodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+```
+
+```{r tblsizeinfluence}
+# Make a nice table of influence of artefact size, measured by Cook's distance
+bind_rows(hormodels_diagnostics_influence,
+      hordirmodels_diagnostics_influence,
+      vermodels_diagnostics_influence,
+      orientmodels_diagnostics_influence,
+      plungemodels_diagnostics_influence, 
+      .id = "source") %>% 
+  filter(p.value < 0.05,
+         estimate > 0.6 | estimate < -0.6 ) %>% 
+  mutate(movement = ifelse(source == 4, "Orientation", 
+                     ifelse(source == 5, "Plunge", NA))) %>% 
+  mutate(variable = ifelse(variable == "length(mm)", "Length",
+                     ifelse(variable == "thickness(mm)", "Thickness",
+                      ifelse(variable == "volume", "Volume",
+                       ifelse(variable == "width(mm)", "Width",
+                              NA))))) %>% 
+  select(variable, 
+         movement, 
+         estimate,
+         p.value) %>% 
+  map_if(is.numeric, ~round(., 3)) %>% 
+  bind_rows %>% 
+  arrange(variable) %>% 
+  set_names(c("Variable",
+            "Movement",
+            "Pearson correlation",
+            "p-value")) %>% 
+  kable(caption = "Summary of significant (p < 0.05) and strong (r > 0.6 or r < -0.6) correlations of artefact size and shape variables with the Cook's Distance values for each linear model.")
 
 ```
 
-...compare to results of other studies...
+
+```{r}
+# finished working with chunks from SOM so let's
+# delete the temp file we made from the SOM file
+unlink("temp")
+```
+
+Our results similarly showed weak, non-significant relationships between artefact length, width and thickness (as defined above) and horizontal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that trampling causes larger artefacts to move above their starting position. That said, the r^2^ values on these relationships are low (0.1-0.3), indicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. 
+
+Our artefacts ranged in maximum unoriented length from `r min(tramp$'length(mm)')` mm to `r max(tramp$'length(mm)')` mm, a much greater range than reported by Gifford-Gonzalez et al. [-@GiffordGonzalez1985] and Driscoll et al. [-@driscoll2015trampled]. While Driscoll et al. noted a strong effect of larger artefacts in horizontal movement, we did not find a similar effect. Table \@ref(tab:tblsizeinfluence) shows that in our experient the larger artefacts have an outsize influence only on the models describing artefact orientation and plunge. We computed the Cook's [-@Cook1979] distance for each artefact in each model to identify the artefacts whose removal from the model would change the model coefficients the most [@FoxWeisberg2010]. Then we computed the correlation between an artefact's volume (as a measure of artefact size) and its Cook's distance value in each model. Strong significant correlations were found in the models using artefact length and thickness to predict change in artefact orientation, and for using length, thickness, width and volume to to predict change in artefact plunge. There were no signficant correlations between artefact volume and Cook's distance in models predicting horizontal or vertical movement, so bigger artefacts do not seem to have had an unusual influence on these relationships. 
+
+Artefact shape variables have received limited consideration in previous studies. In his experiment with five artefacts, Moeyersons [-@Moeyersons1978] observed how artefacts with the highest weight/vertical projection surface ratio moved the greatest vertical distance. Gifford-Gonzalez et al. [-@GiffordGonzalez1985] similarly examined the orientation of the artefact edge and the ground surface, but did not identify any relationship between this orientation and vertical displacement due to trampling. In their experiment to investigate post-depositional processes on an experimental knapping assemblage deposited on sand dunes, Barton and Bergman [-@BartonBergman1982] observed that wider, flatter artefacts moved less, and artefacts that moved further down the deposit tended not to be horizontally oriented. 
+
+In our experiments artefact shape variables were significant predictors for horizontal distance (shape and elongation have a positive relationship) and unsigned vertical distance (shape has a positive relationship, flatness has a negative relationship). 
+
 
 ## Simulation by resampling
 
