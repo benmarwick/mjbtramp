@@ -411,8 +411,11 @@ library(ggrepel)
 s <- 3 # text size for Zingg's shape
 
 artefact_zingg <- 
-ggplot(tramp[1:30,], aes(flat, elong, label = artefact)) +
-  geom_point() +
+ggplot(tramp[1:30,], aes(flat, 
+                         elong, 
+                         label = artefact)) +
+  geom_point(aes(size = shape),
+             alpha = 0.3) +
   geom_text_repel(size = I(s)) +
   geom_vline(xintercept = 0.67) +
   geom_hline(yintercept = 0.67) +
@@ -477,7 +480,7 @@ ggplot() +
   theme_minimal(base_size = 10)
 
 library(gridExtra)
-grid.arrange( artefact_zingg, artefact_map, ncol=2 )
+grid.arrange(artefact_zingg, artefact_map, ncol=2 )
 
 ```
 
@@ -1583,16 +1586,17 @@ bind_rows(hormodels_diagnostics_influence,
 unlink("temp")
 ```
 
-Our results similarly showed weak, non-significant relationships between artefact length, width and thickness (as defined above) and horizontal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that trampling causes larger artefacts to move above their starting position. That said, the r^2^ values on these relationships are low (0.1-0.3), indicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. 
+Our results similarly showed weak, non-significant relationships between artefact length, width and thickness (as defined above) and horizontal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that trampling causes larger artefacts to move above their starting position. That said, the adjusted R^2^ values on these relationships are low (0.1-0.3), indicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. 
 
-Our artefacts ranged in maximum unoriented length from `r min(tramp$'length(mm)')` mm to `r max(tramp$'length(mm)')` mm, a much greater range than reported by Gifford-Gonzalez et al. [-@GiffordGonzalez1985] and Driscoll et al. [-@driscoll2015trampled]. While Driscoll et al. noted a strong effect of larger artefacts in horizontal movement, we did not find a similar effect. Table \@ref(tab:tblsizeinfluence) shows that in our experient the larger artefacts have an outsize influence only on the models describing artefact orientation and plunge. We computed the Cook's [-@Cook1979] distance for each artefact in each model to identify the artefacts whose removal from the model would change the model coefficients the most [@FoxWeisberg2010]. Then we computed the correlation between an artefact's volume (as a measure of artefact size) and its Cook's distance value in each model. Strong significant correlations were found in the models using artefact length and thickness to predict change in artefact orientation, and for using length, thickness, width and volume to to predict change in artefact plunge. There were no signficant correlations between artefact volume and Cook's distance in models predicting horizontal or vertical movement, so bigger artefacts do not seem to have had an unusual influence on these relationships. 
+Our artefacts ranged in maximum unoriented length from `r min(tramp$'length(mm)')` mm to `r max(tramp$'length(mm)')` mm, a much greater range than reported by Gifford-Gonzalez et al. [-@GiffordGonzalez1985] and Driscoll et al. [-@driscoll2015trampled]. While Driscoll et al. noted a strong effect of larger artefacts in horizontal movement, we did not find a similar effect. Table \@ref(tab:tblsizeinfluence) shows that in our experiment the larger artefacts have an outsize influence only on the models describing artefact orientation and plunge (full details are reported in the SOM). We computed the Cook's [-@Cook1979] distance for each artefact in each model to identify the artefacts whose removal from the model would change the model coefficients the most [@FoxWeisberg2010]. Then we computed the correlation between an artefact's volume (as a measure of artefact size) and its Cook's distance value in each model. Strong significant correlations were found in the models using artefact length and thickness to predict change in artefact orientation, and for using length, thickness, width and volume to to predict change in artefact plunge. There were no signficant correlations between artefact volume and Cook's distance in models predicting horizontal or vertical movement, so bigger artefacts do not seem to have had an unusual influence on these relationships. 
 
 Artefact shape variables have received limited consideration in previous studies. In his experiment with five artefacts, Moeyersons [-@Moeyersons1978] observed how artefacts with the highest weight/vertical projection surface ratio moved the greatest vertical distance. Gifford-Gonzalez et al. [-@GiffordGonzalez1985] similarly examined the orientation of the artefact edge and the ground surface, but did not identify any relationship between this orientation and vertical displacement due to trampling. In their experiment to investigate post-depositional processes on an experimental knapping assemblage deposited on sand dunes, Barton and Bergman [-@BartonBergman1982] observed that wider, flatter artefacts moved less, and artefacts that moved further down the deposit tended not to be horizontally oriented. 
 
-In our experiments artefact shape variables were significant predictors for horizontal distance (shape and elongation have a positive relationship) and unsigned vertical distance (shape has a positive relationship, flatness has a negative relationship). 
-
+In our experiments artefact shape variables were significant predictors for horizontal distance (shape and elongation have a positive relationship) and unsigned vertical distance (shape has a positive relationship, flatness has a negative relationship). Artefacts with high shape and elongation values are more discoidal, and artefacts with high shape and low flatness values are either discoidal or blade-like, depending on their elongation values (Figure \@ref(fig:zinggplotofartefacts)). These results differ from Barton and Bergman's [-@BartonBergman1982] observations that wider, flatter (i.e. discoidal) artefacts moved less. However, the adjusted R^2^ values for our models range between 0.1 and 0.3, indicating that although shape variables have a statistically significant role in influencing artefact movement during trampling, they have limited value for making specific predictions how far artefacts with certain shape attributes have moved due to prehistoric trampling. 
 
 ## Simulation by resampling
+
+A common limitation of experimental studies of taphonomic processes such as trampling is the short time scale of experimental observations relative to the time scales in archaeological sites. The duration of our experiement was particularly short due to the unique use of the archaeological sediments in the spoil heap as the trampling substration. To explore what might have happened if our experiment had run for a long time we can simulate the effects of trampling by resampling many times from the observed trampling event measurements.  
 
 simulation or 1000s of trampling events by resampling bearing, hor-distance and ver-distance (independantly of each trampling event measurement) for each artefact to move it to new but plausible locations 
 
