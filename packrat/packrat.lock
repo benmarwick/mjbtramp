@@ -29,12 +29,7 @@ Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
 Requires: Formula, acepack, data.table, ggplot2, gridExtra, gtable,
-    lattice, latticeExtra, survival
-
-Package: Matrix
-Source: CRAN
-Version: 1.2-7.1
-Requires: lattice
+    latticeExtra
 
 Package: PKI
 Source: CRAN
@@ -198,11 +193,16 @@ Version: 0.9
 Hash: cf338d73ba4ee3a4fefec612cdfd38db
 Requires: stringr
 
+Package: fitdistrplus
+Source: CRAN
+Version: 1.0-7
+Hash: 3a85fce75e6c1d8252073e6f12fc9e48
+
 Package: flexmix
 Source: CRAN
 Version: 2.3-13
 Hash: 4c5ae92368e1cc01c26afd1e67b66cd3
-Requires: lattice, modeltools
+Requires: modeltools
 
 Package: foreach
 Source: CRAN
@@ -286,7 +286,6 @@ Package: hexbin
 Source: CRAN
 Version: 1.27.1
 Hash: 9f94c576cc4b9e83fd714ae8387272e6
-Requires: lattice
 
 Package: highr
 Source: CRAN
@@ -343,15 +342,11 @@ Source: CRAN
 Version: 0.3
 Hash: ecf589b42cd284b03a4beb9665482d3e
 
-Package: lattice
-Source: CRAN
-Version: 0.20-34
-
 Package: latticeExtra
 Source: CRAN
 Version: 0.6-28
 Hash: efdf3a10a129129f7b8f4ae5a0d7ec3d
-Requires: RColorBrewer, lattice
+Requires: RColorBrewer
 
 Package: lazyeval
 Source: CRAN
@@ -400,6 +395,16 @@ Package: mnormt
 Source: CRAN
 Version: 1.5-4
 Hash: d9793228e6242e0f025123fc19587990
+
+Package: modelr
+Source: github
+Version: 0.0.0.9000
+Hash: 3901fe743516a7f123193baaa256f83d
+Requires: broom, dplyr, lazyeval, magrittr, purrr, tibble, tidyr
+GithubRepo: modelr
+GithubUsername: hadley
+GithubRef: master
+GithubSha1: 7a1270d2729da48c913732054d1cfbd185305827
 
 Package: modeltools
 Source: CRAN
@@ -557,11 +562,6 @@ Version: 1.1.0
 Hash: 4d21d0063b37a17ea18eaec6acd29bf3
 Requires: magrittr, stringi
 
-Package: survival
-Source: CRAN
-Version: 2.39-5
-Requires: Matrix
-
 Package: testthat
 Source: CRAN
 Version: 1.0.2
@@ -575,10 +575,14 @@ Hash: 3b35b556ef7acddb0d28fe6a27ad50e4
 Requires: Rcpp, assertthat, lazyeval
 
 Package: tidyr
-Source: CRAN
-Version: 0.6.0
-Hash: daf06bb30f2d9581e69609e0c0f7d38a
+Source: github
+Version: 0.6.0.9000
+Hash: c29ff9ceb5e3454fdb7b1baaec0ee938
 Requires: Rcpp, dplyr, lazyeval, magrittr, stringi, tibble
+GithubRepo: tidyr
+GithubUsername: hadley
+GithubRef: master
+GithubSha1: 3c9335bb8441e846a7a22c2d4db9feb2461f5a56
 
 Package: trimcluster
 Source: CRAN

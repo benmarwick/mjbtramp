@@ -58,20 +58,11 @@ read_chunk("temp")
 
 ## Diagnostic plots for linear models of horizontal displacement of artefacts
 
-```{r, hormodelsdiagnostics,  fig.show = 'as.is'}
-# compute linear models for hori
-hormodels_diagnostics <- 
-hor_disp_artefact %>% 
-  gather(value, 
-         variable, 
-         -fifteen) %>% 
-  filter(value %in% vars_of_interest) %>% 
-  mutate(scale_hor_disp_artefact = as.vector(scale(fifteen)),
-         scale_variable = as.vector(scale(variable))) %>% 
-  split(.$value) %>% 
-  map(~lm(scale_hor_disp_artefact ~ scale_variable, data = .))
+```{r, ref.label = "hormodelsdiagnostics"}
+```
 
- # draw diagnostic plots
+```{r,  fig.show = 'as.is'}
+# draw diagnostic plots
 hormodels_diagnostics_plots <- 
  map(hormodels_diagnostics,
      ~autoplot(., 
@@ -83,16 +74,6 @@ hormodels_diagnostics_plots <-
 # view
 hormodels_diagnostics_plots
 
-# explore if bigger artefacts have outsize effect on relationships
-# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
-hormodels_diagnostics_influence <- 
-hormodels_diagnostics %>% 
-  map(~fortify(.)) %>% 
-  map(~cor.test(hor_disp_artefact$volume, .x$.cooksd)) %>% 
-  map(~tidy(.)) %>% 
-  bind_rows() %>% 
-  mutate(variable = names(hormodels_diagnostics)) %>% 
-  select(-method, -alternative)
 
 kable(hormodels_diagnostics_influence, 
       caption = "Horizontal displacement: Correlation of artefact volume with Cook's distance values for each model")
@@ -101,18 +82,10 @@ kable(hormodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of horizontal direction of artefacts
 
-```{r, hordirmodelsdiagnostics,  fig.show = 'as.is'}
-# compute linear models for hori
-hordirmodels_diagnostics <- 
-hor_dir_artefact %>% 
-  gather(value, 
-         variable, 
-         -angle_hor_displacement) %>% 
-  filter(value %in% vars_of_interest) %>% 
-  mutate(scale_angle_hor_displacement = as.vector(scale(angle_hor_displacement)),
-         scale_variable = as.vector(scale(variable))) %>% 
-  split(.$value) %>% 
-  map(~lm(scale_angle_hor_displacement ~ scale_variable, data = .))
+```{r, ref.label = "hordirmodelsdiagnostics"}
+```
+
+```{r,  fig.show = 'as.is'}
 
  # draw diagnostic plots
   
@@ -126,22 +99,14 @@ hordirmodels_diagnostics_plots <-
 # view
 hordirmodels_diagnostics_plots
 
-# explore if bigger artefacts have outsize effect on relationships
-# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
-hordirmodels_diagnostics_influence <- 
-hordirmodels_diagnostics %>% 
-  map(~fortify(.)) %>% 
-  map(~cor.test(hor_dir_artefact$volume, .x$.cooksd)) %>% 
-  map(~tidy(.)) %>% 
-  bind_rows() %>% 
-  mutate(variable = names(hordirmodels_diagnostics)) %>% 
-  select(-method, -alternative)
+
 
 kable(hordirmodels_diagnostics_influence, 
       caption = "Horizontal direction: Correlation of artefact volume with Cook's distance values for each model")
  
 ```
 
+## Diagnostic plots for linear models of vertical displacement of artefacts
 
 
 ```{r, ref.label = "verdisp"}
@@ -150,21 +115,12 @@ kable(hordirmodels_diagnostics_influence,
 ```{r, ref.label = "vermodels"}
 ```
 
-## Diagnostic plots for linear models of vertical displacement of artefacts
+```{r, ref.label = "vermodelsdiagnostics"}
+```
 
-```{r, vermodelsdiagnostics,  fig.show = 'as.is'}
-vermodels_diagnostics <- 
- ver_disp_artefact %>% 
- gather(value, 
-        variable, 
-        -fifteen) %>% 
-  filter(value %in% vars_of_interest) %>% 
-  mutate(scale_fifteen = as.vector(scale(fifteen)),
-         scale_variable = as.vector(scale(variable))) %>% 
-  split(.$value) %>% 
-  map(~lm(scale_fifteen ~ scale_variable, data = .))  
+```{r,  fig.show = 'as.is'}
 
-  # draw diagnostic plots
+# draw diagnostic plots
 vermodels_diagnostics_plots <- 
   map(vermodels_diagnostics, 
       ~autoplot(., 
@@ -175,21 +131,12 @@ vermodels_diagnostics_plots <-
 
 vermodels_diagnostics_plots
 
-# explore if bigger artefacts have outsize effect on relationships
-# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
-vermodels_diagnostics_influence <- 
-vermodels_diagnostics %>% 
-  map(~fortify(.)) %>% 
-  map(~cor.test(ver_disp_artefact$volume, .x$.cooksd)) %>% 
-  map(~tidy(.)) %>% 
-  bind_rows() %>% 
-  mutate(variable = names(vermodels_diagnostics)) %>% 
-  select(-method, -alternative)
 
 kable(vermodels_diagnostics_influence, 
       caption = "Vertical displacement: Correlation of artefact volume with Cook's distance values for each model")
 ```
 
+## Diagnostic plots for linear models of artefact orientation
 
 ```{r, ref.label = "verangles"}
 ```
@@ -203,19 +150,11 @@ kable(vermodels_diagnostics_influence,
 ```{r, ref.label = "orientplungcorr"}
 ```
 
-## Diagnostic plots for linear models of artefact orientation
+```{r, ref.label = "orientmodelsdiagnostics"}
+```
 
-```{r, orientmodelsdiagnostics,  fig.show = 'as.is'}
-orientmodels_diagnostics <-  
-  fifteen_orientations_tramp %>% 
-   gather(value, 
-         variable, 
-        -orient_change) %>% 
-  filter(value %in% vars_of_interest) %>% 
-  split(.$value) %>% 
-  map(~lm(as.vector(scale(orient_change)) ~ as.vector(scale(variable)), data = .)) 
-
-  orientmodels_diagnostics_plots <- 
+```{r,  fig.show = 'as.is'}
+orientmodels_diagnostics_plots <- 
   orientmodels_diagnostics %>% 
   map(~autoplot(., 
          which = 1:6, 
@@ -225,16 +164,6 @@ orientmodels_diagnostics <-
 
 orientmodels_diagnostics_plots
 
-# explore if bigger artefacts have outsize effect on relationships
-# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
-orientmodels_diagnostics_influence <- 
-orientmodels_diagnostics %>% 
-  map(~fortify(.)) %>% 
-  map(~cor.test(fifteen_orientations_tramp$volume, .x$.cooksd)) %>% 
-  map(~tidy(.)) %>% 
-  bind_rows() %>% 
-  mutate(variable = names(orientmodels_diagnostics)) %>% 
-  select(-method, -alternative)
 
 kable(orientmodels_diagnostics_influence, 
       caption = "Artefact orientation: Correlation of artefact volume with Cook's distance values for each model")
@@ -243,15 +172,12 @@ kable(orientmodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of artefact plunge
 
-```{r, plungemodelsdiagnostics,  fig.show = 'as.is'}
-plungemodels_diagnostics <- 
-  fifteen_plunge_tramp %>% 
- gather(value, 
-        variable, 
-        -plunge_change) %>% 
-  filter(value %in% vars_of_interest) %>% 
-  split(.$value) %>% 
-  map(~lm(as.vector(scale(plunge_change)) ~ as.vector(scale(variable)), data = .))
+
+```{r, ref.label = "plungemodelsdiagnostics"}
+```
+
+
+```{r,  fig.show = 'as.is'}
 
 plungemodels_diagnostics_plots <- 
   plungemodels_diagnostics %>% 
@@ -263,16 +189,6 @@ plungemodels_diagnostics_plots <-
 
 plungemodels_diagnostics_plots
 
-# explore if bigger artefacts have outsize effect on relationships
-# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
-plungemodels_diagnostics_influence <- 
-plungemodels_diagnostics %>% 
-  map(~fortify(.)) %>% 
-  map(~cor.test(fifteen_plunge_tramp$volume, .x$.cooksd)) %>% 
-  map(~tidy(.)) %>% 
-  bind_rows() %>% 
-  mutate(variable = names(plungemodels_diagnostics)) %>% 
-  select(-method, -alternative)
 
 kable(plungemodels_diagnostics_influence, 
       caption = "Artefact plunge: Correlation of artefact volume with Cook's distance values for each model")
@@ -284,4 +200,79 @@ kable(plungemodels_diagnostics_influence,
 unlink("temp")
 ```
 
+## Simulation of many trampling events
+
+How to determine the how deep is too deep for trampling to have an effect on an artefact? Here we look at the distribution of distances below the starting point, and assess which theoretical distribution is the best fit. 
+
+```{r}
+ggplot(ver.s, aes(displ)) + 
+  geom_histogram()
+
+# take the -ve values and fit a distribution
+# focus on the distrubution of moves when an artefact moves down
+negative_vert <- ver.s$displ[ver.s$displ < 0]
+
+library(fitdistrplus)
+library(logspline)
+
+descdist(negative_vert, discrete = FALSE)
+
+possible_distributions <- c("lnorm", "gamma",  "beta", "exp", "norm")
+
+# compute fits to distributions
+fits <- map(possible_distributions, ~fitdist(-negative_vert, .x))
+
+# for visual inspections
+map(fits, ~plot(.x))
+
+# find model with lowest AIC
+best_distribution <- 
+map_dbl(fits, ~.x$aic) %>% 
+  which.min() %>% 
+  possible_distributions[.]
+
+best_distribution_details <- 
+fits[[which(possible_distributions == best_distribution)]]
+```
+
+We evaluated `r length(possible_distributions)` possible distributions to find the best fit with our observed values of artefact displacement below the point of origin. Using visual inspection of diagnostic plots and the AIC valuess, we have determined that a `r best_distribution` distribution is the best fit for the observed vertical displacenent values.
+
+
+```{r}
+# generate a bunch of fitted gamma distributions
+n <- 1000
+many_fitted_distributions <- 
+replicate(n, rgamma(n = length(negative_vert), 
+                      shape = best_distribution_details$estimate[[1]], 
+                      rate= best_distribution_details$estimate[[2]]))
+
+
+
+data_to_plot <- 
+   data.frame(many_fitted_distributions,
+            observed_data = -negative_vert) %>% 
+   gather(variable, 
+          value)
+
+ggplot() +
+   geom_density(data = filter(data_to_plot, 
+                              grepl("X", variable)),
+                aes(value, 
+                    group = variable),
+               colour = alpha("grey70", 0.1)) +
+  geom_density(data = filter(data_to_plot, 
+                             variable == 'observed_data'),
+               aes(value),
+               colour = alpha("red", 1)) +
+   theme_minimal()
+```
+
+The plot above shows `r n` simulated `r best_distribution` distributions (in grey) and our observed distrubtion in red. 
+
+```{r}
+ninety_nine_point_five <- 
+qgamma(0.995, 
+       shape = best_distribution_details$estimate[[1]],
+       rate = best_distribution_details$estimate[[2]])
+```
 

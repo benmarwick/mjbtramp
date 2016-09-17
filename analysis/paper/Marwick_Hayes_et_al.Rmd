@@ -1177,8 +1177,37 @@ ggplot(all_models_ver,
               labels = c(0.75, 0.25, 0.05, 0.01, 0.005)) +
   guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21, 21)))) +
   facet_wrap(~ signed, ncol = 2)
+```
 
-   
+
+```{r, smallartefacts}
+
+# if we just consider the question of whether small artefacts tend to go deeper:
+ver_disp_artefact_long %>% 
+  filter(value %in% c("length(mm)", "width(mm)",  "thickness(mm)", "volume")) %>% 
+  mutate(value = ifelse(value == "length(mm)", "Length",
+                     ifelse(value == "thickness(mm)", "Thickness",
+                      ifelse(value == "volume", "Volume",
+                       ifelse(value == "width(mm)", "Width",
+                              NA))))) %>% 
+  group_by(value) %>% 
+  #bootstrap(100, by_group = TRUE) %>% 
+  do(tidy(cor.test(.$fifteen, .$variable))) %>% 
+  ungroup() %>% 
+  dplyr::select(value, 
+         estimate,
+         p.value) %>% 
+  map_if(is.numeric, ~round(., 3)) %>% 
+  bind_rows %>% 
+  arrange(estimate) %>% 
+  set_names(c("Variable",
+            "Pearson correlation",
+            "p-value")) %>% 
+  kable(caption = "Summary of correlations of artefact size and shape variables with the displacement below starting position after 15 minutes.")
+
+
+
+
 ```
 
 ```{r verangles, fig.cap="Vertical angles of artefact displacement, or the vertical angle that the artefact moved from its starting point to its location after each trampling event. Zero degrees is horizontal"}
@@ -1515,36 +1544,125 @@ Previous trampling studies show little agreement about the relationship between 
 
 On the other hand, Villa and Courtin [-@villa1983267] reported from their trampling experiment that artefacts lighter than 50 g were relatively mobile, moving vertically more than pieces heavier than 50 g, which tended to stay on or near their original location. They report no obvious correlations for horizontal movement and artefact size, but observed that while many lighter artefacts did not move far from their original locations, lighter pieces tended to move further than heavier artefacts. Gifford-Gonzalez et al. [-@GiffordGonzalez1985] found that none of the artefact metric variables they recorded correlated significantly with depth below surface (although no summary statistics or raw data are provided to support this claim). However, they note that their results may not be decisive because of the rarity of very large and very small artefacts in their sample (their artefacts had a maximum unoriented length of 3-13 mm, the majority were 3-6.5 mm). They further propose that the high dynamic range of trampling (i.e. highly vigorous) in their experiment may have prevented patterns from emerging in the interaction between the artefacts and the moving sediment. In a trampling experiment conducted by Driscoll et al. [-@driscoll2015trampled] vertical movements of artefacts were mostly less than 1 cm, with rare occurrences of greater than 2 cm. They observed no clear relationship between artefact size and vertical distance. In their low foot-traffic zone the largest artefacts had the greatest change in mean depth, while in the high traffic zone the smallest artefacts moved further. For horizontal movement, Driscoll et al. noted a clear pattern of the largest, thickest, and heaviest artefacts moving the greatest mean distance. But when they excluded the largest artefacts from the analysis (i.e. those with a maximum length of 35-40 mm, out of a total range of 10-40 mm in their sample), the relationship between distance and artefact size became very weak. 
 
-```{r, echo = FALSE}
-# extract code from SOM file into a new R file
-# so we can run select chunks from that in this file
-library(knitr)
+```{r, hormodelsdiagnostics}
 library(ggfortify)
-opts_chunk$set(echo = FALSE, 
-               messages = FALSE, 
-               warnings = FALSE, 
-               dpi = 300,
-               fig.show = 'hide')
-invisible(purl("Marwick_Hayes_et_al_SOM.Rmd",  
-               output="temp",
-               quiet=TRUE))
-read_chunk("temp")
-# now read relevant chunks of code from SOM...
+# compute linear models for hori
+hormodels_diagnostics <- 
+hor_disp_artefact %>% 
+  gather(value, 
+         variable, 
+         -fifteen) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  mutate(scale_hor_disp_artefact = as.vector(scale(fifteen)),
+         scale_variable = as.vector(scale(variable))) %>% 
+  split(.$value) %>% 
+  map(~lm(scale_hor_disp_artefact ~ scale_variable, data = .))
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+hormodels_diagnostics_influence <- 
+hormodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(hor_disp_artefact$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(hormodels_diagnostics)) %>% 
+  select(-method, -alternative)
 ```
 
-```{r, ref.label = "hormodelsdiagnostics", fig.show = 'hide', results = 'hide'}
+```{r, hordirmodelsdiagnostics}
+# compute linear models for hori
+hordirmodels_diagnostics <- 
+hor_dir_artefact %>% 
+  gather(value, 
+         variable, 
+         -angle_hor_displacement) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  mutate(scale_angle_hor_displacement = as.vector(scale(angle_hor_displacement)),
+         scale_variable = as.vector(scale(variable))) %>% 
+  split(.$value) %>% 
+  map(~lm(scale_angle_hor_displacement ~ scale_variable, data = .))
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+hordirmodels_diagnostics_influence <- 
+hordirmodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(hor_dir_artefact$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(hordirmodels_diagnostics)) %>% 
+  select(-method, -alternative)
 ```
 
-```{r, ref.label = "hordirmodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+```{r, vermodelsdiagnostics}
+vermodels_diagnostics <- 
+ ver_disp_artefact %>% 
+ gather(value, 
+        variable, 
+        -fifteen) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  mutate(scale_fifteen = as.vector(scale(fifteen)),
+         scale_variable = as.vector(scale(variable))) %>% 
+  split(.$value) %>% 
+  map(~lm(scale_fifteen ~ scale_variable, data = .))  
+
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+vermodels_diagnostics_influence <- 
+vermodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(ver_disp_artefact$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(vermodels_diagnostics)) %>% 
+  select(-method, -alternative)
 ```
 
-```{r, ref.label = "vermodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+```{r, orientmodelsdiagnostics}
+orientmodels_diagnostics <-  
+  fifteen_orientations_tramp %>% 
+   gather(value, 
+         variable, 
+        -orient_change) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  split(.$value) %>% 
+  map(~lm(as.vector(scale(orient_change)) ~ as.vector(scale(variable)), data = .)) 
+
+
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+orientmodels_diagnostics_influence <- 
+orientmodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(fifteen_orientations_tramp$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(orientmodels_diagnostics)) %>% 
+  select(-method, -alternative)
 ```
 
-```{r, ref.label = "orientmodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
-```
+```{r, plungemodelsdiagnostics}
+plungemodels_diagnostics <- 
+  fifteen_plunge_tramp %>% 
+ gather(value, 
+        variable, 
+        -plunge_change) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  split(.$value) %>% 
+  map(~lm(as.vector(scale(plunge_change)) ~ as.vector(scale(variable)), data = .))
 
-```{r, ref.label = "plungemodelsdiagnostics",  fig.show = 'hide', results = 'hide'}
+# explore if bigger artefacts have outsize effect on relationships
+# extract Cook's Distance and test for correlation between artefact volume and Cook's distance for each variable
+plungemodels_diagnostics_influence <- 
+plungemodels_diagnostics %>% 
+  map(~fortify(.)) %>% 
+  map(~cor.test(fifteen_plunge_tramp$volume, .x$.cooksd)) %>% 
+  map(~tidy(.)) %>% 
+  bind_rows() %>% 
+  mutate(variable = names(plungemodels_diagnostics)) %>% 
+  select(-method, -alternative)
 ```
 
 ```{r tblsizeinfluence}
@@ -1579,13 +1697,6 @@ bind_rows(hormodels_diagnostics_influence,
 
 ```
 
-
-```{r}
-# finished working with chunks from SOM so let's
-# delete the temp file we made from the SOM file
-unlink("temp")
-```
-
 Our results similarly showed weak, non-significant relationships between artefact length, width and thickness (as defined above) and horizontal distance, horizontal direction of movement, and unsigned (ie. absolute) vertical displacement after trampling. However, if we consider the direction of vertical movement, we found a positive significant relationship with length, width, thickness and volume, indicating that trampling causes larger artefacts to move above their starting position. That said, the adjusted R^2^ values on these relationships are low (0.1-0.3), indicating that these artefact metrics predict only 10-30% of the observed variation in vertical distance moved after trampling. 
 
 Our artefacts ranged in maximum unoriented length from `r min(tramp$'length(mm)')` mm to `r max(tramp$'length(mm)')` mm, a much greater range than reported by Gifford-Gonzalez et al. [-@GiffordGonzalez1985] and Driscoll et al. [-@driscoll2015trampled]. While Driscoll et al. noted a strong effect of larger artefacts in horizontal movement, we did not find a similar effect. Table \@ref(tab:tblsizeinfluence) shows that in our experiment the larger artefacts have an outsize influence only on the models describing artefact orientation and plunge (full details are reported in the SOM). We computed the Cook's [-@Cook1979] distance for each artefact in each model to identify the artefacts whose removal from the model would change the model coefficients the most [@FoxWeisberg2010]. Then we computed the correlation between an artefact's volume (as a measure of artefact size) and its Cook's distance value in each model. Strong significant correlations were found in the models using artefact length and thickness to predict change in artefact orientation, and for using length, thickness, width and volume to to predict change in artefact plunge. There were no signficant correlations between artefact volume and Cook's distance in models predicting horizontal or vertical movement, so bigger artefacts do not seem to have had an unusual influence on these relationships. 
@@ -1594,18 +1705,31 @@ Artefact shape variables have received limited consideration in previous studies
 
 In our experiments artefact shape variables were significant predictors for horizontal distance (shape and elongation have a positive relationship) and unsigned vertical distance (shape has a positive relationship, flatness has a negative relationship). Artefacts with high shape and elongation values are more discoidal, and artefacts with high shape and low flatness values are either discoidal or blade-like, depending on their elongation values (Figure \@ref(fig:zinggplotofartefacts)). These results differ from Barton and Bergman's [-@BartonBergman1982] observations that wider, flatter (i.e. discoidal) artefacts moved less. However, the adjusted R^2^ values for our models range between 0.1 and 0.3, indicating that although shape variables have a statistically significant role in influencing artefact movement during trampling, they have limited value for making specific predictions how far artefacts with certain shape attributes have moved due to prehistoric trampling. 
 
-## Simulation of long-term tramplin by resampling
+## Simulation of long-term trampling by resampling
 
-A common limitation of experimental studies of taphonomic processes such as trampling is the short time scale of experimental observations relative to the long time scales often represented by archaeological sites. The duration of our experiment was particularly short due to the unique use of the archaeological sediments in the spoil heap as the trampling substrate. In general, we lack experimental data on what patterns might emerge after years of occasasional trampling that might result from, for example, seasonal use of a rockshelter. To explore what might have happened if our experiment had run for a long time, we can simulate the effects of a large number of trampling events by resampling many times from the observed trampling event measurements. Yorsten et al. [@yorston1990simulation] describe this approach applied to the study the effect of ploughing on spatial distributions of ceramic sherds. They observed sherd locations at the Butser Ancient Farm Research Project over six years, fit a theoretical distribution to the distribution of experimental data, and evaluated the function at 10, 50, and 100 years. 
+A common limitation of experimental studies of taphonomic processes such as trampling is the short time scale of experimental observations relative to the long time scales often represented by archaeological sites. The duration of our experiment was particularly short due to the unique use of the archaeological sediments in the spoil heap as the trampling substrate. In general, we lack experimental data on what patterns might emerge after years of occasasional trampling that might result from, for example, seasonal use of a rockshelter. To explore what might have happened if our experiment had run for a long time, we can simulate the effects of a large number of trampling events by resampling many times from the observed trampling event measurements. Yorsten et al. [@yorston1990simulation] used this approach to the study the effect of ploughing on horizontal distributions of ceramic sherds. They observed sherd locations at the Butser Ancient Farm Research Project over six years, and simulated locations for various time intervals up to 200 years to show that ploughing can substantially alter surface distributions of ceramics. 
+
+Taking a similar approach, we computed the difference in co-ordinates of each artefact's location after each of the three trampling events that we observed. The difference in co-ordinates are the co-ordinates of an artefact's starting location minus the co-ordinates of its position at the end of the trampling event. To simulate artefact movement by trampling, we take each artefact in our sample and we randomly select one of its three observed differences in co-ordinates, and compute a new position for the artefact by adding these randomly selected co-ordinates to the artefact's starting co-ordintates. Then at this new position, we make another random selection from the three co-ordinate pairs, and add these co-ordinates to compute a new position. In each iteration we are taking the observed measurements specific to each artefact, and using them to compute new theoretical, but plausible, positions after a simulated trampling event. This differs slightly from Yorsten et al. [@yorston1990simulation], who used a probability distribution to displace each artefact in their simulation. Instead, we use the distribution of observed displacements because the displacement of the artefacts is determined, in part, by the specific shape and size of each artefact. If we repeat this process of computing new positions many times, we can simulate the movement of artefacts after a large number of events, which is challenging to do in practice. 
+
+```{r}
+negative_vert <- ver.s$displ[ver.s$displ < 0]
+library(fitdistrplus)
+fitted_dist <- fitdist(-negative_vert, "gamma")
+ninety_nine_point_five <- 
+qgamma(0.995, 
+       shape = fitted_dist$estimate[[1]],
+       rate = fitted_dist$estimate[[2]])
+ninety_nine_point_five <- round(ninety_nine_point_five, 3) 
 
 
- Simulations such as this are a trade-off between realism and [@Aldenderfer1991; ]
+```
 
-cite:  @kohler2015review lake2014trends
+Simulations such as this are a trade-off between a desire to be relevant to real-world conditions, and the limitations imposed by simplifications necessary to make the modelling tractable [@Aldenderfer1991; @kohler2015review; @lake2014trends]. One detail we need to consider to improve the realism of this simulation is that the impact of trampling activity declines with depth from ground surface, such that an artefact may have been trampled so deep below the surface that it is no longer in range of the majority of the trampling disturbance. To identify a realistic value for this depth, we computed the parameters for a gamma distribution to fit the distribution of observed values of artefact displacement below their starting locations (several other distributions were also explored, details are available in the SOM). Using this distribution, we determined that 99.9% of observations are above a depth of `r ninety_nine_point_five` m below the surface. This depth is consistent with our field observations of the depth of the upper 'dry layer' of mobile sands in the alluvial soils of Magella floodplain where Madjebebe is located. It is also close to the value of 16 cm for the maximum depth of the glass artefacts observed by Stockton [-@stockton1973shaw] in the sandy deposits of Shaw's Creek rockshelter. We used this gamma distribution to scale down the intensity of trampling as the depth of the artefact increased during the simulation. As an artefact in the simulation moves deeper, we multiplied the displacement co-ordinates of each iteration by the inverse probability of finding an artefact at that depth. 
 
-For each artefact, we computed the difference in co-ordinates of the artefact's location after each of the three trampling events we recorded. The difference in co-ordinates are the co-ordinates of an artefact's starting location minus the co-ordinates of its final position, after the trampling event. To simulate artefact movement by trampling, we take each artefact in our sample and we randomly select one of its three observed differences in co-ordinates, and compute a new position for the artefact using these randomly selected co-ordinates. Then at this new position, we make another random selection from the three co-ordinate pairs, and add these co-ordinates to compute a new position. In each case we are taking the observed measurements specific to each artefact, and using them to compute new theoretical positions after a simulated trampling event. If we repeat this many times, we can simulate the movement of artefacts after a large number of events, which is challenging to do empirically.    
 
-simulation or 1000s of trampling events by resampling bearing, hor-distance and ver-distance (independantly of each trampling event measurement) for each artefact to move it to new but plausible locations 
+
+
+  
 
 ```{r sim}
 # want hor and ver distances and hor bearings for 0-5, 5-10, 10-15 min
@@ -1621,7 +1745,7 @@ rbind(before,
       ten, 
       fifteen) %>% 
   # select only relevant rows
-  select(Description, 
+  dplyr::select(Description, 
          run.1, 
          Northing.1, 
          Easting.1, 
@@ -1629,7 +1753,7 @@ rbind(before,
   # make artefact ID column
   mutate(Description = gsub("_", "-", Description)) %>% 
   mutate(artefact = gsub("[A-Z].*-[A-Z].*-.*-", "", Description)) %>%
-  select(-Description) %>% 
+  dplyr::select(-Description) %>% 
   # make wide format so we have one row per artefact
   reshape(idvar = "artefact", 
            timevar = "run.1",
@@ -1662,23 +1786,23 @@ move_the_artefact <- function(artefact_num,
   df_artefact <- mydf[mydf$artefact == artefact_num, ]
   
   # starting location 
-  before <- select(df_artefact, 
+  before <- dplyr::select(df_artefact, 
                               Northing.1.B,
                               Easting.1.B,
                               Elevation.1.B)
   
   # diffs that we can resample from 
-  diff_coords_0_5 <- select(df_artefact, 
+  diff_coords_0_5 <- dplyr::select(df_artefact, 
                               Northing_B_to_5,
                               Easting_B_to_5,
                               Elevation_B_to_5)
   
-  diff_coords_5_10 <- select(df_artefact, 
+  diff_coords_5_10 <- dplyr::select(df_artefact, 
                               Northing_5_to_10,
                               Easting_5_to_10,
                               Elevation_5_to_10)
   
-  diff_coords_10_15 <- select(df_artefact, 
+  diff_coords_10_15 <- dplyr::select(df_artefact, 
                               Northing_10_to_15,
                               Easting_10_to_15,
                               Elevation_10_to_15)
@@ -1745,17 +1869,32 @@ move_artefact_n <-
                     artefact_event_coords_diffs,
                     n = n)
 
-# range of movement
+# get some variables to set the axis limits of the plot
+
+# range of hor movement
 rnge_n <- max(move_artefact_n$Northing) - min(move_artefact_n$Northing)
 rnge_e <- max(move_artefact_n$Easting) - min(move_artefact_n$Easting)
 rngs <- c(rnge_n, rnge_e)
 max_extent <- round(rngs[which.max(rngs)], 0)
 
+# hor xmin, ymin, etc. 
 const <- 1.2
 xmin <- median(move_artefact_n$Northing) - max_extent/const
 xmax <- median(move_artefact_n$Northing) + max_extent/const
 ymin <- median(move_artefact_n$Easting) - max_extent/const
 ymax <- median(move_artefact_n$Easting) + max_extent/const
+
+# range of vert movement
+rnge_vert <- max(move_artefact_n$Elevation) - min(move_artefact_n$Elevation)
+rngs_v <- c(rnge_n, rnge_vert)
+max_extent_v <- round(rngs_v[which.max(rngs_v)], 0)
+
+# vert xmin, ymin, etc. 
+vconst <- 1.2
+vxmin <- median(move_artefact_n$Northing) - max_extent_v/vconst
+vxmax <- median(move_artefact_n$Northing) + max_extent_v/vconst
+vymin <- median(move_artefact_n$Elevation) - max_extent_v/vconst
+vymax <- median(move_artefact_n$Elevation) + max_extent_v/vconst
 
 # plot plan to see horizontal movement
 hplot <- 
@@ -1771,7 +1910,7 @@ ggplot(move_artefact_n,
  coord_fixed(ratio = 1) +
   xlim(xmin, xmax) +
   ylim(ymin, ymax) +
-  ggtitle(paste0("Plan view of all artefact locations \nduring", n, " simulated events for artefact ", artefact_num))
+  ggtitle(paste0("Plan view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
 
 # plot section to see vertical movement
 vplot <- 
@@ -1785,6 +1924,8 @@ ggplot(move_artefact_n,
        size = 3)  +
   geom_point(alpha = 0.1) +
  coord_fixed(ratio = 1) +
+  xlim(vxmin, vxmax) +
+  ylim(vymin, vymax) +
   ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
 
 grid.arrange(hplot, vplot, ncol =  2)
@@ -1819,7 +1960,7 @@ move_all_the_artefacts <- function(n, artefact_event_coords_diffs){
 }
 
 # run the function to move all the artefacts:
-n <- 10 # how many times to move each artefact
+n <- 100 # how many times to move each artefact
 moved <- 
 move_all_the_artefacts(n = n, 
                       artefact_event_coords_diffs )
@@ -1827,32 +1968,65 @@ move_all_the_artefacts(n = n,
 
   
 ```{r}
+# get some variables to set the axis limits of the plot
+
+# range of hor movement
+rnge_n <- max(moved$Northing, na.rm = TRUE) - min(moved$Northing, na.rm = TRUE)
+rnge_e <- max(moved$Easting, na.rm = TRUE) - min(moved$Easting, na.rm = TRUE)
+rngs <- c(rnge_n, rnge_e)
+max_extent <- round(rngs[which.max(rngs)], 0)
+
+# hor xmin, ymin, etc. 
+const <- 1.2
+xmin <- median(moved$Northing, na.rm = TRUE) - max_extent/const
+xmax <- median(moved$Northing, na.rm = TRUE) + max_extent/const
+ymin <- median(moved$Easting, na.rm = TRUE) - max_extent/const
+ymax <- median(moved$Easting, na.rm = TRUE) + max_extent/const
+
+# range of vert movement
+rnge_vert <- max(moved$Elevation) - min(moved$Elevation)
+rngs_v <- c(rnge_n, rnge_vert)
+max_extent_v <- round(rngs_v[which.max(rngs_v)], 0)
+
+# vert xmin, ymin, etc. 
+vconst <- 1.2
+vxmin <- median(move_artefact_n$Northing) - max_extent_v/vconst
+vxmax <- median(move_artefact_n$Northing) + max_extent_v/vconst
+vymin <- median(move_artefact_n$Elevation) - max_extent_v/vconst
+vymax <- median(move_artefact_n$Elevation) + max_extent_v/vconst
+
 hplot <- 
 ggplot(moved,
        aes(Northing,
            Easting)) +
-  geom_point(alpha = 0.01) +
+  geom_point(alpha = 0.002) +
   geom_point(data = moved[moved$event == 1,],
        aes(Northing,
            Easting),
        colour = "red",
-       size = 3)  +
+       size = 1)  +
  coord_fixed(ratio = 1) +
-  ggtitle(paste0("Plan view of all artefact locations \nduring ", n, " simulated events for all artefacts"))
+  xlim(xmin, xmax) +
+  ylim(ymin, ymax) +
+  ggtitle(paste0("Plan view of all artefact \nlocations during ", n, " \nsimulated events for all artefacts")) +
+  theme_minimal()
 
 # plot section to see vertical movement
 vplot <- 
 ggplot(moved,
        aes(Northing,
            Elevation)) +
-  geom_point(alpha = 0.01) +
+  geom_point(alpha = 0.002) +
    geom_point(data = moved[moved$event == 1,],
        aes(Northing,
            Elevation),
        colour = "red",
-       size = 3)  +
+       size = 1)  +
  coord_fixed(ratio = 1) +
-  ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for all artefacts"))
+  xlim(vxmin, vxmax) +
+  ylim(vymin, vymax) +
+  ggtitle(paste0("Section view of all artefact \nlocations during ", n, " \nsimulated events for all artefacts")) +
+  theme_minimal()
 
 grid.arrange(hplot, vplot, ncol =  2)
 
@@ -1865,7 +2039,7 @@ start_elevations <- moved[moved$event == 1,]$Elevation
 ggplot(moved,
        aes(event,
            Elevation)) +
-  geom_point(alpha = 0.25) +
+  geom_point(alpha = 0.01) +
   geom_hline(aes(yintercept = mean(start_elevations)),
              colour = "red",
              size = 1)
@@ -1941,7 +2115,7 @@ hdist_cum_plot <-
 ggplot(move_keep_each_hdist_df_stack,
        aes(values,
            group = event)) +
-  geom_density( alpha = 0.5, linetype = 0, fill = "grey20") +
+  geom_density( alpha = 0.05, linetype = 0, fill = "grey20") +
   xlab(paste0("Horizontal distance (m) from starting point at the end of each of ", n, " events"))
 
 # same for vertical distances
@@ -1962,7 +2136,7 @@ vdist_cum_plot <-
 ggplot(move_keep_each_vdist_df_stack,
        aes(values,
            group = event)) +
-  geom_density( alpha = 0.2, linetype = 0, fill = "grey20") +
+  geom_density( alpha = 0.02, linetype = 0, fill = "grey20") +
   xlab(paste0("Vertical distance (m) from starting point at the end of each of ", n, " events"))
 
 grid.arrange(hdist_cum_plot, vdist_cum_plot, ncol = 1)
