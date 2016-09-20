@@ -17,7 +17,11 @@ abstract: |
 
 ```{r load_libraries, echo = FALSE}
 library(knitr)
-opts_chunk$set(echo = FALSE, messages = FALSE, warnings = FALSE, dpi = 300)
+opts_chunk$set(echo = FALSE, 
+               messages = FALSE, 
+               warnings = FALSE, 
+               dpi = 300,
+               cache = TRUE)
 suppressPackageStartupMessages(library(dplyr, quietly = TRUE))
 suppressPackageStartupMessages(library(ggplot2, quietly = TRUE))
 suppressPackageStartupMessages(library(gridExtra, quietly = TRUE))
@@ -375,7 +379,7 @@ minimum_age_if_trampled <- interpolate_chrono_data(dates_1989_tidy, depth_of_int
 
 ```
 
-Hiscock cited previous work [eg. @stockton1973shaw] that documented vertical movement of artefacts in the range of 20-40 cm. If movements of this magnitude are common in sandy deposits such as Madjedbebe, then the artefacts associated with the 52 and 61 ka BP dates may have originally been deposited on a much younger occupational surface, and then been displaced downward into older deposits that are unrelated to human occupation. Hiscock's suggestion is that, for example, an artefact at the level of the 52 ka date, 242 cm below the surface, may have originally been deposited during occupation at c. 200 cm below. Using a loess regression on the dates published in Clarkson et al. [-@Clarkson2015Madjedbebe], we can interpolate a calibrated age of `r round(minimum_age_if_trampled$age_at_depth_of_interest, 1)` ka BP for 200 cm below the surface. The difference in age of `r formatC((52 -  round(minimum_age_if_trampled$age_at_depth_of_interest, 0)) * 1000, big.mark=",",format="f", drop0trailing = TRUE)` years between 242 and 200 cm below the surface is substantial, and the ages at each depth have very different implications for the how we interpret the stone artefact assemblage. 
+Hiscock cited previous work [eg. @stockton1973shaw] that documented vertical movement of artefacts up to 16 cm. If movements of this magnitude are common in sandy deposits such as Madjedbebe, then the artefacts associated with the 52 and 61 ka BP dates may have originally been deposited on a much younger occupational surface, and then been displaced downward into older deposits that are unrelated to human occupation. Hiscock's suggestion is that, for example, an artefact at the level of the 52 ka date, 242 cm below the surface, may have originally been deposited during occupation at c. 200 cm below. Using a loess regression on the dates published in Clarkson et al. [-@Clarkson2015Madjedbebe], we can interpolate a calibrated age of `r round(minimum_age_if_trampled$age_at_depth_of_interest, 1)` ka BP for 200 cm below the surface. The difference in age of `r formatC((52 -  round(minimum_age_if_trampled$age_at_depth_of_interest, 0)) * 1000, big.mark=",",format="f", drop0trailing = TRUE)` years between 242 and 200 cm below the surface is substantial, and the ages at each depth have very different implications for the how we interpret the stone artefact assemblage. 
 
 Previously, we reported on two factors that suggest this kind of downward displacement has not been extensive at Madjedbebe [@Clarkson2015Madjedbebe]. First, we noted there there are several artefacts found within the same excavation unit that conjoin. We take these conjoins as evidence that downward displacement has had only a small effect on this assemblage. Second, we showed that there are clear changes in the abundance of raw materials over time. These changes would be heavily obscured if there was substantial downward displacement of artefacts at Madjedbebe. We believe it is unlikely that the all the artefacts associated with the 52 ka date are actually `r round(minimum_age_if_trampled$age_at_depth_of_interest, 1)` ka old, we recognise the potential for movement. However, we recognise the potential for artefact movement at the scale described by Hiscock, and with this experiment we intended to get a better understanding of what components of the lithic assemblage are most susceptible to this kind of downward displacement, and how much of the assemblage was displaced to this extent. 
 
@@ -576,8 +580,10 @@ We have archived the data resulting from the experiment at doi:XXXXX to enable i
 ```{r hordisp, results='hide'}
 # plots for 5, 10 , 15, three plots, side by side
 
-s <- 4.5 # point size
-a <- 0.2 # arrow size
+s <- 2 # point size
+a <- 0.1 # arrow size
+base_size = 6.5 # text size
+segment_size = 0.5
 
 ### plot hor displ starting locations ### 
 
@@ -611,7 +617,7 @@ plot_starting_location <- ggplot() +
   # plot options
   ylab("Easting (m)") +
   xlab("Northing (m)")  +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = base_size)
   
   
 plot_hor_5_min <- function(fill_5m = "grey40"){ 
@@ -647,19 +653,19 @@ plot_hor_5_min <- function(fill_5m = "grey40"){
                    xend = five1diff$Northing.1.y, 
                    yend = five1diff$Easting.1.y), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, color="black") +
+               size=segment_size, color="black") +
   geom_segment(aes(x =    five2diff$B.centre.N, 
                    y =    five2diff$B.centre.E, 
                    xend = five2diff$A5.centre.N, 
                    yend = five2diff$A5.centre.E), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, color="black") +
+               size=segment_size, color="black") +
   geom_segment(aes(x =    five4diff$B.centre.N, 
                    y =    five4diff$B.centre.E, 
                    xend = five4diff$A5.centre.N, 
                    yend = five4diff$A5.centre.E), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, color="black") 
+               size=segment_size, color="black") 
 }
 
 
@@ -717,7 +723,7 @@ plot_hor_10_min <- function(fill_5m = "grey40", fill_10m = "grey80"){
                    x =    five1diff$Northing.1.y, 
                    y =    five1diff$Easting.1.y), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, 
+               size=segment_size, 
                color="black") +
                                       
   geom_segment(aes(xend = ten2diff$A5.centre.N, 
@@ -725,14 +731,14 @@ plot_hor_10_min <- function(fill_5m = "grey40", fill_10m = "grey80"){
                    x =    five2diff$A5.centre.N, 
                    y =    five2diff$A5.centre.E), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, 
+               size=segment_size, 
                color="black") +
   geom_segment(aes(xend = ten4diff$A5.centre.N, 
                    yend = ten4diff$A5.centre.E, 
                    x =    five4diff$A5.centre.N, 
                    y =    five4diff$A5.centre.E), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, 
+               size=segment_size, 
                color="black")
 }
   
@@ -791,7 +797,7 @@ plot_hor_15_min <- function(fill_5m = "grey40", fill_10m = "grey80", fill_15m = 
                    x =    ten1diff$Northing.1.y, 
                    y =    ten1diff$Easting.1.y), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, 
+               size=segment_size, 
                color="black") +
                                         
   geom_segment(aes(xend = fifteen2diff$A5.centre.N, 
@@ -799,14 +805,14 @@ plot_hor_15_min <- function(fill_5m = "grey40", fill_10m = "grey80", fill_15m = 
                    x =    ten2diff$A5.centre.N, 
                    y =    ten2diff$A5.centre.E), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, 
+               size=segment_size, 
                color="black") +
   geom_segment(aes(xend = fifteen4diff$A5.centre.N, 
                    yend = fifteen4diff$A5.centre.E, 
                    x =    ten4diff$A5.centre.N, 
                    y =    ten4diff$A5.centre.E), 
                arrow = arrow(length = unit(a, "cm")), 
-               size=1, 
+               size=segment_size, 
                color="black") 
   
 }
@@ -816,16 +822,27 @@ plot1 <- plot_hor_5_min()  + ggtitle("0-5min")
 plot2 <- plot_hor_10_min() + ggtitle("0-5-10 min")
 plot3 <- plot_hor_15_min() + ggtitle("0-5-10-15 min")
 
-            
 g <- arrangeGrob(plot1, plot2, plot3, nrow=3) #generates g
 # grid.draw(g)
+# save to file 
 ggsave(file="../figures/horizontal_plots.png", g,
-       width = 6, height = 18,
-       dpi = 300)
+       width = 3, height = 9,
+       dpi = 600)
+
+# put them in a list
+three_plots <- list(plot1 = plot1,
+                    plot2 = plot2,
+                    plot3 = plot3)
+
+          
 ```
 
-```{r showhordispplot,  out.height = 4, fig.cap="Plots of horizontal displacement of artefacts after 5, 10 and 15 minutes of trampling."}
+```{r showhordispplot, fig.cap="Plots of horizontal displacement of artefacts after 5, 10 and 15 minutes of trampling."}
 knitr::include_graphics("../figures/horizontal_plots.png")
+
+# make the multi-panel plot!
+# do.call(grid.arrange, c(three_plots, list(ncol = 1)))
+
 ```
 
 ```{r hordispldists, fig.cap="Distributions of horizontal displacements of artefacts after 5, 10 and 15 minutes of trampling."}
@@ -1964,8 +1981,7 @@ ggplot(moved,
  coord_fixed(ratio = 1) +
   xlim(xmin, xmax) +
   ylim(ymin, ymax) +
-  ggtitle(paste0("Plan view of all artefact \nlocations 
-                 during ", n, " simulated events \nfor all artefacts")) +
+  ggtitle(paste0("Plan view of all artefact locations during \n", n, " simulated events for all artefacts")) +
   theme_minimal(base_size = base_size)
 
 # plot section to see vertical movement, not very informative.
@@ -2057,24 +2073,35 @@ plots <-  list(hplot = hplot,
                moved_n_h_plot = moved_n_h_plot)
 
 # set the layout...
-lay <- rbind(c(1,1,2),
-             c(1,1,3),
-             c(1,1,4))
+lay <- rbind(c(1,2,2),
+             c(1,3,3),
+             c(1,4,4))
 
 # make the multi-panel plot!
 do.call(grid.arrange, c(plots, list(layout_matrix = lay)))
 ```
 
-Figure \@ref(simplotpanels) summarises the results of our simulation (additional figures are included in the SOM). Horizontal movement is strongly determined by the direction of walking, with most artefacts between 0 and 50 m from their original location. In the left panel of Figure \@ref(simplotpanels) we can see two diffuse scatters to the upper and lower left of the starting location. This simulation demonstrates how trampling of a concentrated artefact scatter can result in low density scatters over a large area, and isolated finds of artefacts up to 100 m from their original location. The vertical distribution of artefacts at the end of the simulation shows that most artefacts end up 0.1 to 0.2 m below their starting positions. Most artefacts in the simulation move quickly towards the asymptotic depth where they are out of range of further trampling, and do not change their vertical location much after the first few hundred trampling events.  
+Figure \@ref(fig:simplotpanels) summarises the results of our simulation (additional figures are included in the SOM). Horizontal movement is strongly determined by the direction of walking, with most artefacts between 0 and 50 m from their original location. In the left panel of Figure \@ref(fig:simplotpanels) we can see two diffuse scatters to the upper and lower left of the starting location. This simulation demonstrates how trampling of a concentrated artefact scatter can result in low density scatters over a large area, and isolated finds of artefacts up to 100 m from their original location. The vertical distribution of artefacts at the end of the simulation shows that most artefacts end up 0.1 to 0.2 m below their starting positions. Most artefacts in the simulation move quickly towards the asymptotic depth where they are out of range of further trampling, and do not change their vertical location much after the first few hundred trampling events.  
 
 This simulation has two implications for artefacts in sandy deposits. First is that that horizontal patterning of artefacts may be strongly determined by the directions and duration of tramping events. This means that horizontal clusters of artefacts observed on real-world archaeological surfaces may be the result of trampling rather than prehistoric behaviour.  Secondly, the vertical distribution of artefacts is also altered by trampling, but rarely more than 0.1 to 0.2 m above or below their starting locations. These findings are consistent with the observations of Gifford-Gonzalez et al. [-@GiffordGonzalez1985] and Villa and Courtin [-@villa1983267] who report a  turbulent 'zone of constant cirulation' of loose, mobile substrate where trampling affects the location of artefacts. They also report artefacts migrating down to a stable zone where they are out of reach from further trampling, just as we observed here. One real-world application of this is that in a weakly stratified sandy deposit an assemblage of artefacts representing an archaeological instant (i.e. a few hours or days) may, after some trampling, be distributed across a depth of up to 0.1 to 0.2 m below its original position. 
+
+## Implications for the age of artefacts at Madjedbebe 
+
+```{r}
+depth_0.1 <- interpolate_chrono_data(dates_1989_tidy, depth_of_interest=287-10)
+depth_0.2 <- interpolate_chrono_data(dates_1989_tidy, depth_of_interest=287-20)
+
+```
+
+To return to the archaeological question that motivated this experiment, we can investigate the effect of 0.1 to 0.2 m of vertical spread of artefacts on determining the age of artefacts at Madjedbebe. The 0.4 m vertical migration proposed by Hiscock for artefacts Madjedbebe is much greater than what experimental data indicates would result from trampling. We acknowledge, of course, that trampling is not the only process that can vertically migrate artefacts, and may even be one of the least disruptive of post-depositional processes [@Wooddisturbance1978; @Steinearthworms1983]. Using the data published in Clarkson et al. [-@Clarkson2015Madjedbebe] and the results of this trampling experiment we can estimate new ages for the lowest artefacts at Madjedbebe.  For example, Clarkson et al. [-@Clarkson2015Madjedbebe] report the lowest artefacts at a depth of `r minimum_age_if_trampled$oldest_depth/100` m below the surface. Using the loess regression described above, we can compute an age of `r round(minimum_age_if_trampled$oldest,1)` ka for those sediments. If those artefacts were actually deposited on a surface 0.1 to 0.2 m above that depth, we can compute ages of `r round(depth_0.1$age_at_depth_of_interest,1)` ka to `r round(depth_0.2$age_at_depth_of_interest,1)` ka for those surfaces. The error term (two standard deviations) on the nearest OSL sample to these lowest artefacts is 8.2 ka (KTL-162), so the variation in the age of the artefacts due to trampling (`r round(minimum_age_if_trampled$oldest,1) - round(depth_0.2$age_at_depth_of_interest,1)` ka) is less than half of the error on the OSL age. This finding does not conclusively resolve the debate about the age of the oldest artefacts at this site -- questions remain about the effects of other post-depositional processes, and the degree of mixing of the sediment grains used in the OSL analysis [@allen2014both; allen2003colonised; @allen2004dating]. However, it does help us to understand the magnitude of the effect of trampling at this site, which seems to be low, relative to uncertainties in ages produced by OSL methods.
 
 # Conclusion
 
 # References 
 
-# Colophon
 
+
+## Colophon
 
 This report was generated on `r Sys.time()` using the following computational environment and dependencies: 
 
@@ -2088,6 +2115,6 @@ repo <- repository(path = "../..")
 last_commit <- commits(repo)[[1]]
 ```
 
-The current git commit of this file is `r last_commit@sha`, which is on the `r branches(repo)[[1]]@name` branch and was made by `r last_commit@committer@name` on `r when(last_commit)`. The current commit message is "`r last_commit@summary`". 
+The current git commit of this file is `r last_commit@sha`, which is on the `r branches(repo)[[1]]@name` branch and was made by `r last_commit@committer@name` on `r when(last_commit)`. The current commit message is "`r last_commit@summary`". The repository is online at https://github.com/benmarwick/mjbtramp
 
 

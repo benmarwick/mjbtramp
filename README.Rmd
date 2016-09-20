@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   fig.path = "README-"
 )
 ```
-[![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-6666ff.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![open materials](analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/) [![open data](analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/)
+[![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-brightgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-brightgreen.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp) [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp)   [![open materials](analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/) [![open data](analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/)
 
 ## Research compendium for a report on xxx
 
@@ -44,7 +44,7 @@ The `analysis/` directory contains:
 - supplementary information source files (in R markdown format)
 - executed versions of the supplementary files (in HTML format) and all the figures that are included in the paper (in the `figures/` directory)
 
-### The R package [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp)
+### The R package 
 
 This repository is organized as an R package. There are no actual R functions in this package - all the R code is in the Rmd file. I simply used the R package structure to help manage dependencies, to take advantage of continuous integration for automated code testing, and so I didn't have to think too much about how to organise the files. 
 
@@ -58,7 +58,7 @@ Once the download is complete, open the `mjbtramp.Rproj` in RStudio to begin wor
 
 The package has a number of dependencies on other R packages, and programs outside of R. These are listed at the bottom of this README. Installing these can be time-consuming and complicated, so we've done two things to simpify access to the compendium. First is the packrat directory, which contains the source code for all the packages we depend on. If all works well, these will be installed on your computer when you open `mjbtramp.Rproj` in RStudio. Second is our Docker image that includes all the necessary software, code and data to run our analysis. The Docker image may give a quicker entry point to the project, and is more self-contained, so might save some fiddling with installing things.   
 
-### The Docker image [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp)
+### The Docker image 
 
 A Docker image is a lightweight GNU/Linux virtual computer that can be run as a piece of software on Windows and OSX (and other Linux systems). To capture the complete computational environment used for this project we have a Dockerfile that specifies how to make the Docker image that we developed this project in. The Docker image includes all of the software dependencies needed to run the code in this project, as well as the R package and other compendium files. To launch the Docker image for this project, first, [install Docker](https://docs.docker.com/installation/) on your computer. At the Docker prompt, enter:
 
