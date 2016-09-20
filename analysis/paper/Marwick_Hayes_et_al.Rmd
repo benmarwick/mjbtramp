@@ -1242,13 +1242,6 @@ p <- ggplot(ver_and_hor) +
 suppressMessages(print(p))
 ```
 
-```{r corverhor}
-
-
-
-```
-
-
 ## Orientation and Plunge
 
 Our sample includes `r nrow(rbind(five2diff, five4diff))` artefacts with two or four total station points, enabling measurements of changes in the orientation of the artefact (ie. changes in the bearing of the long axis of the artefact) and plunge (ie. the vertical angle from the horizontal plane of the long axis of the artefact). Figure \@ref(fig:artefactplunge) shows that these changes are generally small, with most changes clustered around zero degrees (ie the bearing/plunge angle that the artefact was at before trampling). Only changes in orientation are significantly predicted by artefact shape and size attributes; there are no significant predictors for changes in artefact plunge angle (Figure \@ref(fig:plotorientplunge)). Similar to vertical displacement, artefact volume, width, length and thickness are all significant predictors of the magnitude of change in artefact orientation. Bigger artefacts tend to be rotated further from their original bearing.
@@ -1707,29 +1700,25 @@ In our experiments artefact shape variables were significant predictors for hori
 
 ## Simulation of long-term trampling by resampling
 
-A common limitation of experimental studies of taphonomic processes such as trampling is the short time scale of experimental observations relative to the long time scales often represented by archaeological sites. The duration of our experiment was particularly short due to the unique use of the archaeological sediments in the spoil heap as the trampling substrate. In general, we lack experimental data on what patterns might emerge after years of occasasional trampling that might result from, for example, seasonal use of a rockshelter. To explore what might have happened if our experiment had run for a long time, we can simulate the effects of a large number of trampling events by resampling many times from the observed trampling event measurements. Yorsten et al. [@yorston1990simulation] used this approach to the study the effect of ploughing on horizontal distributions of ceramic sherds. They observed sherd locations at the Butser Ancient Farm Research Project over six years, and simulated locations for various time intervals up to 200 years to show that ploughing can substantially alter surface distributions of ceramics. 
+A common limitation of experimental studies of taphonomic processes such as trampling is the short time scale of experimental observations relative to the long time scales often represented by archaeological sites. The duration of our experiment was particularly short due to the unique use of the archaeological sediments in the spoil heap as the trampling substrate. In general, we lack experimental data on what patterns might emerge after years of occasasional trampling that might result from, for example, seasonal use of a rockshelter. To explore what might have happened if our experiment had run for a long time, we can simulate the effects of a large number of trampling events by resampling many times from the observed trampling event measurements. Yorsten et al. [-@yorston1990simulation] used this approach to the study the effect of ploughing on horizontal distributions of ceramic sherds. They observed sherd locations at the Butser Ancient Farm Research Project over six years, and simulated locations for various time intervals up to 200 years to show that ploughing can substantially alter surface distributions of ceramics. 
 
-Taking a similar approach, we computed the difference in co-ordinates of each artefact's location after each of the three trampling events that we observed. The difference in co-ordinates are the co-ordinates of an artefact's starting location minus the co-ordinates of its position at the end of the trampling event. To simulate artefact movement by trampling, we take each artefact in our sample and we randomly select one of its three observed differences in co-ordinates, and compute a new position for the artefact by adding these randomly selected co-ordinates to the artefact's starting co-ordintates. Then at this new position, we make another random selection from the three co-ordinate pairs, and add these co-ordinates to compute a new position. In each iteration we are taking the observed measurements specific to each artefact, and using them to compute new theoretical, but plausible, positions after a simulated trampling event. This differs slightly from Yorsten et al. [@yorston1990simulation], who used a probability distribution to displace each artefact in their simulation. Instead, we use the distribution of observed displacements because the displacement of the artefacts is determined, in part, by the specific shape and size of each artefact. If we repeat this process of computing new positions many times, we can simulate the movement of artefacts after a large number of events, which is challenging to do in practice. 
+Taking a similar approach, we computed the difference in co-ordinates of each artefact's location after each of the three trampling events that we observed. The difference in co-ordinates are the co-ordinates of an artefact's starting location minus the co-ordinates of its position at the end of the trampling event. To simulate artefact movement by trampling, we take each artefact in our sample and we randomly select one of its three observed differences in co-ordinates, and compute a new position for the artefact by adding these randomly selected co-ordinates to the artefact's starting co-ordintates. Then at this new position, we make another random selection from the three co-ordinate pairs, and add these co-ordinates to compute a new position. In each iteration we are taking the observed measurements specific to each artefact, and using them to compute new theoretical, but plausible, positions after a simulated trampling event. This differs slightly from Yorsten et al. [-@yorston1990simulation], who used a probability distribution to displace each artefact in their simulation. Instead, we use the observed displacement values directly, because the displacement of the artefacts is determined, in part, by the specific shape and size of each artefact. If we repeat this process of computing new positions many times, we can simulate the movement of artefacts after a large number of events, which is challenging to do in practice. 
 
 ```{r}
 negative_vert <- ver.s$displ[ver.s$displ < 0]
-library(fitdistrplus)
+suppressPackageStartupMessages(library(fitdistrplus))
 fitted_dist <- fitdist(-negative_vert, "gamma")
 ninety_nine_point_five <- 
 qgamma(0.995, 
        shape = fitted_dist$estimate[[1]],
        rate = fitted_dist$estimate[[2]])
 ninety_nine_point_five <- round(ninety_nine_point_five, 3) 
-
-
 ```
 
-Simulations such as this are a trade-off between a desire to be relevant to real-world conditions, and the limitations imposed by simplifications necessary to make the modelling tractable [@Aldenderfer1991; @kohler2015review; @lake2014trends]. One detail we need to consider to improve the realism of this simulation is that the impact of trampling activity declines with depth from ground surface, such that an artefact may have been trampled so deep below the surface that it is no longer in range of the majority of the trampling disturbance. To identify a realistic value for this depth, we computed the parameters for a gamma distribution to fit the distribution of observed values of artefact displacement below their starting locations (several other distributions were also explored, details are available in the SOM). Using this distribution, we determined that 99.9% of observations are above a depth of `r ninety_nine_point_five` m below the surface. This depth is consistent with our field observations of the depth of the upper 'dry layer' of mobile sands in the alluvial soils of Magella floodplain where Madjebebe is located. It is also close to the value of 16 cm for the maximum depth of the glass artefacts observed by Stockton [-@stockton1973shaw] in the sandy deposits of Shaw's Creek rockshelter. We used this gamma distribution to scale down the intensity of trampling as the depth of the artefact increased during the simulation. As an artefact in the simulation moves deeper, we multiplied the displacement co-ordinates of each iteration by the inverse probability of finding an artefact at that depth. 
+Simulations such as this are a trade-off between a desire to be relevant to real-world conditions, and the limitations imposed by assumptions and simplifications necessary to make the modelling tractable [@Aldenderfer1991; @kohler2015review; @lake2014trends]. In our model we assume that the surface that the artefacts rest on is clear, stable and flat, and that there is not acculumuation or erosion of the substrate. Obviously this is unrealistic, but because we do not have high resolution data on the relationship between sediment accumulation rates and site occupation rates (e.g. was the site was visited one week every ten years, or three hours every month? Were sedimentation rates continuuous or strongly seasonal? Were there cycles of erosion and deposition, or contant deposition?), we prefer not to speculate about these details in our simulation. 
 
+One detail that is important for improving the realism of this simulation is that the impact of trampling activity declines with depth from ground surface, such that an artefact may eventually be trampled so deep below the surface that it is no longer in range of trampling disturbance. To identify a realistic value for this depth, we computed the parameters for a gamma distribution to fit the distribution of observed values of artefact displacement below their starting locations (several other distributions were also explored, details are available in the SOM). Using this distribution, we determined that 99.9% of observations are above a depth of `r ninety_nine_point_five` m below the surface. This depth is consistent with our field observations of the depth of the upper 'dry layer' of mobile sands in the alluvial soils of Magella floodplain where Madjebebe is located. It is also close to the value of 16 cm for the maximum depth of the glass artefacts observed by Stockton [-@stockton1973shaw] in his experiment in the sandy deposits of Shaw's Creek rockshelter. We used this gamma distribution to scale down the intensity of trampling as the depth of the artefact increased during the simulation. As an artefact in the simulation moves deeper, we multiplied the displacement co-ordinates of each iteration by the inverse probability of finding an artefact at that depth.
 
-
-
-  
 
 ```{r sim}
 # want hor and ver distances and hor bearings for 0-5, 5-10, 10-15 min
@@ -1832,10 +1821,45 @@ move_the_artefact <- function(artefact_num,
    # this event by randomly sampling for the diffs
    # for the artefact that we observed during the experiment
        if(i == 1){
+          # if this is the first move, use the starting point coords
        artefact_coords_simulated[[1]] <-  starting_location
         }else{
+          
+          # check the depth this artefact is at 
+          # before adding this random draw...
+        current_depth_below_start <- 
+          artefact_coords_simulated[[j]][, 3] - # current elevation
+          before[,3] # previous location
+          
+        #print(paste0("current_depth_below_start: ", current_depth_below_start))
+        
+          # scale down the vertical displacement based on gamma distribution
+          # this artefact is already, we'll apply this to 
+          # artefacts moving up also, to contstrain how 
+          # high artefacts will go
+        vertical_multiplication_factor <- 
+          1 - pgamma(abs(current_depth_below_start), # must be +ve 
+                     shape = fitted_dist$estimate[[1]], 
+                     rate = fitted_dist$estimate[[2]])
+        #print(paste0("vertical_multiplication_factor: ", vertical_multiplication_factor))
+        
+          # get a random draw from the observed coords for this artefact
+        random_draw <- diff_list[[sample(3, 1)]]
+        #print("unaltered random draw")
+        #print(random_draw[,3])
+        
+          # adjust the elevation, it's the third column, using
+          # the multiplication factor we computed above
+        random_draw[, 3] <- 
+          random_draw[, 3] * vertical_multiplication_factor
+          #print("altered random draw")
+          #print(random_draw[,3])
+  
+          # apply random draw from observed coords to this artefact
         artefact_coords_simulated[[i]] <- 
-    starting_location + diff_list[[sample(3, 1)]]
+    starting_location + random_draw
+        
+        #print(i)
         }
     
   }
@@ -1858,80 +1882,10 @@ move_the_artefact <- function(artefact_num,
   return(artefact_coords_simulated_df)
   
 }
-
-
-# move one artefact n times and look at the results
-
-n <- 100
-artefact_num = 46
-move_artefact_n <- 
-  move_the_artefact(artefact_num, 
-                    artefact_event_coords_diffs,
-                    n = n)
-
-# get some variables to set the axis limits of the plot
-
-# range of hor movement
-rnge_n <- max(move_artefact_n$Northing) - min(move_artefact_n$Northing)
-rnge_e <- max(move_artefact_n$Easting) - min(move_artefact_n$Easting)
-rngs <- c(rnge_n, rnge_e)
-max_extent <- round(rngs[which.max(rngs)], 0)
-
-# hor xmin, ymin, etc. 
-const <- 1.2
-xmin <- median(move_artefact_n$Northing) - max_extent/const
-xmax <- median(move_artefact_n$Northing) + max_extent/const
-ymin <- median(move_artefact_n$Easting) - max_extent/const
-ymax <- median(move_artefact_n$Easting) + max_extent/const
-
-# range of vert movement
-rnge_vert <- max(move_artefact_n$Elevation) - min(move_artefact_n$Elevation)
-rngs_v <- c(rnge_n, rnge_vert)
-max_extent_v <- round(rngs_v[which.max(rngs_v)], 0)
-
-# vert xmin, ymin, etc. 
-vconst <- 1.2
-vxmin <- median(move_artefact_n$Northing) - max_extent_v/vconst
-vxmax <- median(move_artefact_n$Northing) + max_extent_v/vconst
-vymin <- median(move_artefact_n$Elevation) - max_extent_v/vconst
-vymax <- median(move_artefact_n$Elevation) + max_extent_v/vconst
-
-# plot plan to see horizontal movement
-hplot <- 
-ggplot(move_artefact_n,
-       aes(Northing,
-           Easting)) +
-  geom_point(alpha = 0.1) +
-  geom_point(data = move_artefact_n[1,],
-       aes(Northing,
-           Easting),
-       colour = "red",
-       size = 3)  +
- coord_fixed(ratio = 1) +
-  xlim(xmin, xmax) +
-  ylim(ymin, ymax) +
-  ggtitle(paste0("Plan view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
-
-# plot section to see vertical movement
-vplot <- 
-ggplot(move_artefact_n,
-       aes(Northing,
-           Elevation)) +
-  geom_point(data = move_artefact_n[1,],
-       aes(Northing,
-           Elevation),
-       colour = "red",
-       size = 3)  +
-  geom_point(alpha = 0.1) +
- coord_fixed(ratio = 1) +
-  xlim(vxmin, vxmax) +
-  ylim(vymin, vymax) +
-  ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
-
-grid.arrange(hplot, vplot, ncol =  2)
 ```
 
-```{r}
+
+```{r simmovealltheartefacts}
 # function to move ALL the artefacts n many times
 
 move_all_the_artefacts <- function(n, artefact_event_coords_diffs){
@@ -1960,7 +1914,7 @@ move_all_the_artefacts <- function(n, artefact_event_coords_diffs){
 }
 
 # run the function to move all the artefacts:
-n <- 100 # how many times to move each artefact
+n <- 1000 # how many times to move each artefact
 moved <- 
 move_all_the_artefacts(n = n, 
                       artefact_event_coords_diffs )
@@ -1968,13 +1922,15 @@ move_all_the_artefacts(n = n,
 
   
 ```{r}
+# set the font size for the plots
+base_size <- 8
 # get some variables to set the axis limits of the plot
 
 # range of hor movement
 rnge_n <- max(moved$Northing, na.rm = TRUE) - min(moved$Northing, na.rm = TRUE)
 rnge_e <- max(moved$Easting, na.rm = TRUE) - min(moved$Easting, na.rm = TRUE)
 rngs <- c(rnge_n, rnge_e)
-max_extent <- round(rngs[which.max(rngs)], 0)
+max_extent <- round(rngs[which.max(rngs)], 3)
 
 # hor xmin, ymin, etc. 
 const <- 1.2
@@ -1986,14 +1942,14 @@ ymax <- median(moved$Easting, na.rm = TRUE) + max_extent/const
 # range of vert movement
 rnge_vert <- max(moved$Elevation) - min(moved$Elevation)
 rngs_v <- c(rnge_n, rnge_vert)
-max_extent_v <- round(rngs_v[which.max(rngs_v)], 0)
+max_extent_v <- round(rngs_v[which.max(rngs_v)], 3)
 
 # vert xmin, ymin, etc. 
 vconst <- 1.2
-vxmin <- median(move_artefact_n$Northing) - max_extent_v/vconst
-vxmax <- median(move_artefact_n$Northing) + max_extent_v/vconst
-vymin <- median(move_artefact_n$Elevation) - max_extent_v/vconst
-vymax <- median(move_artefact_n$Elevation) + max_extent_v/vconst
+vxmin <- median(moved$Northing) - max_extent_v/vconst
+vxmax <- median(moved$Northing) + max_extent_v/vconst
+vymin <- median(moved$Elevation) - max_extent_v/vconst
+vymax <- median(moved$Elevation) + max_extent_v/vconst
 
 hplot <- 
 ggplot(moved,
@@ -2008,10 +1964,11 @@ ggplot(moved,
  coord_fixed(ratio = 1) +
   xlim(xmin, xmax) +
   ylim(ymin, ymax) +
-  ggtitle(paste0("Plan view of all artefact \nlocations during ", n, " \nsimulated events for all artefacts")) +
-  theme_minimal()
+  ggtitle(paste0("Plan view of all artefact \nlocations 
+                 during ", n, " simulated events \nfor all artefacts")) +
+  theme_minimal(base_size = base_size)
 
-# plot section to see vertical movement
+# plot section to see vertical movement, not very informative.
 vplot <- 
 ggplot(moved,
        aes(Northing,
@@ -2025,10 +1982,8 @@ ggplot(moved,
  coord_fixed(ratio = 1) +
   xlim(vxmin, vxmax) +
   ylim(vymin, vymax) +
-  ggtitle(paste0("Section view of all artefact \nlocations during ", n, " \nsimulated events for all artefacts")) +
-  theme_minimal()
-
-grid.arrange(hplot, vplot, ncol =  2)
+  ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for all artefacts")) +
+  theme_minimal(base_size = base_size)
 
 ```
 
@@ -2036,15 +1991,29 @@ grid.arrange(hplot, vplot, ncol =  2)
 # movement over time
 
 start_elevations <- moved[moved$event == 1,]$Elevation
+
+vertical_over_time <- 
 ggplot(moved,
        aes(event,
            Elevation)) +
-  geom_point(alpha = 0.01) +
+  geom_point(alpha = 0.005) +
   geom_hline(aes(yintercept = mean(start_elevations)),
              colour = "red",
-             size = 1)
+             size = 1) +
+  geom_segment(aes(x = 0,
+                   y = min(start_elevations),
+                   xend = 0,
+                   yend = max(start_elevations)),
+        colour = "red",
+        size = 3) +
+  ylab("Elevation (m)") +
+  xlab("Simulation event") +
+  theme_minimal(base_size = base_size)
+# Vertical line shows the full vertical distribution of starting positions
 
 # distribution of ver at event n
+n <- n
+vertical_distributions <- 
 ggplot(moved[moved$event == n,],
        aes(Elevation)) +
   geom_histogram(bins = 50) +
@@ -2067,7 +2036,8 @@ moved_n_v_plot <-
 ggplot(moved_n,
        aes(vdist)) +
   geom_histogram(bins = 20) +
-  xlab(paste0("Vertical distance (m) from starting point after ", n, " events"))
+  xlab(paste0("Vertical distance (m) from starting point\n after ", n, " events")) +
+  theme_minimal(base_size = base_size)
   
 
 # distribution of hor dist at position of last event
@@ -2075,76 +2045,31 @@ moved_n_h_plot <-
 ggplot(moved_n,
        aes(hdist)) +
   geom_histogram(bins = 20) +
-  xlab(paste0("Horizontal distance (m) from starting point after ", n, " events"))
-
-grid.arrange(moved_n_v_plot, moved_n_h_plot, ncol = 1)
-
+  xlab(paste0("Horizontal distance (m) from starting point\n after ", n, " events")) +
+  theme_minimal(base_size = base_size)
 ```
 
-```{r}
-  
+```{r simplotpanels, fig.cap="Summary of a simulation of artefact trampling. Left panel shows the plan view of artefact locations during the simulation, the red area indicates the starting locations of the artefacts. Upper right panel shows change in artefact elevation during the simulation, the horizontal red line shows the mean starting elevation of the artefacts, and the short vertical red line shows the range of starting elevations for the artefacts. Middle right panel shows the distribution of vertical displacement of artefacts after 1000 simulated trampling events. Lower right panel shows distribution of horizontal displacement of artefacts after 1000 simulated trampling events.", fig.width=10}
+# get the named list of plots...
+plots <-  list(hplot = hplot, 
+               vertical_over_time = vertical_over_time, 
+               moved_n_v_plot  = moved_n_v_plot, 
+               moved_n_h_plot = moved_n_h_plot)
 
-# run the function to move all the artefacts, and keep the results after each event so we can see the cumulative effect
-n <- 100 # how many times to move each artefact
-move_keep_each <- vector("list", n)
-for(i in 1:n){
-  move_keep_each[[i]] <- 
-move_all_the_artefacts(n = i, artefact_event_coords_diffs)
-}
+# set the layout...
+lay <- rbind(c(1,1,2),
+             c(1,1,3),
+             c(1,1,4))
 
-move_keep_each <- 
-lapply(move_keep_each, function(i) i[i$event == max(i$event),])
-
-move_keep_each_hdist <-
-  lapply(move_keep_each, function(i) 
-  sqrt(
-    (artefact_event_coords_diffs$Northing.1.B - i$Northing)^2 +
-    (artefact_event_coords_diffs$Easting.1.B  - i$Easting)^2
- ))
-
-move_keep_each_hdist_df <- data.frame(do.call(cbind, move_keep_each_hdist))
-move_keep_each_hdist_df_stack <- stack(move_keep_each_hdist_df)
-move_keep_each_hdist_df_stack$event <- 
-  as.numeric(move_keep_each_hdist_df_stack$ind)
-move_keep_each_hdist_df_stack$event <-
-  factor(move_keep_each_hdist_df_stack$event,
-         levels = 1:n)
-
-# plot h dist cumulative
-hdist_cum_plot <- 
-ggplot(move_keep_each_hdist_df_stack,
-       aes(values,
-           group = event)) +
-  geom_density( alpha = 0.05, linetype = 0, fill = "grey20") +
-  xlab(paste0("Horizontal distance (m) from starting point at the end of each of ", n, " events"))
-
-# same for vertical distances
-move_keep_each_vdist <-
-  lapply(move_keep_each, function(i) 
-  artefact_event_coords_diffs$Elevation.1.B - i$Elevation)
-
-move_keep_each_vdist_df <- data.frame(do.call(cbind, move_keep_each_vdist))
-move_keep_each_vdist_df_stack <- stack(move_keep_each_vdist_df)
-move_keep_each_vdist_df_stack$event <- 
-  as.numeric(move_keep_each_vdist_df_stack$ind)
-move_keep_each_vdist_df_stack$event <-
-  factor(move_keep_each_vdist_df_stack$event,
-         levels = 1:n)
-
-# plot v dist cumulative
-vdist_cum_plot <- 
-ggplot(move_keep_each_vdist_df_stack,
-       aes(values,
-           group = event)) +
-  geom_density( alpha = 0.02, linetype = 0, fill = "grey20") +
-  xlab(paste0("Vertical distance (m) from starting point at the end of each of ", n, " events"))
-
-grid.arrange(hdist_cum_plot, vdist_cum_plot, ncol = 1)
-
-
+# make the multi-panel plot!
+do.call(grid.arrange, c(plots, list(layout_matrix = lay)))
 ```
 
 
+Figure \@ref(simplotpanels) summarises the results of our simulation (additional figures are included in the SOM). Horizontal movement is strongly determined by the direction of walking, with most artefacts between 0 and 50 m from their original location. This simulation demonstrates how trampling of a concentrated artefact scatter can result in a low density scatter over a large area, and isolated finds of artefacts up to 100 m from their original location. The vertical distribution of artefacts at the end of the simulation shows that most artefacts end up 0.1 to 0.2 m below their starting positions. Most artefacts in the simulation move quickly towards the asymptotic depth where they are out of range of further trampling, and do not change their vertical location much after the first few hundred trampling events.  
+
+The implications of these results are 
+ 
 
 # Conclusion
 
@@ -2158,7 +2083,7 @@ This report was generated on `r Sys.time()` using the following computational en
 ```{r colophon, cache = FALSE}
 # which R packages and versions?
 devtools::session_info()
-
+ 
 # what commit is this file at?
 library(git2r)
 repo <- repository(path = "../..")

@@ -56,6 +56,41 @@ read_chunk("temp")
 ```{r, ref.label = "hormodels"}
 ```
 
+## Visualising individual artefact movements
+
+In the plot below we can see the vertical distance each artefact has moved after each trampling event.  
+
+```{r}
+artefact_num <- 33
+ver_indiv_plot <- 
+ver %>% 
+  gather(variable, 
+         value,
+         -artefact) %>% 
+  mutate(variable = ifelse(variable == 'five', 5,
+                        ifelse(variable == 'ten', 10,
+                          ifelse(variable == 'fifteen', 15, NA))))
+
+ggplot(ver_indiv_plot, aes(variable, 
+             value,
+             group = artefact)) +
+  geom_point() +
+  geom_text_repel(data = ver_indiv_plot[ver_indiv_plot$variable == 10,],
+                  aes(label = artefact)) +
+  geom_line() +
+  ylab("Vertical displacement") +
+  xlab("Trampling event (mins)") +
+  scale_x_continuous(breaks = c(5, 10, 15),
+                     labels = c(5, 10, 15)) +
+  theme_minimal()
+
+
+
+
+```
+
+
+
 ## Diagnostic plots for linear models of horizontal displacement of artefacts
 
 ```{r, ref.label = "hormodelsdiagnostics"}
@@ -195,10 +230,6 @@ kable(plungemodels_diagnostics_influence,
  
 ```
 
-```{r}
-# delete the temp file we made at the top of this file
-unlink("temp")
-```
 
 ## Simulation of many trampling events
 
@@ -213,7 +244,6 @@ ggplot(ver.s, aes(displ)) +
 negative_vert <- ver.s$displ[ver.s$displ < 0]
 
 library(fitdistrplus)
-library(logspline)
 
 descdist(negative_vert, discrete = FALSE)
 
@@ -236,6 +266,9 @@ fits[[which(possible_distributions == best_distribution)]]
 ```
 
 We evaluated `r length(possible_distributions)` possible distributions to find the best fit with our observed values of artefact displacement below the point of origin. Using visual inspection of diagnostic plots and the AIC valuess, we have determined that a `r best_distribution` distribution is the best fit for the observed vertical displacenent values.
+
+```{r ref.label = "sim"}
+```
 
 
 ```{r}
@@ -264,7 +297,8 @@ ggplot() +
                              variable == 'observed_data'),
                aes(value),
                colour = alpha("red", 1)) +
-   theme_minimal()
+   theme_minimal() +
+   xlab("Depth below starting location (m)")
 ```
 
 The plot above shows `r n` simulated `r best_distribution` distributions (in grey) and our observed distrubtion in red. 
@@ -276,3 +310,378 @@ qgamma(0.995,
        rate = best_distribution_details$estimate[[2]])
 ```
 
+
+```{r simplottingoneartefact}
+# move one artefact n times and look at the results
+
+n <- 1000
+artefact_num = 31
+move_artefact_n <- 
+  move_the_artefact(artefact_num, 
+                    artefact_event_coords_diffs,
+                    n = n)
+
+# get some variables to set the axis limits of the plot
+
+# range of hor movement
+rnge_n <- max(move_artefact_n$Northing) - min(move_artefact_n$Northing)
+rnge_e <- max(move_artefact_n$Easting) - min(move_artefact_n$Easting)
+rngs <- c(rnge_n, rnge_e)
+max_extent <- round(rngs[which.max(rngs)], 2)
+
+# hor xmin, ymin, etc. 
+const <- 1.2
+xmin <- median(move_artefact_n$Northing) - max_extent/const
+xmax <- median(move_artefact_n$Northing) + max_extent/const
+ymin <- median(move_artefact_n$Easting) - max_extent/const
+ymax <- median(move_artefact_n$Easting) + max_extent/const
+
+# range of vert movement
+rnge_vert <- max(move_artefact_n$Elevation) - min(move_artefact_n$Elevation)
+rngs_v <- c(rnge_n, rnge_vert)
+max_extent_v <- round(rngs_v[which.max(rngs_v)], 2)
+
+# vert xmin, ymin, etc. 
+vconst <- 0.5
+vxmin <- median(move_artefact_n$Northing) - max_extent_v/vconst
+vxmax <- median(move_artefact_n$Northing) + max_extent_v/vconst
+vymin <- median(move_artefact_n$Elevation) - max_extent_v/vconst
+vymax <- median(move_artefact_n$Elevation) + max_extent_v/vconst
+
+# plot plan to see horizontal movement
+hplot <- 
+ggplot(move_artefact_n,
+       aes(Northing,
+           Easting)) +
+  geom_point(alpha = 0.1) +
+  geom_point(data = move_artefact_n[1,],
+       aes(Northing,
+           Easting),
+       colour = "red",
+       size = 3)  +
+ coord_fixed(ratio = 1) +
+  xlim(xmin, xmax) +
+  ylim(ymin, ymax) +
+  ggtitle(paste0("Plan view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
+
+# plot section to see vertical movement
+vplot <- 
+ggplot(move_artefact_n,
+       aes(Northing,
+           Elevation)) +
+  geom_point(data = move_artefact_n[1,],
+       aes(Northing,
+           Elevation),
+       colour = "red",
+       size = 3)  +
+  geom_point(alpha = 0.1) +
+ coord_fixed(ratio = 1) +
+  xlim(vxmin, vxmax) +
+  ylim(vymin, vymax) +
+  ggtitle(paste0("Section view of all artefact locations \nduring ", n, " simulated events for artefact ", artefact_num))
+
+grid.arrange(hplot, vplot, ncol =  2)
+```
+
+
+```{r, eval = FALSE}
+# run the function to move all the artefacts, and keep the results after each event so we can see the cumulative effect. 
+
+n <- 10 # how many times to move each artefact
+move_keep_each <- vector("list", n)
+for(i in 1:n){
+  move_keep_each[[i]] <- 
+move_all_the_artefacts(n = i, artefact_event_coords_diffs)
+}
+
+move_keep_each <- 
+lapply(move_keep_each, function(i) i[i$event == max(i$event),])
+
+move_keep_each_hdist <-
+  lapply(move_keep_each, function(i) 
+  sqrt(
+    (artefact_event_coords_diffs$Northing.1.B - i$Northing)^2 +
+    (artefact_event_coords_diffs$Easting.1.B  - i$Easting)^2
+ ))
+
+move_keep_each_hdist_df <- data.frame(do.call(cbind, move_keep_each_hdist))
+move_keep_each_hdist_df_stack <- stack(move_keep_each_hdist_df)
+move_keep_each_hdist_df_stack$event <- 
+  as.numeric(move_keep_each_hdist_df_stack$ind)
+move_keep_each_hdist_df_stack$event <-
+  factor(move_keep_each_hdist_df_stack$event,
+         levels = 1:n)
+
+# plot h dist cumulative
+hdist_cum_plot <- 
+ggplot(move_keep_each_hdist_df_stack,
+       aes(values,
+           group = event)) +
+  geom_density( alpha = 0.05, linetype = 0, fill = "grey20") +
+  xlab(paste0("Horizontal distance (m) from starting point at the end of each of ", n, " events"))
+
+# same for vertical distances
+move_keep_each_vdist <-
+  lapply(move_keep_each, function(i) 
+  artefact_event_coords_diffs$Elevation.1.B - i$Elevation)
+
+move_keep_each_vdist_df <- data.frame(do.call(cbind, move_keep_each_vdist))
+move_keep_each_vdist_df_stack <- stack(move_keep_each_vdist_df)
+move_keep_each_vdist_df_stack$event <- 
+  as.numeric(move_keep_each_vdist_df_stack$ind)
+move_keep_each_vdist_df_stack$event <-
+  factor(move_keep_each_vdist_df_stack$event,
+         levels = 1:n)
+
+# plot v dist cumulative
+vdist_cum_plot <- 
+ggplot(move_keep_each_vdist_df_stack,
+       aes(values,
+           group = event)) +
+  geom_density( alpha = 0.02, linetype = 0, fill = "grey20") +
+  xlab(paste0("Vertical distance (m) from starting point at the end of each of ", n, " events"))
+
+grid.arrange(hdist_cum_plot, vdist_cum_plot, ncol = 1)
+
+
+```
+
+
+
+
+
+
+## Explors Bayesian linear models
+
+```{r, eval=FALSE}
+# summarise multiple models hor dir
+library(rstanarm)
+
+tidy_stan_lm <- function(x){
+  df <- data.frame(estimate = x$coefficients[-1],
+        t(quantile(rstanarm:::as.matrix.stanreg(x)[,2], 
+                              probs = c(0.05, 0.95))), 
+        std.error = x$ses[-1], 
+        R2 = mean(x$stanfit@sim$samples[[1]]$`R2[1]`))
+  names(df) <- c("estimate", "estimate_5", "estimate_95", "std.error", "R2")
+  df
+}
+
+
+# the broom::tidy method isn't very useful 
+tidy_stan_lm <- function(x){
+  df <- data.frame(estimate = x$coefficients[-1],
+        t(quantile(rstanarm:::as.matrix.stanreg(x)[,2], 
+                              probs = c(0.05, 0.95))), 
+        std.error = x$ses[-1], 
+        R2 = mean(x$stanfit@sim$samples[[1]]$`R2[1]`))
+  names(df) <- c("estimate", "estimate_5", "estimate_95", "std.error", "R2")
+  df
+}
+
+
+stan_linear_models_estimates_hor_dir <- 
+hor_dir_artefact %>% 
+  gather(value, 
+         variable, 
+         -angle_hor_displacement) %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(tidy_stan_lm(stan_lm(scale(angle_hor_displacement) ~ scale(variable), 
+                    data = .,
+                    prior = NULL,
+                    chains = 1, 
+                    cores = parallel::detectCores(), 
+                    seed = 1))) 
+
+
+stan_linear_models_estimates_hor_dir <- 
+stan_linear_models_estimates_hor_dir %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value),
+         model = "Horizontal direction")
+
+hor_disp_artefact <- merge(hor, tramp, by = "artefact")
+
+# reshape to long, keeping the 15 mist hor dist out
+
+library(tidyr)
+hor_disp_artefact_long <- gather(hor_disp_artefact, 
+                                 value, variable, 
+                                 -fifteen)
+
+
+# summarise multiple models hor dipls
+stan_linear_models_estimates_hor_disp <- 
+hor_disp_artefact_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(tidy_stan_lm(stan_lm(scale(fifteen) ~ scale(variable), 
+                    data = .,
+                    prior = NULL,
+                    chains = 1, 
+                    cores = parallel::detectCores(), 
+                    seed = 1))) %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value),
+         model = "Horizontal distance")
+
+# combine two models for hor dir and dist to plot
+stan_hor_models <- 
+rbind(stan_linear_models_estimates_hor_dir,
+      stan_linear_models_estimates_hor_disp)
+
+# estimate distribution includes zero?
+stan_hor_models <- 
+  stan_hor_models %>% 
+  mutate(zero = ifelse(0 < estimate_95 & estimate_5 < 0, "yes", "no"))
+   
+ggplot() +
+    geom_point(data = stan_hor_models,
+        aes(estimate, 
+            R2,
+            colour = zero)) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(data = stan_hor_models, 
+                  aes(estimate, 
+                      R2,
+            xmin = estimate_5, 
+            xmax = estimate_95, 
+            height = 0)) +
+    geom_text_repel(data = stan_hor_models,
+                    aes(estimate, 
+                    R2,
+                    label = value),
+            nudge_x = 0.02,
+            nudge_y = 0.02) +
+   theme_bw() +
+   xlab("Standardised estimates with 90% confidence intervals") +
+   ylab(expression(R^2)) +
+   scale_size("p-values", 
+              breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01, 1/0.005), 
+              labels = c(0.75, 0.25, 0.05, 0.01, 0.005)) +
+  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21, 21)))) +
+  facet_wrap(~model, ncol = 2)
+
+```
+
+
+
+```{r, eval=FALSE}
+library(rstanarm)
+# the broom::tidy method isn't very useful 
+tidy_rstan_lm <- function(model){
+  # compute loo: Leave-One-Out (LOO) cross-validation
+  loo_model <- loo::loo(model)
+  # tidy the output
+  df <- data.frame(
+          estimate = model$coefficients[-1],
+          t(quantile(rstanarm:::as.matrix.stanreg(model)[,2], 
+                                probs = c(0.05, 0.95))), 
+          std.error = model$ses[-1], 
+          R2 = mean(model$stanfit@sim$samples[[1]]$`R2[1]`),
+          looic = unname(loo_model$looic))
+  names(df) <- c("estimate", "estimate_5", "estimate_95", "std.error", "R2", "looic")
+  df
+}
+
+augment_rstan_lm <- function(model){
+  # compute the model
+  # compute loo: Leave-One-Out (LOO) cross-validation
+  loo_model <- loo::loo(model)
+  df <- data.frame(loo_model$pointwise)
+  df
+}
+
+# total vertical displacement, don't care if up or down
+stan_linear_models_estimates_unsigned <- 
+ver_disp_artefact_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  nest(-value) %>% 
+  mutate(model = map(data, ~stan_lm(abs(fifteen) ~ variable, data = .,
+                    prior = NULL, 
+                    chains = 1, 
+                    cores = 2, 
+                    seed = 1))) 
+
+stan_linear_models_estimates_unsigned %>% 
+  mutate(augmented = map(.$model, ~augment_rstan_lm(.)))
+
+
+%>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value)) %>% 
+  mutate(signed = "unsigned")
+
+#  vertical displacement relative to zero, do care if up or down
+stan_linear_models_estimates_signed <- 
+ver_disp_artefact_long %>% 
+  filter(value %in% vars_of_interest) %>% 
+  group_by(value) %>% 
+  do(tidy_stan_lm(stan_lm(scale(fifteen) ~ scale(variable), 
+                    data = .,
+                    prior = NULL,
+                    chains = 1, 
+                    cores = parallel::detectCores(), 
+                    seed = 1))) %>% 
+  ungroup %>% 
+  mutate(value = gsub("\\(mm\\)", "", value)) %>% 
+  mutate(signed = "signed")
+
+stan_all_models_ver <- 
+rbind(stan_linear_models_estimates_unsigned,
+      stan_linear_models_estimates_signed)
+
+ggplot(stan_all_models_ver, 
+        aes(estimate, 
+            R2, 
+            height = 0)) +
+    geom_point(data = stan_all_models_ver,
+        aes(estimate, 
+            R2)) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(data = stan_all_models_ver, 
+                  aes(estimate, 
+                      R2,
+            xmin = estimate_5, 
+            xmax = estimate_95, 
+            height = 0)) +
+    geom_text_repel(aes(estimate, 
+            R2,
+            label = value),
+            nudge_x = 0.02,
+            nudge_y = 0.02) +
+   theme_bw() +
+   xlab("Standardised estimates with 90% confidence intervals") +
+   ylab(expression(Adjusted~R^2)) +
+   scale_size("p-values", 
+              breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01, 1/0.005), 
+              labels = c(0.75, 0.25, 0.05, 0.01, 0.005)) +
+  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21, 21)))) +
+  facet_wrap(~ signed, ncol = 2)
+
+```
+
+
+```{r}
+# delete the temp file we made at the top of this file
+unlink("temp")
+```
+
+
+# Colophon
+
+
+This report was generated on `r Sys.time()` using the following computational environment and dependencies: 
+
+```{r colophon, cache = FALSE}
+# which R packages and versions?
+devtools::session_info()
+
+# what commit is this file at?
+library(git2r)
+repo <- repository(path = "../..")
+last_commit <- commits(repo)[[1]]
+```
+
+The current git commit of this file is `r last_commit@sha`, which is on the `r branches(repo)[[1]]@name` branch and was made by `r last_commit@committer@name` on `r when(last_commit)`. The current commit message is "`r last_commit@summary`". 
