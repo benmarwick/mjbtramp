@@ -11,6 +11,7 @@ output:
     fig_caption: yes
     reference_docx: templates/template.docx
 bibliography: trampling.bib
+csl: journal-of-archaeological-science.csl
 abstract: |
   This is the abstract.
 ---
