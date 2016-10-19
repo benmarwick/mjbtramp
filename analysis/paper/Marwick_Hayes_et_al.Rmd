@@ -400,7 +400,7 @@ The overall shape of a clastic particle, such an artefact, is difficult to conve
 # calculate Zingg's shape values
 tramp$elong <- with(tramp, (`width(mm)` / `length(mm)`))
 tramp$flat <- with(tramp, (`thickness(mm)` / `width(mm)`))
-tramp$shape <- with(tramp, (elong / flat))
+tramp$shape <- with(tramp, ( flat / elong))
 
 # rename and compute some variables
 tramp$vol <- with(tramp, (`length(mm)` * `width(mm)` * `thickness(mm)`))
@@ -489,7 +489,7 @@ grid.arrange(artefact_zingg, artefact_map, ncol=2 )
 
 ```
 
-Zingg indices are derived from the measurement of the three principal axes of the approximating tri-axial ellipsoid. The three principal axes are the longest axis (denoted a _a_), the second longest axis perpendicular to the longest axis (_b_), and the third longest axis perpendicular to both _a_ and _b_ (denoted as _c_). These measurements are not oriented with respect to the percussion axis of the artefact. This is because the percussion attributes have little relevance to how the artefact interacts with the sedimentary deposit during trampling. We simply measured the longest axis on the artefact without regard to the flaking attributes, and then the longest axis that is perpendicular to the first axis (the intermediate axis), and then the longest axis perpendicular to that (the short axis). Volume is taken as the log of the product of _a_, _b_, and _c_. To obtain the Zingg indices for a given artefact, we first determined the directions for principal axes of the artefact, then measured the axes, and finally computed the axis ratios _b_/_a_ (Zingg's elongation ratio) and _c_/_b_ (Zingg's flatness ratio). Zingg's shape factor is elongation divided by flatness. A round or cubic artefact will have a shape factor equal to 1, more elongated and thin artefacts will have a shape factor less than 1, and a blade shaped artefact will have a shape factor greater than 1 [@uthus2005evaluation]. The Zingg classifications of the artefacts used in the trampling experiment are presented in Figure \@ref(fig:zinggplotofartefacts).
+Zingg indices are derived from the measurement of the three principal axes of the approximating tri-axial ellipsoid. The three principal axes are the longest axis (denoted a _a_), the second longest axis perpendicular to the longest axis (_b_), and the third longest axis perpendicular to both _a_ and _b_ (denoted as _c_). These measurements are not oriented with respect to the percussion axis of the artefact. This is because the percussion attributes have little relevance to how the artefact interacts with the sedimentary deposit during trampling. We simply measured the longest axis on the artefact without regard to the flaking attributes, and then the longest axis that is perpendicular to the first axis (the intermediate axis), and then the longest axis perpendicular to that (the short axis). Volume is taken as the log of the product of _a_, _b_, and _c_. To obtain the Zingg indices for a given artefact, we first determined the directions for principal axes of the artefact, then measured the axes, and finally computed the axis ratios _b_/_a_ (Zingg's elongation ratio) and _c_/_b_ (Zingg's flatness ratio). Zingg's shape factor is flatness divided by elongation.  A round or cubic artefact will have a shape factor equal to 1, more elongated and thin artefacts will have a shape factor greater than 1, and a disc shaped artefact will have a shape factor less than 1 [@uthus2005evaluation]. The Zingg classifications of the artefacts used in the trampling experiment are presented in Figure \@ref(fig:zinggplotofartefacts).
 
 ```{r tramplingarea, fig.cap="Views of the trampling area on the excavation spoil heaps."}
 # I combined these images in Inkscape
@@ -1013,7 +1013,7 @@ ggplot() +
    scale_size("p-values", 
               breaks = c(1/0.75, 1/0.25, 1/0.05, 1/0.01, 1/0.005), 
               labels = c(0.75, 0.25, 0.05, 0.01, 0.005)) +
-  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21, 21, 21)))) +
+  guides(size = guide_legend(override.aes = list(pch = c(19, 19, 21)))) +
   facet_wrap(~model, ncol = 2)
   
    
@@ -1031,7 +1031,7 @@ hor_mad <-       round(mad(hor_disp_artefact$fifteen),rounding)
 
 Figure \@ref(fig:showhordispplot) shows maps of the horizontal displacement of artefacts after five, ten and fifteen minutes. A variety of trajectories are visible, with some artefacts moving in a relatively straight line, others changing direction at each move, and one returning almost exactly to its start position. Figure \@ref(fig:hordirectionshist) shows that after fifteen minutes, most artefacts have moved to a location opposite to the direction of walking across the area. None of the Zingg shape variables are effective predictors of the direction of horizontal displacement (Figure \@ref(fig:hormodels)).
 
-Figure \@ref(fig:hordispldists) shows the distributions of displacements from each artefact's starting position after each trampling interval. After fifteen minutes, the total horizontal displacement of all artefacts varied from `r hor_min` m to `r hor_max` m with a median of `r hor_median` m, and median absolute deviation (a robust measure of variation) of `r hor_mad` m. Figure \@ref(fig:hormodels) provides a graphical summary of linear regression models to identify how well the Zingg shape attributes predict the amount of horizontal displacement for each artefact after fifteen minutes of trampling. Shape and elongation are the strongest predictors of horizontal displacement. The elongation relationship indicates that as width increases relative to length, the artefacts are more likely to be moved a longer distance by trampling. The shape relationship suggests that as artefacts are more disc-like, they tend to be moved horizontally further by trampling. 
+Figure \@ref(fig:hordispldists) shows the distributions of displacements from each artefact's starting position after each trampling interval. After fifteen minutes, the total horizontal displacement of all artefacts varied from `r hor_min` m to `r hor_max` m with a median of `r hor_median` m, and median absolute deviation (a robust measure of variation) of `r hor_mad` m. Figure \@ref(fig:hormodels) provides a graphical summary of linear regression models to identify how well the Zingg shape attributes predict the amount of horizontal displacement for each artefact after fifteen minutes of trampling. Elongation is the strongest predictor of horizontal displacement. The elongation relationship indicates that as width increases relative to length, the artefacts are more likely to be moved a longer distance by trampling. 
 
 ## Vertical displacement 
 
@@ -1100,11 +1100,11 @@ ver.s %>%
 kable(versummary, caption = "Summary of absolute (ie unsigned) vertical displacement of trampled artefacts (units are meters, MAD = median absolute deviation)")
 ```
 
-Figure \@ref(fig:vermodels) shows that unsigned (or absolute, without respect to the upwards or downwards direction) vertical displacement is most strongly influenced by artefact shape. Shape is elongation divided by flatness, so this means that disc-like artefacts have higher magnitudes of vertical movement relative to other artefact shapes. However, shape is relatively unimportant when considering signed (or directional) displacement. Artefact volume, width, length and thickness are all signficant predictors when the direction of vertical movement is considered. Bigger artefacts tend to move above their starting position, and smaller artefacts tend to move below it. 
+Figure \@ref(fig:vermodels) shows that unsigned (or absolute, without respect to the upwards or downwards direction) vertical displacement have no strong predictors among artefact shape and size variables. However, artefact volume, width, length and thickness are all signficant predictors when the direction of vertical movement is considered. Bigger artefacts tend to move above their starting position, and smaller artefacts tend to move below it. 
 
 The vertical angles of artefact displacement cluster close to horizontal (Figure \@ref(fig:verangles)). This is expected given that the horizontal displacement values are much greater than the vertical displacement values.
 
-Correlation of ver with hor displs 
+
 
 ```{r vermodels, fig.cap="Linear models for a variety of predictors of signed and unsigned (ie. absolute) vertical displacement after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations.", fig.width=10}
 ver_disp_artefact <- merge(ver, tramp, by = "artefact")
@@ -1227,6 +1227,7 @@ ver_disp_artefact_long %>%
 
 
 ```
+
 
 ```{r verangles, fig.cap="Vertical angles of artefact displacement, or the vertical angle that the artefact moved from its starting point to its location after each trampling event. Zero degrees is horizontal"}
 # compute vertical angle for each artefact
@@ -2100,7 +2101,9 @@ To return to the archaeological question that motivated this experiment, we can 
 
 Trampling is as an important post-depositional process that influences spatial patterning of artefacts in surface and stratified deposits. Our experiment used the Zingg system of quantifying clast shape to investigate the relationship between artefact size and shape attributes and movement resulting from trampling. We used a trampling substrate made from the sediments of the Madjedbebe excavations to increase the relevance of our results to the debate about artefact movement in the Pleistocene deposits at Madjedbebe. Artefact shape and elongation is a significant predictor of the horizontal distance an artefact is moved by trampling. Length, width, thickness and volume are significant predictors of the vertical distance an artefact is moved by trampling, when direction is considered. They are also predictors for changes in artefact orientation, but there are no significant predictors of artefact plunge. For overall vertical displacement, only shape and flatness are significant predictors. However, the explanatory power of these artefact shape and size variables is small, indicating that many other factors are also important in determining how an artefact moves during trampling. It is not possible to use artefact size and shape to reliably identify artefacts in an archaeological assemblage that have been moved the most by trampling. 
 
-Our experiment is limited by the short duration of the trampling events, and the small number of events. To explore the impact of long-term trampling on archaeological deposits, we used our observed data as inputs to a simulation of a large number of trampling events. The simulation resulted in extensive horizontal movement, but only limited vertical movement, rarely more than 0.1 to 0.2 m below the surface. We applied the results of the simulation to the archaeological stratigraphy at Madjedbebe, a site in northern Australia with controversial evidence of early human occupation. We find that when the effects of trampling are considered, the age of the lowest artefacts in the deposit remains within the error range of the OSL ages used to date the deposit. We conclude that trampling has probably not contributed to extensive downward displacement of artefacts at Madjedbebe. 
+Our experiment is limited by the short duration of the trampling events, and the small number of events. To explore the impact of long-term trampling on archaeological deposits, we used our observed data as inputs to a simulation of a large number of trampling events. The simulation resulted in extensive horizontal movement, but only limited vertical movement, rarely more than 0.1 to 0.2 m below the surface. We applied the results of the simulation to the archaeological stratigraphy at Madjedbebe, a site in northern Australia with controversial evidence of early human occupation. We find that when the effects of trampling are considered, the age of the lowest artefacts in the deposit remains within the error range of the OSL ages used to date the deposit. We conclude that trampling has probably not contributed to extensive downward displacement of artefacts at Madjedbebe.
+
+Future directions in experimental studies of post-depositional artefact movement might explore the relationship between the body mass, foot size and gait of the person trampling. While we controlled these variables by using a single person for all the trampling, it is possible that variations in the physical attributes of the person and how they walk might be predictive of artefact displacement. A second important question is how variations in the texture of the deposit could be used to predict artefact movement. Our experiment was conducted on loose, well-sorted sand, and this might result in higher values of artefact displacement compared to other types of deposit. For example, highly compact deposits, or deposits with a high percentage of angular gravel might be predicted to have much smaller distances that artefacts move due to trampling. The more compact sediment requires higher energy for artefacts to penetrate, and the larger clasts would act as barriers to artefact movement. By experimenting with a range of different deposit textures it may be possible to identify how much texture variation can predict artefact movement due to trampling. 
 
 # Acknowledgements
 
