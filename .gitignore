@@ -3,5 +3,8 @@
 .RData
 analysis/paper/Marwick_Hayes_et_al_files/
 analysis/paper/Marwick_Hayes_et_al_cache/
+analysis/paper/Marwick_Hayes_et_al_SOM_files/
+analysis/paper/Marwick_Hayes_et_al_SOM_cache/
 *~*
 packrat/lib*/
+
