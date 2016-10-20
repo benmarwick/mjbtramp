@@ -71,7 +71,4 @@ I used [RStudio](http://www.rstudio.com/products/rstudio/) (version 0.99.845) on
 
 ### Contact:
 
-Ben Marwick, Associate Professor, Department of Anthropology Denny Hall 117, Box 353100, University of Washington Seattle, WA 98195-3100 USA
-
-1.  (+1) 206.552.9450 e. <bmarwick@uw.edu>
-2.  (+1) 206.543.3285 w. <http://faculty.washington.edu/bmarwick/> o: <http://orcid.org/0000-0001-7879-4531>
+Ben Marwick, Associate Professor, Department of Anthropology Denny Hall 117, Box 353100, University of Washington Seattle, WA 98195-3100 USA e. <bmarwick@uw.edu> w. <http://faculty.washington.edu/bmarwick/> o. <http://orcid.org/0000-0001-7879-4531>
