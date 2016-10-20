@@ -1,14 +1,14 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Last-changedate](https://img.shields.io/badge/last%20change-2016--09--20-brightgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-brightgreen.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp) [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp) [![open materials](analysis/figures/open_materials_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/) [![open data](analysis/figures/open_data_20px.png)](https://osf.io/tvyxz/wiki/1.%20View%20the%20Badges/)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2016--10--20-brightgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-brightgreen.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp) [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp)
 
-Research compendium for a report on xxx
----------------------------------------
+Research compendium for a report on 'Movement of lithics by trampling: An experiment in the Madjedbebe sediments'
+-----------------------------------------------------------------------------------------------------------------
 
 ### Compendium DOI:
 
-<http://dx.doi.org/xxxxxxx>
+<http://dx.doi.org/10.17605/OSF.IO/7A6H6>
 
-The files at the URL above will generate the results as found in the publication. The files hosted at github.com are the development versions and may have changed since the report was published
+The files at the URL above will generate the results as found in the publication. The files hosted at <https://github.com/benmarwick/mjbtramp> are the development versions and may have changed since the report was published
 
 ### Author of this repository:
 
@@ -20,7 +20,7 @@ Marwick, B, xxxxx
 
 ### Overview of contents
 
-This repository is our research compendium for our analysis of xxxx. The compendium contains all data, code, and text associated with the publication. The `Rmd` files in the `analysis/paper/` directory contain details of how all the analyses reported in the paper were conducted, as well as instructions on how to rerun the analysis to reproduce the results. The `data/` directory in the `analysis/` directory contains all the raw data.
+This repository is our research compendium for our analysis. The compendium contains all data, code, and text associated with the publication. The `Rmd` files in the `analysis/paper/` directory contain details of how all the analyses reported in the paper were conducted, as well as instructions on how to rerun the analysis to reproduce the results. The `data/` directory in the `analysis/` directory contains all the raw data.
 
 ### The supplementary files
 
@@ -29,7 +29,7 @@ The `analysis/` directory contains:
 -   all the data files (in CSV format, in the `data/` directory)
 -   the manuscript as submitted (in MS Word format)
 -   supplementary information source files (in R markdown format)
--   executed versions of the supplementary files (in HTML format) and all the figures that are included in the paper (in the `figures/` directory)
+-   executed versions of the supplementary files and all the figures that are included in the paper (in the `figures/` directory)
 
 ### The R package
 

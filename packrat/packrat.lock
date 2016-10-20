@@ -545,6 +545,11 @@ Version: 0.2.2
 Hash: 4edd496b5b2c7b37c6fb73fe32908191
 Requires: BH, Rcpp, dplyr, lazyeval, magrittr
 
+Package: pwr
+Source: CRAN
+Version: 1.2-0
+Hash: a7e43338c1877ee60e76b00c48638cda
+
 Package: qap
 Source: CRAN
 Version: 0.1-0

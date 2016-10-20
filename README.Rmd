@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 
 ### Compendium DOI: 
  
-http://dx.doi.org/xxxxxxx
+http://dx.doi.org/10.17605/OSF.IO/7A6H6
 
-The files at the URL above will generate the results as found in the publication. The files hosted at github.com are the development versions and may have changed since the report was published
+The files at the URL above will generate the results as found in the publication. The files hosted at https://github.com/benmarwick/mjbtramp are the development versions and may have changed since the report was published
 
 ### Author of this repository:
 
@@ -33,7 +33,7 @@ Marwick, B,  xxxxx
 
 ### Overview of contents
 
-This repository is our research compendium for our analysis of xxxx. The compendium contains all data, code, and text associated with the publication. The `Rmd` files in the `analysis/paper/` directory contain details of how all the analyses reported in the paper were conducted, as well as instructions on how to rerun the analysis to reproduce the results. The `data/` directory in the `analysis/` directory contains all the raw data. 
+This repository is our research compendium for our analysis. The compendium contains all data, code, and text associated with the publication. The `Rmd` files in the `analysis/paper/` directory contain details of how all the analyses reported in the paper were conducted, as well as instructions on how to rerun the analysis to reproduce the results. The `data/` directory in the `analysis/` directory contains all the raw data. 
 
 ### The supplementary files
 
@@ -42,7 +42,7 @@ The `analysis/` directory contains:
 - all the data files (in CSV format, in the `data/` directory)    
 - the manuscript as submitted (in MS Word format)    
 - supplementary information source files (in R markdown format)
-- executed versions of the supplementary files (in HTML format) and all the figures that are included in the paper (in the `figures/` directory)
+- executed versions of the supplementary files and all the figures that are included in the paper (in the `figures/` directory)
 
 ### The R package 
 
