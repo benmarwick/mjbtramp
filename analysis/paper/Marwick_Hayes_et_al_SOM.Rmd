@@ -24,7 +24,9 @@ opts_chunk$set(echo = FALSE,
                messages = FALSE, 
                warnings = FALSE, 
                dpi = 300,
-               fig.show = 'hide')
+               fig.width = 12
+               #fig.show = 'hide'
+               )
 invisible(purl("Marwick_Hayes_et_al.Rmd",  
                output="temp",
                quiet=TRUE))
@@ -38,27 +40,32 @@ read_chunk("temp")
 ```{r, ref.label="load_data"}
 ```
 
-```{r, ref.label="split_by_trampling_event"}
+```{r, ref.label="split_by_trampling_event", fig.show = 'hide'}
 ```
 
-```{r, ref.label="prepare_point_data"}
+```{r, ref.label="prepare_point_data", fig.show = 'hide'}
 ```
 
-```{r, ref.label="zinggplotofartefacts"}
+```{r, ref.label="zinggplotofartefacts", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "hordispldists"} 
+```{r, ref.label = "hordispldists", fig.show = 'hide'} 
 ```
 
-```{r, ref.label = "hordirectionshist"}
+```{r, ref.label = "hordirectionshist", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "hormodels"}
+```{r, ref.label = "hormodels", fig.show = 'hide'}
 ```
 
 ## Visualising individual artefact movements
 
 In the plot below we can see the vertical distance each artefact has moved after each trampling event.  
+
+
+```{r, ref.label = "verdisp", fig.show = 'hide'}
+```
+
 
 ```{r}
 artefact_num <- 33
@@ -93,7 +100,7 @@ ggplot(ver_indiv_plot, aes(variable,
 
 ## Diagnostic plots for linear models of horizontal displacement of artefacts
 
-```{r, ref.label = "hormodelsdiagnostics"}
+```{r, ref.label = "hormodelsdiagnostics", fig.show = 'hide'}
 ```
 
 ```{r,  fig.show = 'as.is'}
@@ -117,7 +124,7 @@ kable(hormodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of horizontal direction of artefacts
 
-```{r, ref.label = "hordirmodelsdiagnostics"}
+```{r, ref.label = "hordirmodelsdiagnostics", fig.show = 'hide'}
 ```
 
 ```{r,  fig.show = 'as.is'}
@@ -143,14 +150,10 @@ kable(hordirmodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of vertical displacement of artefacts
 
-
-```{r, ref.label = "verdisp"}
+```{r, ref.label = "vermodels", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "vermodels"}
-```
-
-```{r, ref.label = "vermodelsdiagnostics"}
+```{r, ref.label = "vermodelsdiagnostics", fig.show = 'hide'}
 ```
 
 ```{r,  fig.show = 'as.is'}
@@ -173,19 +176,19 @@ kable(vermodels_diagnostics_influence,
 
 ## Diagnostic plots for linear models of artefact orientation
 
-```{r, ref.label = "verangles"}
+```{r, ref.label = "verangles", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "artefactorientation"}
+```{r, ref.label = "artefactorientation", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "artefactplunge"}
+```{r, ref.label = "artefactplunge", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "orientplungcorr"}
+```{r, ref.label = "orientplungcorr", fig.show = 'hide'}
 ```
 
-```{r, ref.label = "orientmodelsdiagnostics"}
+```{r, ref.label = "orientmodelsdiagnostics", fig.show = 'hide'}
 ```
 
 ```{r,  fig.show = 'as.is'}
@@ -208,7 +211,7 @@ kable(orientmodels_diagnostics_influence,
 ## Diagnostic plots for linear models of artefact plunge
 
 
-```{r, ref.label = "plungemodelsdiagnostics"}
+```{r, ref.label = "plungemodelsdiagnostics", fig.show = 'hide'}
 ```
 
 
@@ -286,9 +289,8 @@ fits[[which(possible_distributions == best_distribution)]]
 
 We evaluated `r length(possible_distributions)` possible distributions to find the best fit with our observed values of artefact displacement below the point of origin. Using visual inspection of diagnostic plots and the AIC valuess, we have determined that a `r best_distribution` distribution is the best fit for the observed vertical displacenent values.
 
-```{r ref.label = "sim"}
+```{r ref.label = "sim", fig.show = 'hide'}
 ```
-
 
 ```{r}
 # generate a bunch of fitted gamma distributions
@@ -322,6 +324,8 @@ ggplot() +
 
 The plot above shows `r n` simulated `r best_distribution` distributions (in grey) and our observed distrubtion in red. 
 
+The plot below shows the movement of one artefact during `r n` simulated trampling events. 
+
 ```{r}
 ninety_nine_point_five <- 
 qgamma(0.995, 
@@ -330,7 +334,11 @@ qgamma(0.995,
 ```
 
 
-```{r simplottingoneartefact}
+```{r fitteddistsom, ref.label='fitteddist'}
+```
+
+
+```{r simplottingoneartefactsom}
 # move one artefact n times and look at the results
 
 n <- 1000
@@ -461,18 +469,14 @@ ggplot(move_keep_each_vdist_df_stack,
   xlab(paste0("Vertical distance (m) from starting point at the end of each of ", n, " events"))
 
 grid.arrange(hdist_cum_plot, vdist_cum_plot, ncol = 1)
-
-
 ```
 
 
 
 
-
-
-## Explors Bayesian linear models
-
 ```{r, eval=FALSE}
+## Explore Bayesian linear models
+
 # summarise multiple models hor dir
 library(rstanarm)
 
@@ -693,7 +697,7 @@ unlink("temp")
 
 This report was generated on `r Sys.time()` using the following computational environment and dependencies: 
 
-```{r colophon, cache = FALSE}
+```{r colophon2, cache = FALSE}
 # which R packages and versions?
 devtools::session_info()
 

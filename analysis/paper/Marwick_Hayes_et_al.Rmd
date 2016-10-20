@@ -572,15 +572,13 @@ The trampling area was a levelled section of the excavation spoil heap. The sedi
 
 ## Regression models and model visualisations
 
-To investigate how the artefacts' shape and size variables predicts their movements during trampling, we computed linear models [@Chambers1991] for each combination of artefact attribute and movement. For each model we visually inspected the independence of residuals, homoscedasticity (constant variance of the residuals), and the distribution of the residuals to verify that our data are consistent with the assumptions of linear modelling. These plots are available in our SOM and at http://dx.doi.org/10.17605/OSF.IO/7A6H6. Here we present visual summaries of several models, following @Wickhammodelvis2015 and @Wickham2015vizmodels. We introduce a new kind of plot, the model ensemble plot, to show model-level summary statistics. These model ensemble plots are an information-dense visualisation that is useful for exploring and comparing the importance of predictors in multiple models. These scatterplots show the models' adjusted R^2^ values, standardarised estimates and p-values. The adjusted R^2 values (on the vertical axis) shows model fit as an estimate of the proportion of variance explained by the variable under consideration [@Faraway2014]. Standardarised estimates (on the horizontal axis) are useful as measures of relationship strength for each variable because they can be interpreted as the change in response when the predictor changes by one standard deviation, if all other variables are held constant [@Wickham2015vizmodels]. Standardarised estimates also show the slope of the regression line and thus the direction of the relationship between the variables (i.e. a positive or negative relationship). Our model ensemble plots show the models' p-value of the models as proportional to the size of the data points (larger points indicate lower p-values), with p < 0.05 values indicated by hollow points to highlight models with a very low probability of obtaining the observed data or more extreme data, given a hypothesis of no association between the variables [@Greenland2016]. 
+To investigate how the artefacts' shape and size variables predicts their movements during trampling, we computed linear models [@Chambers1991] for each combination of artefact attribute and movement. For each model we visually inspected the independence of residuals, homoscedasticity (constant variance of the residuals), and the distribution of the residuals to verify that our data are consistent with the assumptions of linear modelling. These plots are available in our SOM. Here we present visual summaries of several models, following @Wickhammodelvis2015 and @Wickham2015vizmodels. We introduce a new kind of plot, the model ensemble plot, to show model-level summary statistics. These model ensemble plots are an information-dense visualisation that is useful for exploring and comparing the importance of predictors in multiple models. These scatterplots show the models' adjusted R^2^ values, standardarised estimates and p-values. The adjusted R^2 values (on the vertical axis) shows model fit as an estimate of the proportion of variance explained by the variable under consideration [@Faraway2014]. Standardarised estimates (on the horizontal axis) are useful as measures of relationship strength for each variable because they can be interpreted as the change in response when the predictor changes by one standard deviation, if all other variables are held constant [@Wickham2015vizmodels]. Standardarised estimates also show the slope of the regression line and thus the direction of the relationship between the variables (i.e. a positive or negative relationship). Our model ensemble plots show the models' p-value of the models as proportional to the size of the data points (larger points indicate lower p-values), with p < 0.05 values indicated by hollow points to highlight models with a very low probability of obtaining the observed data or more extreme data, given a hypothesis of no association between the variables [@Greenland2016]. 
 
 ## Reproducibility and open source materials
 
 To enable re-use of our materials and improve reproducibility and transparency [cf. @Marwick2016repro], we include the entire R code used for all the analysis and visualizations contained in this paper in our SOM at http://dx.doi.org/10.17605/OSF.IO/7A6H6. Also in this version-controlled compendium are the raw data for all the tests reported here, and additional regression diagnostics and power tests. All of the figures, tables and statistical test results presented here can be independently reproduced with the code and data in this repository. In our SOM our code is released under the MIT licence, our data as CC-0, and our figures as CC-BY, to enable maximum re-use [@Marwick2016repro].
 
 # Results
-
-We have archived the data resulting from the experiment at doi:XXXXX to enable inspection and resuse of our data and methods. To facilitate computational repoducibility according to the principles described in [@Marwick2016repro], we have also included in that compendium the R code used to analyse the data and generate the all results presented here.
 
 ```{r hordisp, results='hide'}
 # plots for 5, 10 , 15, three plots, side by side
@@ -1496,9 +1494,9 @@ left_join(
   left_join(the_list[[3]],
             the_list[[4]],
             by = "artefact"),
-  by = "artefact") %>% 
+  by = "artefact")  %>% 
   # simplify
-  select(orient_change, 
+  dplyr::select(orient_change, 
          plunge_change,
          hdispl,
          angle_hor_displacement,
@@ -1585,7 +1583,7 @@ hormodels_diagnostics %>%
   map(~tidy(.)) %>% 
   bind_rows() %>% 
   mutate(variable = names(hormodels_diagnostics)) %>% 
-  select(-method, -alternative)
+  dplyr::select(-method, -alternative)
 ```
 
 ```{r, hordirmodelsdiagnostics}
@@ -1610,7 +1608,7 @@ hordirmodels_diagnostics %>%
   map(~tidy(.)) %>% 
   bind_rows() %>% 
   mutate(variable = names(hordirmodels_diagnostics)) %>% 
-  select(-method, -alternative)
+  dplyr::select(-method, -alternative)
 ```
 
 ```{r, vermodelsdiagnostics}
@@ -1635,7 +1633,7 @@ vermodels_diagnostics %>%
   map(~tidy(.)) %>% 
   bind_rows() %>% 
   mutate(variable = names(vermodels_diagnostics)) %>% 
-  select(-method, -alternative)
+  dplyr::select(-method, -alternative)
 ```
 
 ```{r, orientmodelsdiagnostics}
@@ -1658,7 +1656,7 @@ orientmodels_diagnostics %>%
   map(~tidy(.)) %>% 
   bind_rows() %>% 
   mutate(variable = names(orientmodels_diagnostics)) %>% 
-  select(-method, -alternative)
+  dplyr::select(-method, -alternative)
 ```
 
 ```{r, plungemodelsdiagnostics}
@@ -1680,7 +1678,7 @@ plungemodels_diagnostics %>%
   map(~tidy(.)) %>% 
   bind_rows() %>% 
   mutate(variable = names(plungemodels_diagnostics)) %>% 
-  select(-method, -alternative)
+  dplyr::select(-method, -alternative)
 ```
 
 ```{r tblsizeinfluence}
@@ -1700,7 +1698,7 @@ bind_rows(hormodels_diagnostics_influence,
                       ifelse(variable == "volume", "Volume",
                        ifelse(variable == "width(mm)", "Width",
                               NA))))) %>% 
-  select(variable, 
+  dplyr::select(variable, 
          movement, 
          estimate,
          p.value) %>% 
@@ -1729,7 +1727,7 @@ A common limitation of experimental studies of taphonomic processes such as tram
 
 Taking a similar approach, we computed the difference in co-ordinates of each artefact's location after each of the three trampling events that we observed. The difference in co-ordinates are the co-ordinates of an artefact's starting location minus the co-ordinates of its position at the end of the trampling event. To simulate artefact movement by trampling, we take each artefact in our sample and we randomly select one of its three observed differences in co-ordinates, and compute a new position for the artefact by adding these randomly selected co-ordinates to the artefact's starting co-ordintates. Then at this new position, we make another random selection from the three co-ordinate pairs, and add these co-ordinates to compute a new position. In each iteration we are taking the observed measurements specific to each artefact, and using them to compute new theoretical, but plausible, positions after a simulated trampling event. This differs slightly from Yorsten et al. [-@yorston1990simulation], who used a probability distribution to displace each artefact in their simulation. Instead, we use the observed displacement values directly, because the displacement of the artefacts is determined, in part, by the specific shape and size of each artefact. If we repeat this process of computing new positions many times, we can simulate the movement of artefacts after a large number of events, which is challenging to do in practice. 
 
-```{r}
+```{r, fitteddist}
 negative_vert <- ver.s$displ[ver.s$displ < 0]
 suppressPackageStartupMessages(library(fitdistrplus))
 fitted_dist <- fitdist(-negative_vert, "gamma")
