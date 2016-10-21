@@ -11,8 +11,7 @@ output:
     fig_caption: yes
     reference_docx: templates/template.docx
 bibliography: trampling.bib
-abstract: |
-  This is the abstract.
+
 ---
 
 ```{r, echo = FALSE}
