@@ -404,7 +404,7 @@ knitr::include_graphics("../figures/zingg/drawing.png")
 
 ```
 
-```{r zinggplotofartefacts, fig.cap="Left: Zingg Diagram classifying the shape of the experimental artefacts. Right: Starting locations of the experimental artefacts before trampling.", fig.width=10}
+```{r zinggplotofartefacts, fig.cap="Left: Zingg Diagram classifying the shape of the experimental artefacts. Right: Starting locations of the experimental artefacts before trampling. Numbers on the plots indicate the artefact identification number", fig.width=10}
 # compute Zingg values --------
 
 # calculate Zingg's shape values
@@ -1047,7 +1047,7 @@ Figure \@ref(fig:hordispldists) shows the distributions of displacements from ea
 
 ## Vertical displacement 
 
-```{r verdisp, fig.cap="Distributions of vertical displacements of artefacts from their initial location to their location after 5, 10 and 15 minutes of trampling. Negative values indicate that the artefact is below its starting location."}
+```{r verdisp, fig.cap="Distributions of vertical displacements of artefacts from their initial location to their location after 5, 10 and 15 minutes of trampling. Negative values indicate that the artefact is below its starting location, and positive values indicate that they are higher than the start because surface levels were raised by sand displacement."}
 
 # plot distribution of vertical displacements after 5-10-15
 ver <- data.frame(artefact = c(five1diff$artefact.1, 
