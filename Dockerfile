@@ -9,9 +9,6 @@ RUN apt-get update -y \
 
   # solve a mysterious & sudden error with XML pkg
   && apt-get install libxml2-dev libssl-dev  -y \
-  && R CMD INSTALL --configure-args='--with-libssl-include=INCLUDE_PATH --with-libssl-lib=LIB_PATH' git2r \
-
-
   # get the full set of repository files from GitHub
   && git clone https://github.com/benmarwick/mjbtramp.git \
   # make these files writable

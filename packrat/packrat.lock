@@ -291,9 +291,13 @@ Hash: 5797fec8e2806fcb1d69a58b792d1446
 Requires: Rcpp, ggplot2
 
 Package: git2r
-Source: CRAN
-Version: 0.15.0
-Hash: 92d5a9f3cba5e146b92a76dabbc29fbb
+Source: github
+Version: 0.15.0.9000
+Hash: 517fe5abfc7b821fe4d1297ba470d7c5
+GithubRepo: git2r
+GithubUsername: ropensci
+GithubRef: master
+GithubSha1: e1f337d230da2c0c80fad336c1db1a06ce2a8907
 
 Package: gplots
 Source: CRAN
