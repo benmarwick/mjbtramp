@@ -8,7 +8,7 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 RUN apt-get update -y \
 
   # solve a mysterious & sudden error with XML pkg
-  && apt-get install libxml2-dev libssl-dev  -y \
+  && apt-get install libxml2-dev libssl-dev libssl-dev/unstable -y \
   # get the full set of repository files from GitHub
   && git clone https://github.com/benmarwick/mjbtramp.git \
   # make these files writable
