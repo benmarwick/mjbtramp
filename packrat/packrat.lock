@@ -500,8 +500,8 @@ Hash: 8053df240a4635aeb54fc68c6de67709
 
 Package: openssl
 Source: CRAN
-Version: 0.9.4
-Hash: 5ceb5d83bba44e8e5a764ac6ad32e9fb
+Version: 0.9.5
+Hash: 26776a287eaffb2331c9a449c1d2a791
 
 Package: packrat
 Source: CRAN
