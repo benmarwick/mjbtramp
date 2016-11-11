@@ -158,6 +158,11 @@ Source: CRAN
 Version: 2.0.5
 Hash: 80ca2d4d18a212e4dbefbfc39f079121
 
+Package: codetools
+Source: CRAN
+Version: 0.2-15
+Hash: a4268e48f71dc70ac2203aced7cdd8ea
+
 Package: colorspace
 Source: CRAN
 Version: 1.2-6
@@ -268,7 +273,7 @@ Package: foreach
 Source: CRAN
 Version: 1.4.3
 Hash: cd53ef4cf29dc59ce3f8c5c1af735fd1
-Requires: iterators
+Requires: codetools, iterators
 
 Package: formatR
 Source: CRAN
