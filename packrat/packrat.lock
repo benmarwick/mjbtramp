@@ -65,14 +65,18 @@ Version: 1.3-0
 Hash: fb672e20eb6f3010a3639f855d8ef6de
 
 Package: Rcpp
-Source: CRAN
-Version: 0.12.7
-Hash: f0ba7322cfb66f1b563462faa9c2b2ab
+Source: github
+Version: 0.12.7.5
+Hash: acefbdf442ce2e9472cfe04c57fa9b61
+GithubRepo: Rcpp
+GithubUsername: RcppCore
+GithubRef: master
+GithubSha1: 2aeb67607955734ec5ce2a41b9ba248df2d6a756
 
 Package: RcppEigen
 Source: CRAN
 Version: 0.3.2.9.0
-Hash: 8bfb94825f634147c7f82c063bb2bd9a
+Hash: e02cbff1d313f7a3b638f9694dec5f78
 Requires: Rcpp
 
 Package: StanHeaders
@@ -213,7 +217,7 @@ Hash: de93e5330ff45c5795d0bae12c8a9695
 Package: dplyr
 Source: github
 Version: 0.5.0.9000
-Hash: 2d864b7514215c27b2d5ee3345ba7bf1
+Hash: 6c7e6ccfd3c880dfd921e0802f14f640
 Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr, tibble
 GithubRepo: dplyr
 GithubUsername: hadley
@@ -287,7 +291,7 @@ Requires: digest, gtable, plyr, reshape2, scales
 Package: ggrepel
 Source: CRAN
 Version: 0.5
-Hash: 5797fec8e2806fcb1d69a58b792d1446
+Hash: 888db582dfe139771e07634386c9b838
 Requires: Rcpp, ggplot2
 
 Package: git2r
@@ -338,7 +342,7 @@ Hash: aa3d5b7912b5fed4b546ed5cd2a1760b
 Package: htmltools
 Source: CRAN
 Version: 0.3.5
-Hash: a96dc1cfe628e66337c86be732567df2
+Hash: b7e6627906def1d26305342795d0a342
 Requires: Rcpp, digest
 
 Package: htmlwidgets
@@ -350,7 +354,7 @@ Requires: htmltools, jsonlite, yaml
 Package: httpuv
 Source: CRAN
 Version: 1.3.3
-Hash: 12c4ec43e5609293576e368c740c1f84
+Hash: e867f781d70f9ede970c8d43be5a8e9d
 Requires: Rcpp
 
 Package: httr
@@ -409,7 +413,7 @@ Hash: 359aba2b031b3bbb926496a9d70fe533
 Package: lme4
 Source: CRAN
 Version: 1.1-12
-Hash: d528673a539ddd2ade06d9e7288e2c61
+Hash: 438ab7c1dc681163c88d12d3964e00d8
 Requires: Rcpp, RcppEigen, minqa, nloptr
 
 Package: loo
@@ -459,7 +463,7 @@ Requires: htmltools, shiny
 Package: minqa
 Source: CRAN
 Version: 1.2.4
-Hash: 057103b0f0aa585854d1ae615a534e0e
+Hash: 1c3037010f09e115acf568b765658221
 Requires: Rcpp
 
 Package: mnormt
@@ -523,7 +527,7 @@ Requires: base64enc, digest, ggplot2, hexbin, htmlwidgets, httr,
 Package: plyr
 Source: CRAN
 Version: 1.8.4
-Hash: 75ca080b10a9314a9b293964331e5df7
+Hash: 69f86b53b38e8823e5ce6849b419c042
 Requires: Rcpp
 
 Package: prabclus
@@ -546,7 +550,7 @@ Requires: mnormt
 Package: purrr
 Source: CRAN
 Version: 0.2.2
-Hash: 4edd496b5b2c7b37c6fb73fe32908191
+Hash: 87b2470d0ba099015f948754e990ab67
 Requires: BH, Rcpp, dplyr, lazyeval, magrittr
 
 Package: pwr
@@ -562,7 +566,7 @@ Hash: c15a4e38f99efb0c7199d36617480431
 Package: readxl
 Source: CRAN
 Version: 0.1.1
-Hash: b8f078ed7d05f35efd435db8b7be0ebf
+Hash: 6be0004cb1df223ea6eb858431d6ad5c
 Requires: Rcpp
 
 Package: registry
@@ -573,7 +577,7 @@ Hash: f9447c26b51b8c96f53720c5ff862c93
 Package: reshape2
 Source: CRAN
 Version: 1.4.1
-Hash: c9a8d2349fe969cf519dd0ced9cc1414
+Hash: 8d5332aa69a506461b51fc0ffb8304a5
 Requires: Rcpp, plyr, stringr
 
 Package: rex
@@ -608,13 +612,13 @@ Requires: PKI, RCurl, RJSONIO, digest, packrat, rstudioapi, yaml
 Package: rstan
 Source: CRAN
 Version: 2.12.1
-Hash: 00e60bc72dbb681f8be076887f0c18c9
+Hash: 579a25c7607ca24e07b73af0668a6721
 Requires: BH, Rcpp, RcppEigen, StanHeaders, ggplot2, gridExtra, inline
 
 Package: rstanarm
 Source: CRAN
 Version: 2.12.1
-Hash: 8bdafb3aa73e62b6470b41c4ed72d506
+Hash: 9373f04ef2fc15b022f711970b596fc1
 Requires: BH, Rcpp, RcppEigen, StanHeaders, ggplot2, lme4, loo, rstan,
     shinystan
 
@@ -630,7 +634,7 @@ GithubSha1: 55d3200e6c8b1627b204215341501ca6e4e03212
 Package: scales
 Source: CRAN
 Version: 0.4.0
-Hash: c4a91e7a322e03813b68b73940ce031f
+Hash: 90e37b8cb408b1d0a9a4e0cfc2415351
 Requires: RColorBrewer, Rcpp, dichromat, labeling, munsell, plyr
 
 Package: seriation
@@ -697,13 +701,13 @@ Requires: base64enc, htmlwidgets, jsonlite
 Package: tibble
 Source: CRAN
 Version: 1.2
-Hash: 3b35b556ef7acddb0d28fe6a27ad50e4
+Hash: c5066eab5fec359fd0eabc7acc33f248
 Requires: Rcpp, assertthat, lazyeval
 
 Package: tidyr
 Source: github
 Version: 0.6.0.9000
-Hash: c29ff9ceb5e3454fdb7b1baaec0ee938
+Hash: a20803f3d08a68a7b0ecb39637c2365d
 Requires: Rcpp, dplyr, lazyeval, magrittr, stringi, tibble
 GithubRepo: tidyr
 GithubUsername: hadley
