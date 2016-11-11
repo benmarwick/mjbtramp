@@ -35,7 +35,7 @@ Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
 Requires: Formula, acepack, cluster, data.table, ggplot2, gridExtra,
-    gtable, lattice, latticeExtra, survival
+    gtable, lattice, latticeExtra, nnet, survival
 
 Package: MASS
 Source: CRAN
@@ -267,7 +267,7 @@ Package: flexmix
 Source: CRAN
 Version: 2.3-13
 Hash: 4c5ae92368e1cc01c26afd1e67b66cd3
-Requires: lattice, modeltools
+Requires: lattice, modeltools, nnet
 
 Package: foreach
 Source: CRAN
@@ -530,6 +530,11 @@ Package: nloptr
 Source: CRAN
 Version: 1.0.4
 Hash: 8053df240a4635aeb54fc68c6de67709
+
+Package: nnet
+Source: CRAN
+Version: 7.3-12
+Hash: 42c83a1f063b40fd8bb6ad68ed528aa5
 
 Package: openssl
 Source: CRAN
