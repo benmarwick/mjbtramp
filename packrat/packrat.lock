@@ -35,7 +35,12 @@ Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
 Requires: Formula, acepack, data.table, ggplot2, gridExtra, gtable,
-    latticeExtra
+    latticeExtra, survival
+
+Package: MASS
+Source: CRAN
+Version: 7.3-45
+Hash: 0650d5701aa7e369e77c9e2c8e1dc913
 
 Package: PKI
 Source: CRAN
@@ -240,6 +245,7 @@ Package: fitdistrplus
 Source: CRAN
 Version: 1.0-7
 Hash: 3a85fce75e6c1d8252073e6f12fc9e48
+Requires: MASS, survival
 
 Package: flexmix
 Source: CRAN
@@ -262,7 +268,7 @@ Package: fpc
 Source: CRAN
 Version: 2.1-10
 Hash: e537c1c8a52f67db5296c272e9090cbc
-Requires: diptest, flexmix, kernlab, mclust, mvtnorm, prabclus,
+Requires: MASS, diptest, flexmix, kernlab, mclust, mvtnorm, prabclus,
     robustbase, trimcluster
 
 Package: gclus
@@ -286,7 +292,7 @@ Package: ggplot2
 Source: CRAN
 Version: 2.1.0
 Hash: 50e297b0191179c39c7dcae0eff72b51
-Requires: digest, gtable, plyr, reshape2, scales
+Requires: MASS, digest, gtable, plyr, reshape2, scales
 
 Package: ggrepel
 Source: CRAN
@@ -414,7 +420,7 @@ Package: lme4
 Source: CRAN
 Version: 1.1-12
 Hash: 438ab7c1dc681163c88d12d3964e00d8
-Requires: Rcpp, RcppEigen, minqa, nloptr
+Requires: MASS, Rcpp, RcppEigen, minqa, nloptr
 
 Package: loo
 Source: CRAN
@@ -534,7 +540,7 @@ Package: prabclus
 Source: CRAN
 Version: 2.2-6
 Hash: e646245afbb6b8ed25e22e8a76b781cd
-Requires: mclust
+Requires: MASS, mclust
 
 Package: praise
 Source: CRAN
@@ -641,7 +647,8 @@ Package: seriation
 Source: CRAN
 Version: 1.2-1
 Hash: 5fa63c3dcbc4ec4be2ee85519760cebb
-Requires: TSP, colorspace, dendextend, gclus, gplots, qap, registry
+Requires: MASS, TSP, colorspace, dendextend, gclus, gplots, qap,
+    registry
 
 Package: shiny
 Source: CRAN
@@ -685,6 +692,11 @@ Source: CRAN
 Version: 1.1.0
 Hash: 4d21d0063b37a17ea18eaec6acd29bf3
 Requires: magrittr, stringi
+
+Package: survival
+Source: CRAN
+Version: 2.40-1
+Hash: 6c0779308f30f29df842fe8dfa725593
 
 Package: testthat
 Source: CRAN
