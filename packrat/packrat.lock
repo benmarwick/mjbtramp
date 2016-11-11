@@ -34,8 +34,8 @@ Package: Hmisc
 Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
-Requires: Formula, acepack, data.table, ggplot2, gridExtra, gtable,
-    latticeExtra, survival
+Requires: Formula, acepack, cluster, data.table, ggplot2, gridExtra,
+    gtable, latticeExtra, survival
 
 Package: MASS
 Source: CRAN
@@ -146,6 +146,11 @@ Package: chron
 Source: CRAN
 Version: 2.3-47
 Hash: d25d96d908cd21080f24c89eed4c80a0
+
+Package: cluster
+Source: CRAN
+Version: 2.0.5
+Hash: 80ca2d4d18a212e4dbefbfc39f079121
 
 Package: colorspace
 Source: CRAN
@@ -268,13 +273,14 @@ Package: fpc
 Source: CRAN
 Version: 2.1-10
 Hash: e537c1c8a52f67db5296c272e9090cbc
-Requires: MASS, diptest, flexmix, kernlab, mclust, mvtnorm, prabclus,
-    robustbase, trimcluster
+Requires: MASS, cluster, diptest, flexmix, kernlab, mclust, mvtnorm,
+    prabclus, robustbase, trimcluster
 
 Package: gclus
 Source: CRAN
 Version: 1.3.1
 Hash: d6047d34e2f634d2163405db9a3f7774
+Requires: cluster
 
 Package: gdata
 Source: CRAN
@@ -647,8 +653,8 @@ Package: seriation
 Source: CRAN
 Version: 1.2-1
 Hash: 5fa63c3dcbc4ec4be2ee85519760cebb
-Requires: MASS, TSP, colorspace, dendextend, gclus, gplots, qap,
-    registry
+Requires: MASS, TSP, cluster, colorspace, dendextend, gclus, gplots,
+    qap, registry
 
 Package: shiny
 Source: CRAN
