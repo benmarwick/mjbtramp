@@ -1,5 +1,5 @@
 # get the base image, this one has R, RStudio and pandoc
-FROM rocker/rstudio
+FROM rocker/rstudio:3.3.2
 
 # required
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
