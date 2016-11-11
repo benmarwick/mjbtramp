@@ -42,6 +42,12 @@ Source: CRAN
 Version: 7.3-45
 Hash: 0650d5701aa7e369e77c9e2c8e1dc913
 
+Package: Matrix
+Source: CRAN
+Version: 1.2-7.1
+Hash: 44c7e8fe4ce50a044ec2e5196f6694cc
+Requires: lattice
+
 Package: PKI
 Source: CRAN
 Version: 0.1-3
@@ -82,7 +88,7 @@ Package: RcppEigen
 Source: CRAN
 Version: 0.3.2.9.0
 Hash: e02cbff1d313f7a3b638f9694dec5f78
-Requires: Rcpp
+Requires: Matrix, Rcpp
 
 Package: StanHeaders
 Source: CRAN
@@ -432,7 +438,7 @@ Package: lme4
 Source: CRAN
 Version: 1.1-12
 Hash: 438ab7c1dc681163c88d12d3964e00d8
-Requires: MASS, Rcpp, RcppEigen, lattice, minqa, nloptr
+Requires: MASS, Matrix, Rcpp, RcppEigen, lattice, minqa, nloptr
 
 Package: loo
 Source: CRAN
@@ -637,8 +643,8 @@ Package: rstanarm
 Source: CRAN
 Version: 2.12.1
 Hash: 9373f04ef2fc15b022f711970b596fc1
-Requires: BH, Rcpp, RcppEigen, StanHeaders, ggplot2, lme4, loo, rstan,
-    shinystan
+Requires: BH, Matrix, Rcpp, RcppEigen, StanHeaders, ggplot2, lme4, loo,
+    rstan, shinystan
 
 Package: rstudioapi
 Source: github
@@ -709,6 +715,7 @@ Package: survival
 Source: CRAN
 Version: 2.40-1
 Hash: 6c0779308f30f29df842fe8dfa725593
+Requires: Matrix
 
 Package: testthat
 Source: CRAN
@@ -720,7 +727,7 @@ Package: threejs
 Source: CRAN
 Version: 0.2.2
 Hash: 163690739dae4422bfb1469a59e6b069
-Requires: base64enc, htmlwidgets, jsonlite
+Requires: Matrix, base64enc, htmlwidgets, jsonlite
 
 Package: tibble
 Source: CRAN
