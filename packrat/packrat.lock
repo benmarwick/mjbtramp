@@ -35,7 +35,7 @@ Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
 Requires: Formula, acepack, cluster, data.table, ggplot2, gridExtra,
-    gtable, latticeExtra, survival
+    gtable, lattice, latticeExtra, survival
 
 Package: MASS
 Source: CRAN
@@ -256,7 +256,7 @@ Package: flexmix
 Source: CRAN
 Version: 2.3-13
 Hash: 4c5ae92368e1cc01c26afd1e67b66cd3
-Requires: modeltools
+Requires: lattice, modeltools
 
 Package: foreach
 Source: CRAN
@@ -345,6 +345,7 @@ Package: hexbin
 Source: CRAN
 Version: 1.27.1
 Hash: 9f94c576cc4b9e83fd714ae8387272e6
+Requires: lattice
 
 Package: highr
 Source: CRAN
@@ -406,11 +407,16 @@ Source: CRAN
 Version: 0.3
 Hash: ecf589b42cd284b03a4beb9665482d3e
 
+Package: lattice
+Source: CRAN
+Version: 0.20-34
+Hash: 4390fc5602fd36017be70a27f7123ff3
+
 Package: latticeExtra
 Source: CRAN
 Version: 0.6-28
 Hash: efdf3a10a129129f7b8f4ae5a0d7ec3d
-Requires: RColorBrewer
+Requires: RColorBrewer, lattice
 
 Package: lazyeval
 Source: CRAN
@@ -426,7 +432,7 @@ Package: lme4
 Source: CRAN
 Version: 1.1-12
 Hash: 438ab7c1dc681163c88d12d3964e00d8
-Requires: MASS, Rcpp, RcppEigen, minqa, nloptr
+Requires: MASS, Rcpp, RcppEigen, lattice, minqa, nloptr
 
 Package: loo
 Source: CRAN
@@ -773,3 +779,4 @@ Package: zoo
 Source: CRAN
 Version: 1.7-13
 Hash: 5e9d37229de4b68b9a5e09a619e0f9b6
+Requires: lattice
