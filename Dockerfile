@@ -1,24 +1,18 @@
 # get the base image, this one has R, RStudio and pandoc
-FROM rocker/rstudio:3.3.2
+FROM rocker/tidyverse:3.3.2
 
 # required
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
-# stay current
-RUN apt-get update -y \
-
-  # solve a mysterious & sudden error with XML pkg
-  && apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev -y \
-  # get the full set of repository files from GitHub
-  && git clone https://github.com/benmarwick/mjbtramp.git \
-  # make these files writable
-  && chmod 777 -R mjbtramp \
+RUN git clone https://github.com/benmarwick/mjbtramp.git \
   # go into the repo directory
   && cd /mjbtramp \
   # start R and build pkgs that we depend on from local sources that we have collected with packrat
-  && R -e "0" --args --bootstrap-packrat \
+##  && R -e "0" --args --bootstrap-packrat \
+## Source the MRAN snapshot, so we install the same version of packages always
+  && . /etc/environment \
   # build this compendium package
-  && R -e 'devtools::install(".")' \
+  && R -e "devtools::install('.', dep=TRUE, repo='$MRAN')" \
   # render the manuscript into a docx
   && R -e "rmarkdown::render('analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
