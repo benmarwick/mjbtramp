@@ -8,11 +8,11 @@ RUN git clone https://github.com/benmarwick/mjbtramp.git \
   # go into the repo directory
   && cd /mjbtramp \
   # start R and build pkgs that we depend on from local sources that we have collected with packrat
-  ## && R -e "0" --args --bootstrap-packrat \
+   && R -e "0" --args --bootstrap-packrat \
   ## Source the MRAN snapshot, so we install the same version of packages always
-  && . /etc/environment \
+  ## && . /etc/environment \
   # build this compendium package
-  && R -e "devtools::install('.', dep=TRUE, repo='$MRAN')" \
+  ## && R -e "devtools::install('.', dep=TRUE, repo='$MRAN')" \
   # render the manuscript into a docx
   && R -e "rmarkdown::render('analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
