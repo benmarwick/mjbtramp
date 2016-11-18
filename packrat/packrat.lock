@@ -6,7 +6,8 @@ Repos: BioCsoft=https://bioconductor.org/packages/3.3/bioc,
     BioCexp=https://bioconductor.org/packages/3.3/data/experiment,
     BioCextra=https://bioconductor.org/packages/3.3/extra,
     CRAN=https://cran.rstudio.com/,
-    CRANextra=https://www.stats.ox.ac.uk/pub/RWin
+    CRANextra=https://www.stats.ox.ac.uk/pub/RWin,
+    MRAN=https://mran.microsoft.com/snapshot/2016-11-17
 
 Package: BH
 Source: CRAN
