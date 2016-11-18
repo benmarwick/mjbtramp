@@ -9,3 +9,7 @@ load.external.packages.on.startup: TRUE
 ignored.packages: badgecreatr
 quiet.package.installation: TRUE
 snapshot.recommended.packages: FALSE
+snapshot.fields:
+    Imports
+    Depends
+    LinkingTo
