@@ -119,11 +119,23 @@ Source: CRAN
 Version: 1.3.2
 Hash: 576a9d297a567d6a5ebd164ca5221590
 
+Package: curl
+Source: CRAN
+Version: 2.2
+Hash: 4533829fb0026bd0dea77ba8f1612d37
+
 Package: data.table
 Source: CRAN
 Version: 1.9.6
 Hash: f92ef1f73afa43bf6fd69a22f3794abd
 Requires: chron
+
+Package: devtools
+Source: CRAN
+Version: 1.12.0
+Hash: bbad95109ae75cbb14099281cda43af2
+Requires: digest, git2r, httr, jsonlite, memoise, rstudioapi, whisker,
+    withr
 
 Package: dichromat
 Source: CRAN
@@ -179,6 +191,11 @@ Version: 0.5
 Hash: 5797fec8e2806fcb1d69a58b792d1446
 Requires: Rcpp, ggplot2
 
+Package: git2r
+Source: CRAN
+Version: 0.15.0
+Hash: 92d5a9f3cba5e146b92a76dabbc29fbb
+
 Package: gridExtra
 Source: CRAN
 Version: 2.2.1
@@ -206,6 +223,12 @@ Source: CRAN
 Version: 1.3.3
 Hash: 12c4ec43e5609293576e368c740c1f84
 Requires: Rcpp
+
+Package: httr
+Source: CRAN
+Version: 1.2.1
+Hash: 7de1f8f760441881804af7c1ff324340
+Requires: R6, curl, jsonlite, mime, openssl
 
 Package: jsonlite
 Source: CRAN
@@ -258,6 +281,12 @@ Version: 0.7.7
 Hash: fea2343a1119d61b0cc5c0a950d103a3
 Requires: mime
 
+Package: memoise
+Source: CRAN
+Version: 1.0.0
+Hash: 56e7087c3559eb7ba72a9afb349bf896
+Requires: digest
+
 Package: mime
 Source: CRAN
 Version: 0.5
@@ -279,6 +308,11 @@ Source: CRAN
 Version: 0.4.3
 Hash: f96d896947fcaf9b6d0074002e9f4f9d
 Requires: colorspace
+
+Package: openssl
+Source: CRAN
+Version: 0.9.5
+Hash: 26776a287eaffb2331c9a449c1d2a791
 
 Package: packrat
 Source: CRAN
@@ -411,6 +445,16 @@ Source: CRAN
 Version: 0.6.0
 Hash: daf06bb30f2d9581e69609e0c0f7d38a
 Requires: Rcpp, lazyeval, magrittr, stringi, tibble, dplyr
+
+Package: whisker
+Source: CRAN
+Version: 0.3-2
+Hash: 803d662762e532705c2c066a82d066e7
+
+Package: withr
+Source: CRAN
+Version: 1.0.2
+Hash: 774eb7be9087cdc24b53b74e5359cfac
 
 Package: xtable
 Source: CRAN
