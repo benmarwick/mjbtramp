@@ -7,7 +7,7 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 COPY . /mjbtramp
 RUN . /etc/environment \
   # build this compendium package
-  && R -e "options(repos='$MRAN'); devtools::install('mjbtramp', dep=TRUE)" \
+  && R -e "options(repos='$MRAN'); devtools::install('.', dep=TRUE)" \
  # render the manuscript into a docx
   && R -e "rmarkdown::render('mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
