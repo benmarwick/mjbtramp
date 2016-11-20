@@ -4,9 +4,9 @@ FROM rocker/verse:3.3.2
 # required
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
- RUN git clone https://github.com/benmarwick/mjbtramp.git   
-  && cd /mjbtramp   
-  && . /etc/environment
+ RUN git clone https://github.com/benmarwick/mjbtramp.git   \
+  && cd /mjbtramp   \
+  && . /etc/environment \
   # build this compendium package
   && R -e "devtools::install('.', dep=TRUE, repos = $MRAN)" \
  # render the manuscript into a docx
