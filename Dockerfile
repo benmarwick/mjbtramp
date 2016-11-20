@@ -8,8 +8,7 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
   && cd /mjbtramp   \
   && . /etc/environment \
   # build this compendium package
-  && R -e "options(repos='$MRAN')" \
-  && R -e "devtools::install('.', dep=TRUE, repos = '$MRAN')" \
+  && R -e "options(repos='$MRAN'); devtools::install('.', dep=TRUE, repos = '$MRAN')" \
  # render the manuscript into a docx
   && R -e "rmarkdown::render('analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
