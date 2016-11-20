@@ -4,10 +4,11 @@ FROM rocker/verse:3.3.2
 # required
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
-COPY . /mjbtramp
-RUN . /etc/environment \
+ RUN git clone https://github.com/benmarwick/mjbtramp.git   
+  && cd /mjbtramp   
+  && . /etc/environment
   # build this compendium package
-  && R -e "options(repos='$MRAN'); devtools::install('.', dep=TRUE)" \
+  && R -e "devtools::install('.', dep=TRUE, repos ='https://mran.microsoft.com/snapshot/2016-11-08')" \
  # render the manuscript into a docx
   && R -e "rmarkdown::render('mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
