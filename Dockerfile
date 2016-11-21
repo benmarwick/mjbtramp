@@ -4,13 +4,10 @@ FROM rocker/verse:3.3.2
 # required
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
-ADD . /mjbtramp
+COPY . /mjbtramp
  # go into the repo directory		 
 RUN . /etc/environment \
-  # which dir are we in?
-  && pwd \ 
-  # what is in this dir?
-  && ls \  
+ 
   # what is in /mjbtramp?
   && ls /mjbtramp \ 
 
