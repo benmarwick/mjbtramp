@@ -7,14 +7,14 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 COPY . /mjbtramp
  # go into the repo directory		 
 RUN . /etc/environment \
-  && pwd \
-  && cd /mjbtramp \
-  && ls \
+  && pwd \ # which dir are we in?
+  && ls \  # what is in this dir?
+  && ls /mjbtramp \ # what is in /mjbtramp?
 
   # build this compendium package
-  && R -e "options(repos='$MRAN'); devtools::install('.', dep=TRUE)" \
+  && R -e "options(repos='$MRAN'); devtools::install('/mjbtramp', dep=TRUE)" \
  # render the manuscript into a docx
-  && R -e "rmarkdown::render('analysis/paper/Marwick_Hayes_et_al.Rmd')"
+  && R -e "rmarkdown::render('/mjbtramp/analysis/paper/Marwick_Hayes_et_al.Rmd')"
 
 
 #################### Notes to self ###############################
