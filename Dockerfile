@@ -7,9 +7,12 @@ MAINTAINER Ben Marwick <benmarwick@gmail.com>
 COPY . /mjbtramp
  # go into the repo directory		 
 RUN . /etc/environment \
-  && pwd \ # which dir are we in?
-  && ls \  # what is in this dir?
-  && ls /mjbtramp \ # what is in /mjbtramp?
+  # which dir are we in?
+  && pwd \ 
+  # what is in this dir?
+  && ls \  
+  # what is in /mjbtramp?
+  && ls /mjbtramp \ 
 
   # build this compendium package
   && R -e "options(repos='$MRAN'); devtools::install('/mjbtramp', dep=TRUE)" \
