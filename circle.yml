@@ -5,7 +5,8 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker build -t benmarwick/mjbtramp  https://raw.githubusercontent.com/benmarwick/mjbtramp/master/Dockerfile
+    # so we can use COPY, we send all of the repo, rather than just the dockerfile
+    - docker build -t benmarwick/mjbtramp  .
 test:
   override:
       # see if we can start container...
