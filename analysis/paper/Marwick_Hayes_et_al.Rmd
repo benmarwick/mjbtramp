@@ -1269,7 +1269,148 @@ suppressMessages(print(p))
 
 ## Orientation and Plunge
 
-Our sample includes `r nrow(rbind(five2diff, five4diff))` artefacts with two or four total station points, enabling measurements of changes in the orientation of the artefact (ie. changes in the bearing of the long axis of the artefact) and plunge (ie. the vertical angle from the horizontal plane of the long axis of the artefact). Figure \@ref(fig:artefactplunge) shows that these changes are generally small, with most changes clustered around zero degrees (ie the bearing/plunge angle that the artefact was at before trampling). Only changes in orientation are significantly predicted by artefact shape and size attributes; there are no significant predictors for changes in artefact plunge angle (Figure \@ref(fig:plotorientplunge)). Similar to vertical displacement, artefact volume, width, length and thickness are all significant predictors of the magnitude of change in artefact orientation. Bigger artefacts tend to be rotated further from their original bearing.
+
+```{r orientation_stat_test}
+# get start and end orientations of artefacts with 2-4 points plotted for each time period, then test for significant difference using circular stat
+get_orientations <- function(the_data){
+   orig.orient <- atan ((the_data$Northing.2.x - the_data$Northing.1.x) / 
+                           (the_data$Easting.2.x - the_data$Easting.1.x))
+   
+   final.orient <- atan ((the_data$Northing.2.y - the_data$Northing.1.y) /
+                           (the_data$Easting.2.y - the_data$Easting.1.y)) 
+   
+   df  <- data.frame(angle = c(orig.orient, final.orient),
+                     group = c(rep("orig.orient", length(orig.orient)),
+                               rep("final.orient", length(final.orient))))
+   
+  return(df)
+}
+
+# Test for significant change in artefact orientations after each event
+
+suppressPackageStartupMessages(library(circular))
+
+five_orientations <- rbind(five2diff, five4diff)
+five_orientations_start_end <- get_orientations(five_orientations)
+# check if distribution is von Mises or not
+five_orient_vm_check <- 
+five_orientations_start_end %>% 
+  group_by(group) %>% 
+  do(waston_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+# do stat test for sig diff between orientations
+five_orient_diff_test <-  
+  watson.williams.test(five_orientations_start_end$angle, 
+                       five_orientations_start_end$group)
+
+ten_orientations <- rbind(ten2diff, ten4diff)
+ten_orientations_start_end  <- get_orientations(ten_orientations)
+ten_orient_vm_check <- 
+ten_orientations_start_end %>% 
+  group_by(group) %>% 
+  do(watson_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+ten_orient_diff_test <-  
+  watson.williams.test(ten_orientations_start_end$angle, 
+                       ten_orientations_start_end$group)
+
+fifteen_orientations <- rbind(fifteen2diff, fifteen4diff)
+fifteen_orientations_start_end  <- get_orientations(fifteen_orientations)
+fifteen_orient_vm_check <- 
+fifteen_orientations_start_end %>% 
+  group_by(group) %>% 
+  do(watson_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+fifteen_orient_diff_test <-  
+  watson.williams.test(fifteen_orientations_start_end$angle, 
+                       fifteen_orientations_start_end$group)
+
+# overall, from start to end of 15 min
+overall <- 
+  data.frame(rbind(five_orientations_start_end[five_orientations_start_end$group == "orig.orient", ],
+        fifteen_orientations_start_end[fifteen_orientations_start_end$group == "final.orient", ]))
+overall_orient_vm_check <- 
+overall %>% 
+  group_by(group) %>% 
+  do(watson_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+overall_orient_diff_test <-  
+  watson.williams.test(overall$angle, 
+                       overall$group)
+        
+```
+
+```{r plunge_stat_test}
+get_plunge <- function(the_data){
+    # calculate horizontal length of artefact from end to end
+  # before points
+  plb <- with(the_data, sqrt((Northing.2.x - Northing.1.x)^2 +
+                            (Easting.2.x  - Easting.1.x)^2))
+  #  min points
+  pl <- with(the_data, sqrt((Northing.2.y - Northing.1.y)^2 + 
+                            (Easting.2.y  - Easting.1.y)^2))
+  
+    # calculate vertical difference between each end of the artefact
+  # before points
+  pvb <- with(the_data, (Elevation.2.x - Elevation.1.x))
+  # 
+  pv <- with(the_data, (Elevation.2.y - Elevation.1.y))
+  
+  # calculate angle of plunge - check how -ve values are handled...
+  # before
+  orig.plung <- atan ((pvb) / (plb)) / (pi/180)
+  # after fifteen mins
+  final.plung <- atan ((pv) / (pl)) / (pi/180)
+  
+     df  <- data.frame(angle = c(orig.plung, final.plung),
+                       group = c(rep("orig.plung", length(orig.plung)),
+                                 rep("final.plung", length(final.plung))))
+  
+  return(df)
+  
+}
+
+five_plunge_df <- get_plunge(five_orientations)
+# check if distribution is von Mises or not
+five_plunge_vm_check <- 
+five_plunge_df %>% 
+  group_by(group) %>% 
+  do(waston_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+# do stat test for sig diff between orientations
+five_plunge_diff_test <-  
+  watson.williams.test(five_plunge_df$angle, 
+                       five_plunge_df$group)
+
+ten_plunge_df <- get_plunge(ten_orientations)
+ten_plunge_vm_check <- 
+ten_plunge_df %>% 
+  group_by(group) %>% 
+  do(waston_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+# do stat test for sig diff between orientations
+ten_plunge_diff_test <-  
+  watson.williams.test(ten_plunge_df$angle, 
+                       ten_plunge_df$group)
+
+fifteen_plunge_df <- get_plunge(fifteen_orientations)
+fifteen_plunge_vm_check <- 
+fifteen_plunge_df %>% 
+  group_by(group) %>% 
+  do(waston_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+# do stat test for sig diff between orientations
+fifteen_plunge_diff_test <-  
+  watson.williams.test(fifteen_plunge_df$angle, 
+                       fifteen_plunge_df$group)
+
+# overall, from start to end of 15 min
+overall_plunge <- 
+  data.frame(rbind(five_plunge_df[five_plunge_df$group == "orig.plung", ],
+                   fifteen_plunge_df[fifteen_plunge_df$group == "final.plung", ]))
+overall_plunge_vm_check <- 
+overall_plunge %>% 
+  group_by(group) %>% 
+  do(watson_test = watson.test(.$angle, dist = "vonmises"), data = .$angle)
+overall_plunge_diff_test <-  
+  watson.williams.test(overall_plunge$angle, 
+                       overall_plunge$group)
+```
+
+Our sample includes `r nrow(rbind(five2diff, five4diff))` artefacts with two or four total station points, enabling measurements of changes in the orientation of the artefact (ie. changes in the bearing of the long axis of the artefact) and plunge (ie. the vertical angle from the horizontal plane of the long axis of the artefact). Figure \@ref(fig:artefactplunge) shows that these changes are generally small, with most changes clustered around zero degrees (i.e. the bearing/plunge angle that the artefact was at before trampling). Watson-Williams tests for homogeneity of means [@pewsey2013circular] shows no significant differences between starting and final orientations after 15 minutes of trampling (F = `r unname(round(overall_orient_diff_test$statistic, 3))`, p = `r round(overall_orient_diff_test$p.value, 3)`), but shows significant differences in plunge angles (F = `r unname(round(overall_plunge_diff_test$statistic, 3))`, p = `r round(overall_plunge_diff_test$p.value, 3)`). Only changes in orientation are significantly predicted by artefact shape and size attributes; there are no significant predictors for changes in artefact plunge angle (Figure \@ref(fig:plotorientplunge)). Similar to vertical displacement, artefact volume, width, length and thickness are all significant predictors of the magnitude of change in artefact orientation. Bigger artefacts tend to be rotated further from their original bearing.
 
 Correlations of these changes in orientaton and plunge with horizontal and vertical distances and angles are shown in Table \@ref(tab:cororientplungehorver). Orientation and plunge are not strongly correlated with any other measurements of artefact movement. Increased distances of artefact displacement do not appear to have any effect on artefact orientation and plunge. Vertical angle is strongly negatively correlated with horizontal distance and vertical distance. This indicates that as the artefact moves further from its starting location, the vertical angle is smaller (i.e. closer to horizontal). Vertical and horizontal distance have a moderately strong positive relationship, indicating that the magnitude of displacement is proportional in both horizontal and vertical axes. 
 
@@ -1305,10 +1446,7 @@ all_orientation_changes <- c(five_orientations_change,
                         ten_orientations_change, 
                         fifteen_orientations_change)
 
-# statistical tests for changes in orientations
-# first check for von mises distribution or not ('normal'), then test
 
-# The Rayleigh test and Watson’s U test are used to test for randomness and normality, respectively.  For directional data with von Mises distributions, we use Watson–Williams tests, and for non-von Mises distributed data, we use Mardia–Watson–Wheeler tests 
 
 # plot
 plot_orientation <- ggplot() +
@@ -1557,12 +1695,6 @@ kable(lower[-nrow(lower),-1], row.names = TRUE,
       caption = "Pearson's correlation coefficients for changes in artefact plunge and orientation, and for values of horizontal and vertical distance, horizontal bearing and verticle angle after fifteen minutes. Values in parentheses are p-values. Strong significant correlations are in bold.")
 
 ```
-
-```{r}
-# statistical tests for differences in orientation and plunge
-
-```
-
 
 
 # Discussion 
