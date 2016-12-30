@@ -1234,10 +1234,6 @@ ver_disp_artefact_long %>%
             "Pearson correlation",
             "p-value")) %>% 
   kable(caption = "Summary of correlations of artefact size and shape variables with the displacement below starting position after 15 minutes.")
-
-
-
-
 ```
 
 
