@@ -906,7 +906,7 @@ zero_origin <- end_coords - start_coords
 # compute angle of displacement, as 0-360 deg
 angle_hor_displacement <- atan2(zero_origin[,1], zero_origin[,2]) / (pi/180)
 angle_hor_displacement <- ifelse(angle_hor_displacement < 0, 360 + angle_hor_displacement, angle_hor_displacement)
-  
+
 # plot
 p <- ggplot() +
   geom_histogram(aes(x = angle_hor_displacement), 
@@ -1116,8 +1116,6 @@ Figure \@ref(fig:vermodels) shows that unsigned (or absolute, without respect to
 
 The vertical angles of artefact displacement cluster close to horizontal (Figure \@ref(fig:verangles)). This is expected given that the horizontal displacement values are much greater than the vertical displacement values.
 
-
-
 ```{r vermodels, fig.cap="Linear models for a variety of predictors of signed and unsigned (ie. absolute) vertical displacement after fifteen minutes of trampling. Hollow data points indicate p < 0.05. Positive estimate values indicate positive correlations.", fig.width=10}
 ver_disp_artefact <- merge(ver, tramp, by = "artefact")
 
@@ -1306,6 +1304,11 @@ fifteen_orientations_change <- get_change_in_orientations(fifteen_orientations)
 all_orientation_changes <- c(five_orientations_change, 
                         ten_orientations_change, 
                         fifteen_orientations_change)
+
+# statistical tests for changes in orientations
+# first check for von mises distribution or not ('normal'), then test
+
+# The Rayleigh test and Watson’s U test are used to test for randomness and normality, respectively.  For directional data with von Mises distributions, we use Watson–Williams tests, and for non-von Mises distributed data, we use Mardia–Watson–Wheeler tests 
 
 # plot
 plot_orientation <- ggplot() +
@@ -1554,6 +1557,12 @@ kable(lower[-nrow(lower),-1], row.names = TRUE,
       caption = "Pearson's correlation coefficients for changes in artefact plunge and orientation, and for values of horizontal and vertical distance, horizontal bearing and verticle angle after fifteen minutes. Values in parentheses are p-values. Strong significant correlations are in bold.")
 
 ```
+
+```{r}
+# statistical tests for differences in orientation and plunge
+
+```
+
 
 
 # Discussion 
