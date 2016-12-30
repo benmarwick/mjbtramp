@@ -1,6 +1,6 @@
 PackratFormat: 1.4
 PackratVersion: 0.4.8.1
-RVersion: 3.3.1
+RVersion: 3.3.2
 Repos: BioCsoft=https://bioconductor.org/packages/3.3/bioc,
     BioCann=https://bioconductor.org/packages/3.3/data/annotation,
     BioCexp=https://bioconductor.org/packages/3.3/data/experiment,
@@ -28,8 +28,8 @@ Package: Hmisc
 Source: CRAN
 Version: 3.17-4
 Hash: cc7076b8d20cee30cef888cb4392f5bf
-Requires: Formula, acepack, data.table, ggplot2, gridExtra, gtable,
-    lattice, latticeExtra, survival
+Requires: Formula, acepack, gtable, lattice, survival, data.table,
+    gridExtra, latticeExtra, ggplot2
 
 Package: PKI
 Source: CRAN
@@ -87,7 +87,7 @@ Package: bookdown
 Source: github
 Version: 0.1.10
 Hash: 048c127c22c7869dddac9467b349a110
-Requires: htmltools, knitr, miniUI, rmarkdown, rsconnect, yaml
+Requires: yaml, htmltools, rsconnect, miniUI, knitr, rmarkdown
 GithubRepo: bookdown
 GithubUsername: rstudio
 GithubRef: master
@@ -97,7 +97,7 @@ Package: broom
 Source: CRAN
 Version: 0.4.1
 Hash: c90145ada2eac0128487c21ab2ac9c78
-Requires: dplyr, plyr, psych, reshape2, stringr, tidyr
+Requires: plyr, psych, stringr, dplyr, reshape2, tidyr
 
 Package: caTools
 Source: CRAN
@@ -131,13 +131,6 @@ Version: 1.9.6
 Hash: f92ef1f73afa43bf6fd69a22f3794abd
 Requires: chron
 
-Package: devtools
-Source: CRAN
-Version: 1.12.0
-Hash: bbad95109ae75cbb14099281cda43af2
-Requires: digest, git2r, httr, jsonlite, memoise, rstudioapi, whisker,
-    withr
-
 Package: dichromat
 Source: CRAN
 Version: 2.0-0
@@ -152,8 +145,7 @@ Package: dplyr
 Source: github
 Version: 0.5.0.9000
 Hash: 2bda96c7fd316bcbfb0e0495f1a07a8e
-Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr, plogr,
-    tibble
+Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr, tibble
 GithubRepo: dplyr
 GithubUsername: hadley
 GithubRef: master
@@ -168,6 +160,7 @@ Requires: stringr
 Package: fitdistrplus
 Source: CRAN
 Version: 1.0-7
+Hash: 3a85fce75e6c1d8252073e6f12fc9e48
 Requires: survival
 
 Package: formatR
@@ -240,7 +233,7 @@ Package: knitr
 Source: github
 Version: 1.14.5
 Hash: f916637b2a613d172793eb431f5fb6a7
-Requires: digest, evaluate, formatR, highr, markdown, stringr, yaml
+Requires: digest, formatR, highr, yaml, markdown, stringr, evaluate
 GithubRepo: knitr
 GithubUsername: yihui
 GithubRef: master
@@ -351,7 +344,7 @@ Package: purrr
 Source: CRAN
 Version: 0.2.2
 Hash: 00a7cfe594aca24c8c7b807a9c8478ed
-Requires: BH, Rcpp, dplyr, lazyeval, magrittr
+Requires: BH, Rcpp, lazyeval, magrittr, dplyr
 
 Package: readxl
 Source: CRAN
@@ -369,8 +362,8 @@ Package: rmarkdown
 Source: github
 Version: 1.0.9013
 Hash: 0a967bcc3afb016b5f576593a946c328
-Requires: base64enc, caTools, evaluate, htmltools, jsonlite, knitr,
-    tibble, yaml
+Requires: base64enc, jsonlite, yaml, caTools, htmltools, tibble,
+    evaluate, knitr
 GithubRepo: rmarkdown
 GithubUsername: rstudio
 GithubRef: master
@@ -380,7 +373,7 @@ Package: rsconnect
 Source: github
 Version: 0.4.4
 Hash: 09c7ff59bf67a821e0ac660f7c08cd25
-Requires: PKI, RCurl, RJSONIO, digest, packrat, rstudioapi, yaml
+Requires: RJSONIO, digest, packrat, rstudioapi, yaml, PKI, RCurl
 GithubRepo: rsconnect
 GithubUsername: rstudio
 GithubRef: master
@@ -405,8 +398,8 @@ Package: shiny
 Source: CRAN
 Version: 0.14.1
 Hash: 65d870a0d4c8b9a2ac3dd552a367510b
-Requires: R6, digest, htmltools, httpuv, jsonlite, mime, sourcetools,
-    xtable
+Requires: R6, digest, jsonlite, mime, sourcetools, xtable, httpuv,
+    htmltools
 
 Package: sourcetools
 Source: CRAN
