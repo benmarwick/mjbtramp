@@ -338,9 +338,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.45646068"
-     inkscape:cx="267.85808"
-     inkscape:cy="460.58209"
+     inkscape:zoom="0.1612974"
+     inkscape:cx="99.511572"
+     inkscape:cy="486.83057"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -542,38 +542,6 @@
        style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.45600009;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m -71.428571,415.21935 760.102901,0"
        id="path4227"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:2.62947178;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4352-9-0"
-       sodipodi:type="arc"
-       sodipodi:cx="-577.01355"
-       sodipodi:cy="-543.20026"
-       sodipodi:rx="46.263157"
-       sodipodi:ry="65.028732"
-       sodipodi:start="4.712389"
-       sodipodi:end="1.8181867"
-       d="m -577.01355,-608.22899 a 46.263157,65.028732 0 0 1 41.83427,37.26365 46.263157,65.028732 0 0 1 -6.11062,69.0843 46.263157,65.028732 0 0 1 -47.05232,21.7297"
-       transform="matrix(1,0,-0.08987027,0.99595348,0,0)"
-       sodipodi:open="true" />
-    <ellipse
-       style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:3.94408536;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4352-98"
-       cx="-653.14777"
-       cy="-600.22589"
-       rx="73.558495"
-       ry="92.015984" />
-    <path
-       style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:2.20000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       d="m -635.20406,-688.41589 119.00587,80.40179"
-       id="path4242-5"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:2.29999995;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       d="m -659.09578,-507.82211 111.57986,31.04887"
-       id="path4242-0-0"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <g
@@ -1308,7 +1276,7 @@
          id="tspan4568-4"
          x="141.21515"
          y="89.66256"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Shape</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Form</tspan><tspan
          sodipodi:role="line"
          x="141.21515"
          y="122.92622"
@@ -1325,7 +1293,7 @@
          id="tspan4568-4-9"
          x="391.776"
          y="89.66256"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Shape</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Form</tspan><tspan
          sodipodi:role="line"
          x="391.776"
          y="122.92622"
@@ -1342,7 +1310,7 @@
          id="tspan4568-4-7"
          x="634.85345"
          y="89.66256"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Shape</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Form</tspan><tspan
          sodipodi:role="line"
          x="634.85345"
          y="122.92622"
@@ -1536,7 +1504,7 @@
          id="tspan4568-4-7-2"
          x="707.1665"
          y="374.10376"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Shape</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial">Form</tspan><tspan
          sodipodi:role="line"
          x="707.1665"
          y="407.36743"
