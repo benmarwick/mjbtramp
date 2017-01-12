@@ -25,7 +25,7 @@ library(knitr)
 opts_chunk$set(echo = FALSE, 
                messages = FALSE, 
                warnings = FALSE, 
-               dpi = 300,
+               dpi = 600,
                cache = TRUE)
 suppressPackageStartupMessages(library(dplyr, quietly = TRUE))
 suppressPackageStartupMessages(library(ggplot2, quietly = TRUE))
@@ -870,11 +870,11 @@ hor <- data.frame(artefact = c(five1diff$artefact.1,
 hor.s <- stack(hor[,c(2:4)])
 hor.s$ind = reorder(hor.s$ind, hor.s$values, mean)
 # plot
+library(ggforce)
 ggplot(hor.s, 
        aes(ind, values)) + 
   geom_boxplot(outlier.colour = "white") + 
-  geom_jitter(alpha = 0.4, 
-              width = 0.4,
+  geom_sina(alpha = 0.4, 
               size = 3) +
   theme_minimal(base_size = 12) +
   xlab("Trampling episode (mins)") + 
@@ -1071,11 +1071,10 @@ vert_hist <-
                aes(time, 
                    displ), 
                outlier.colour = "white") + 
-  geom_jitter(data = ver.s[ver.s$displ < 0.2 & ver.s$displ > -0.2, ], 
+  geom_sina(data = ver.s[ver.s$displ < 0.2 & ver.s$displ > -0.2, ], 
               aes(time, 
                   displ),
               alpha = 0.4, 
-              width = 0.4,
               size = 3) +
   geom_point(data = ver.s[ver.s$displ > 0.2 | ver.s$displ < -0.2, ], 
                   aes(time, 
@@ -2251,7 +2250,7 @@ depth_0.2 <- interpolate_chrono_data(dates_1989_tidy, depth_of_interest=287-20)
 
 ```
 
-To return to the archaeological question that motivated this experiment, we can investigate the effect of 0.1 to 0.2 m of vertical spread of artefacts on determining the age of artefacts at Madjedbebe. The 0.4 m vertical migration proposed by Hiscock for artefacts Madjedbebe is much greater than what experimental data indicates would result from trampling. We acknowledge, of course, that trampling is not the only process that can vertically migrate artefacts, and may even be one of the least disruptive of post-depositional processes [@Wooddisturbance1978; @Steinearthworms1983]. Using the data published in Clarkson et al. [-@Clarkson2015Madjedbebe] and the results of this trampling experiment we can estimate new ages for the lowest artefacts at Madjedbebe.  For example, Clarkson et al. [-@Clarkson2015Madjedbebe] report the lowest artefacts at a depth of `r minimum_age_if_trampled$oldest_depth/100` m below the surface. Using the loess regression described above, we can compute an age of `r round(minimum_age_if_trampled$oldest,1)` ka for those sediments. If those artefacts were actually deposited on a surface 0.1 to 0.2 m above that depth, we can compute ages of `r round(depth_0.1$age_at_depth_of_interest,1)` ka to `r round(depth_0.2$age_at_depth_of_interest,1)` ka for those surfaces. The error term (two standard deviations) on the nearest OSL sample to these lowest artefacts is 8.2 ka (KTL-162), so the variation in the age of the artefacts due to trampling (`r round(minimum_age_if_trampled$oldest,1) - round(depth_0.2$age_at_depth_of_interest,1)` ka) is less than half of the error on the OSL age. The unconsolidated nature of our trampling substrate means that our experimental artefacts may have experienced greater downward movement than what occurs to artefacts in the more compact archaeological deposits. This means our estimates here reflect a worst-case scenario for artefact displacement due to trampling. This finding does not conclusively resolve the debate about the age of the oldest artefacts at this site -- questions remain about the effects of other post-depositional processes, and the degree of mixing of the sediment grains used in the OSL analysis [@allen2014both; allen2003colonised; @allen2004dating]. However, it does help us to understand the magnitude of the effect of trampling at this site, which seems to be low, relative to uncertainties in ages produced by OSL methods.
+To return to the archaeological question that motivated this experiment, we can investigate the effect of 0.1 to 0.2 m of vertical spread of artefacts on determining the age of artefacts at Madjedbebe. The 0.4 m vertical migration proposed by Hiscock for artefacts Madjedbebe is much greater than what experimental data indicates would result from trampling. We acknowledge, of course, that trampling is not the only process that can vertically migrate artefacts, and may even be one of the least disruptive of post-depositional processes [@Wooddisturbance1978; @Steinearthworms1983]. Using the data published in Clarkson et al. [-@Clarkson2015Madjedbebe] and the results of this trampling experiment we can estimate new ages for the lowest artefacts at Madjedbebe.  For example, Clarkson et al. [-@Clarkson2015Madjedbebe] report the lowest artefacts at a depth of `r minimum_age_if_trampled$oldest_depth/100` m below the surface. Using the loess regression described above, we can compute an age of `r round(minimum_age_if_trampled$oldest,1)` ka for those sediments. If those artefacts were actually deposited on a surface 0.1 to 0.2 m above that depth, we can compute ages of `r round(depth_0.1$age_at_depth_of_interest,1)` ka to `r round(depth_0.2$age_at_depth_of_interest,1)` ka for those surfaces. The error term (two standard deviations) on the nearest OSL sample to these lowest artefacts is 8.2 ka (KTL-162), so the variation in the age of the artefacts due to trampling (`r round(minimum_age_if_trampled$oldest,1) - round(depth_0.2$age_at_depth_of_interest,1)` ka) is less than half of the error on the OSL age. The unconsolidated nature of our trampling substrate means that our experimental artefacts may have experienced greater downward movement than what occurs to artefacts in the more compact archaeological deposits. This means our estimates here reflect a worst-case scenario for artefact displacement due to trampling. This finding does not conclusively resolve the debate about the age of the oldest artefacts at this site -- questions remain about the effects of other post-depositional processes, and the degree of mixing of the sediment grains used in the OSL analysis [@allen2014both; @allen2003colonised; @allen2004dating]. However, it does help us to understand the magnitude of the effect of trampling at this site, which seems to be low, relative to uncertainties in ages produced by OSL methods.
 
 # Conclusion
 
