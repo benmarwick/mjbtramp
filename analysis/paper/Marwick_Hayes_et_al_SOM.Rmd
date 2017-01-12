@@ -690,9 +690,7 @@ ggplot(stan_all_models_ver,
 unlink("temp")
 ```
 
-
 # Colophon
-
 
 This report was generated on `r Sys.time()` using the following computational environment and dependencies: 
 
