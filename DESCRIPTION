@@ -1,6 +1,6 @@
 Package: mjbtramp
 Title: Research compendium for paper on an artefact trampling experiment
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: person("Ben", "Marwick", email = "benmarwick@gmail.com", role = c("aut", "cre"))
 Description: This package contains the data, code and text of our study of
     artefact trampling at Madjebebe rockshelter.
