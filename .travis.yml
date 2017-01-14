@@ -9,6 +9,6 @@ cache:
 install:
   - echo "deb http://www.unidata.ucar.edu/repos/apt i386/" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update
-  - sudo apt-get install udunits
+  - sudo apt-get install libexpat-dev udunits -y
   - R -e "0" --args --bootstrap-packrat
 warnings_are_errors: false
