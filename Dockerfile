@@ -9,9 +9,8 @@ COPY . /mjbtramp
 RUN . /etc/environment \
 
   # need this for ggforce::geom_sina
-  && echo "deb http://www.unidata.ucar.edu/repos/apt i386/" | sudo tee -a /etc/apt/sources.list \
   && sudo apt-get update \
-  && sudo apt-get install libexpat-dev:i386 udunits:i386 --force-yes -y
+  && sudo apt-get install libudunits2-dev -y
 
   # what is in /mjbtramp?
   && ls /mjbtramp \
