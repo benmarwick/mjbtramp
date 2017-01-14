@@ -7,7 +7,7 @@ cache:
   packages: true
 
 install:
-  - echo "deb http://www.unidata.ucar.edu/repos/apt i386/" | tee -a /etc/apt/sources.list
+  - echo "deb http://www.unidata.ucar.edu/repos/apt i386/" | sudo tee -a /etc/apt/sources.list
   - apt-get update
   - apt-get install udunits
   - R -e "0" --args --bootstrap-packrat
