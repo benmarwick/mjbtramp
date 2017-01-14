@@ -10,7 +10,7 @@ RUN . /etc/environment \
 
   # need this for ggforce::geom_sina
   && sudo apt-get update \
-  && sudo apt-get install libudunits2-dev -y
+  && sudo apt-get install libudunits2-dev -y \
 
   # what is in /mjbtramp?
   && ls /mjbtramp \
