@@ -5,11 +5,15 @@ FROM rocker/verse:3.3.2
 MAINTAINER Ben Marwick <benmarwick@gmail.com>
 
 COPY . /mjbtramp
- # go into the repo directory		 
+ # go into the repo directory
 RUN . /etc/environment \
- 
+
+  # need this for ggforce::geom_sina
+  && apt-get apt-get update \
+  && apt-get install udunits
+
   # what is in /mjbtramp?
-  && ls /mjbtramp \ 
+  && ls /mjbtramp \
 
   # build this compendium package
   && R -e "options(repos='$MRAN'); devtools::install('/mjbtramp', dep=TRUE)" \
