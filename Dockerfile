@@ -10,7 +10,7 @@ RUN . /etc/environment \
 
   # need this for ggforce::geom_sina
   && echo "deb http://www.unidata.ucar.edu/repos/apt i386/" | sudo tee -a /etc/apt/sources.list \
-  && sudo apt-get apt-get update \
+  && sudo apt-get update \
   && sudo apt-get install udunits
 
   # what is in /mjbtramp?
