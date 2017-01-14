@@ -176,6 +176,12 @@ Source: CRAN
 Version: 1.4
 Hash: b2a47a2b91737978cf50ba95825a9cd1
 
+Package: ggforce
+Source: CRAN
+Version: 0.1.1
+Hash: 2d4939b50a91324af58d4919c04a0e74
+Requires: Rcpp, dplyr, ggplot2, gtable, lazyeval, scales, tweenr, units
+
 Package: ggfortify
 Source: CRAN
 Version: 0.2.0
@@ -446,6 +452,23 @@ Source: CRAN
 Version: 0.6.0
 Hash: 55b2d458dcd3407abb74732c82be146c
 Requires: Rcpp, dplyr, lazyeval, magrittr, stringi, tibble
+
+Package: tweenr
+Source: CRAN
+Version: 0.1.5
+Hash: b514df0895b17e46940e97b116dffcb1
+Requires: Rcpp
+
+Package: udunits2
+Source: CRAN
+Version: 0.13
+Hash: 587587ec23c49271e0657fed726e7846
+
+Package: units
+Source: CRAN
+Version: 0.4-1
+Hash: f297145d418ec6cddf0116266a1b3c64
+Requires: udunits2
 
 Package: whisker
 Source: CRAN
