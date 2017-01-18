@@ -1207,7 +1207,7 @@ ggplot(all_models_ver,
 ```
 
 
-```{r, smallartefacts}
+```{r, smallartefacts, eval = FALSE}
 
 # if we just consider the question of whether small artefacts tend to go deeper:
 ver_disp_artefact_long %>% 
