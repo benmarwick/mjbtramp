@@ -25,7 +25,7 @@ library(knitr)
 opts_chunk$set(echo = FALSE, 
                messages = FALSE, 
                warnings = FALSE, 
-               dpi = 600,
+               dpi = 900,
                cache = TRUE)
 suppressPackageStartupMessages(library(dplyr, quietly = TRUE))
 suppressPackageStartupMessages(library(ggplot2, quietly = TRUE))
@@ -425,8 +425,12 @@ library(ggrepel)
 
 s <- 3 # text size for Zingg's shape
 
+tramp_zingg <- tramp[ c(five1diff$artefact.1, 
+                        five2diff$artefact.1,
+                        five4diff$artefact.1), ]
+
 artefact_zingg <- 
-ggplot(tramp[1:30,], aes(flat, 
+ggplot(tramp_zingg, aes(flat, 
                          elong, 
                          label = artefact)) +
   geom_point(aes(size = form),
@@ -1017,8 +1021,8 @@ ggplot() +
                     aes(estimate, 
                     adj.r.squared,
                     label = value),
-            nudge_x = 0.02,
-            nudge_y = 0.02) +
+            nudge_x = 0.1,
+            nudge_y = 0.005) +
    theme_bw() +
    xlab("Standardised estimates with 95% confidence intervals") +
    ylab(expression(Adjusted~R^2)) +
