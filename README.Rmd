@@ -29,7 +29,7 @@ Ben Marwick (benmarwick@gmail.com)
 
 ### Published in: 
 
-Marwick, B,  xxxxx 
+Marwick, Ben, Elspeth Hayes, Chris Clarkson and Richard Fullagar. 2017. Movement of lithics by trampling: An experiment in the Madjedbebe sediments, northern Australia. _Journal of Archaeological Science_ 79:73-85.
 
 ### Overview of contents
 
@@ -80,8 +80,7 @@ Data: CC0 http://creativecommons.org/publicdomain/zero/1.0/ attribution requeste
 
 ### Dependencies:
 
-I used [RStudio](http://www.rstudio.com/products/rstudio/) (version 0.99.845) on Ubuntu 16.04 and Windows 7. See the colophon section of the docx file in `analysis/paper` for a full list of the packages that this project depends on. 
-
+See the colophon section of the docx file in `analysis/paper` for a full list of the packages that this project depends on. 
 
 ### Contact: 
 

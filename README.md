@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Last-changedate](https://img.shields.io/badge/last%20change-2016--10--20-brightgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-brightgreen.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp) [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp) [![ORCiD](https://img.shields.io/badge/ORCiD-0000--0001--7879--4531-green.svg)](http://orcid.org/0000-0001-7879-4531)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2017--02--06-brightgreen.svg)](https://github.com/benmarwick/mjbtramp/commits/master) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.4-brightgreen.svg)](https://cran.r-project.org/) [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](http://choosealicense.com/licenses/mit/) [![Travis-CI Build Status](https://travis-ci.org/benmarwick/mjbtramp.png?branch=master)](https://travis-ci.org/benmarwick/mjbtramp) [![Circle CI](https://circleci.com/gh/benmarwick/mjbtramp.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/benmarwick/mjbtramp) [![ORCiD](https://img.shields.io/badge/ORCiD-0000--0001--7879--4531-green.svg)](http://orcid.org/0000-0001-7879-4531)
 
 Research compendium for a report on 'Movement of lithics by trampling: An experiment in the Madjedbebe sediments'
 -----------------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ Ben Marwick (<benmarwick@gmail.com>)
 
 ### Published in:
 
-Marwick, B, xxxxx
+Marwick, Ben, Elspeth Hayes, Chris Clarkson and Richard Fullagar. 2017. Movement of lithics by trampling: An experiment in the Madjedbebe sediments, northern Australia. *Journal of Archaeological Science* 79:73-85.
 
 ### Overview of contents
 
@@ -67,7 +67,7 @@ Data: CC0 <http://creativecommons.org/publicdomain/zero/1.0/> attribution reques
 
 ### Dependencies:
 
-I used [RStudio](http://www.rstudio.com/products/rstudio/) (version 0.99.845) on Ubuntu 16.04 and Windows 7. See the colophon section of the docx file in `analysis/paper` for a full list of the packages that this project depends on.
+See the colophon section of the docx file in `analysis/paper` for a full list of the packages that this project depends on.
 
 ### Contact:
 
