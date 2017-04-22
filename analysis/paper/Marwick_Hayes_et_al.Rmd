@@ -1,5 +1,5 @@
 ---
-title: 'Movement of lithics by trampling: An experiment in the Madjedbebe sediments, northern Australia'
+title: 'Movement of lithics by trampling: An experiment in the Madjedbebe sediments, Northern Australia'
 author:
 - Ben Marwick
 - Elspeth Hayes
